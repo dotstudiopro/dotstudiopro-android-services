@@ -3,13 +3,12 @@ package com.dotstudioz.dotstudioPRO.services.services;
 import android.content.Context;
 import android.util.Log;
 
+import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
+import com.dotstudioz.dotstudioPRO.models.dto.SpotLightChannelDTO;
+import com.dotstudioz.dotstudioPRO.models.dto.VideoInfoDTO;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
-import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
-import com.dotstudioz.dotstudioPRO.models.dto.SpotLightCategoriesDTO;
-import com.dotstudioz.dotstudioPRO.models.dto.SpotLightChannelDTO;
-import com.dotstudioz.dotstudioPRO.models.dto.VideoInfoDTO;
 import com.dotstudioz.dotstudioPRO.services.util.CommonServiceUtils;
 import com.loopj.android.http.AsyncHttpClient;
 
@@ -23,30 +22,26 @@ import java.util.ArrayList;
  * Created by mohsin on 02-03-2017.
  */
 
-public class FetchMissingChannelService_V1 implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
+public class FetchChannelUsingSlugForSubscriptionStatusService_V1 implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
 
-    public FetchMissingChannelService_V1.IFetchMissingChannelService_V1 iFetchMissingChannelService_V1;
-    private ArrayList<SpotLightCategoriesDTO> spotLightCategoriesDTOList;
+    public IFetchChannelUsingSlugForSubscriptionStatusService_V1 iFetchChannelUsingSlugForSubscriptionStatusService_V1;
 
-    public JSONObject responseJSONOjbect;
-
-    public FetchMissingChannelService_V1(Context ctx) {
-        if (ctx instanceof FetchMissingChannelService_V1.IFetchMissingChannelService_V1)
-            iFetchMissingChannelService_V1 = (FetchMissingChannelService_V1.IFetchMissingChannelService_V1) ctx;
+    public FetchChannelUsingSlugForSubscriptionStatusService_V1(Context ctx) {
+        if (ctx instanceof IFetchChannelUsingSlugForSubscriptionStatusService_V1)
+            iFetchChannelUsingSlugForSubscriptionStatusService_V1 = (IFetchChannelUsingSlugForSubscriptionStatusService_V1) ctx;
         else
-            throw new RuntimeException(ctx.toString()+ " must implement IFetchMissingChannelService_V1");
+            throw new RuntimeException(ctx.toString()+ " must implement IFetchChannelUsingSlugForSubscriptionStatusService_V1");
     }
 
-    public void fetchMissingChannelData(String channelSlug, ArrayList<SpotLightCategoriesDTO> spotLightCategoriesDTOArrayList) {
-        spotLightCategoriesDTOList = spotLightCategoriesDTOArrayList;
+    public void fetchChannelData(String channelSlug) {
         AsyncHttpClient client = new AsyncHttpClient();
         client.setMaxRetriesAndTimeout(2, 30000);
         client.setTimeout(30000);
         client.addHeader("x-access-token", ApplicationConstants.xAccessToken);
 
-        iFetchMissingChannelService_V1.showProgress("Loading");
+        iFetchChannelUsingSlugForSubscriptionStatusService_V1.showProgress("Loading");
         try {
-            Log.d("fetchMissingChannelData", "ApplicationConstantURL.getInstance().CHANNEL + channelSlug==>"+ApplicationConstantURL.getInstance().CHANNEL + channelSlug);
+            Log.d("fetchChannelData", "ApplicationConstantURL.getInstance().CHANNEL + channelSlug==>"+ ApplicationConstantURL.getInstance().CHANNEL + channelSlug);
             ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
             headerItemsArrayList.add(new ParameterItem("x-access-token", ApplicationConstants.xAccessToken));
             if(ApplicationConstants.CLIENT_TOKEN != null && ApplicationConstants.CLIENT_TOKEN.length() > 0)
@@ -54,14 +49,14 @@ public class FetchMissingChannelService_V1 implements CommonAsyncHttpClient_V1.I
 
             CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, null,
                     ApplicationConstantURL.getInstance().CHANNEL + channelSlug, AccessTokenHandler.getInstance().fetchTokenCalledInChannelPageString);
+
         } catch (Exception e) {
-            iFetchMissingChannelService_V1.hidePDialog();
+            iFetchChannelUsingSlugForSubscriptionStatusService_V1.hidePDialog();
         }
     }
     @Override
     public void onResultHandler(JSONObject responseBody) {
-        this.responseJSONOjbect = responseBody;
-        //iFetchMissingChannelService_V1(response);
+        //iFetchChannelUsingSlugForSubscriptionStatusService_V1(response);
         try {
             boolean isSuccess = true;
             try {
@@ -73,22 +68,22 @@ public class FetchMissingChannelService_V1 implements CommonAsyncHttpClient_V1.I
             }
 
             if (isSuccess) {
-                fetchMissingChannelData(responseBody);
+                fetchChannelData(responseBody);
             } else {
                 if (AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
                     AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInChannelPageString);
                     if (AccessTokenHandler.getInstance().foundAnyError)
-                        iFetchMissingChannelService_V1.accessTokenExpired();
+                        iFetchChannelUsingSlugForSubscriptionStatusService_V1.accessTokenExpired();
                 }
             }
         } catch(Exception e) {
             e.printStackTrace();
-            iFetchMissingChannelService_V1.hidePDialog();
+            iFetchChannelUsingSlugForSubscriptionStatusService_V1.hidePDialog();
         }
     }
     @Override
     public void onErrorHandler(String ERROR) {
-        //iFetchMissingChannelService_V1.getVideoDetailsServiceError(ERROR);
+        //iFetchChannelUsingSlugForSubscriptionStatusService_V1.getVideoDetailsServiceError(ERROR);
         try {
             JSONObject responseBody = new JSONObject(ERROR);
             if (responseBody != null) {
@@ -105,33 +100,28 @@ public class FetchMissingChannelService_V1 implements CommonAsyncHttpClient_V1.I
                     if(AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
                         AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInChannelPageString);
                         if(AccessTokenHandler.getInstance().foundAnyError)
-                            iFetchMissingChannelService_V1.accessTokenExpired();
+                            iFetchChannelUsingSlugForSubscriptionStatusService_V1.accessTokenExpired();
                     }
                 }
             }
         } catch(Exception e) {
             e.printStackTrace();
-            iFetchMissingChannelService_V1.hidePDialog();
+            iFetchChannelUsingSlugForSubscriptionStatusService_V1.hidePDialog();
         }
     }
     @Override
     public void accessTokenExpired() {
-        iFetchMissingChannelService_V1.accessTokenExpired();
+        iFetchChannelUsingSlugForSubscriptionStatusService_V1.accessTokenExpired();
     }
     @Override
     public void clientTokenExpired() {
 
     }
     JSONArray channelsArray;
-    ArrayList<VideoInfoDTO> missingVideoInfoDTOList;
+    ArrayList<VideoInfoDTO> videoInfoDTOList;
     String selectedChannelID;
     String selectedDSProChannelID;
-    public void fetchMissingChannelData(JSONObject response) {
-        try {
-            Log.d("fetchMissingChannelData", "FetchMissingChannelService_V1 onResponse==>" + response.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private void fetchChannelData(JSONObject response) {
         JSONObject obj = response;
 
         try {
@@ -144,8 +134,8 @@ public class FetchMissingChannelService_V1 implements CommonAsyncHttpClient_V1.I
 
         if(channelsArray.length() == 0) {
             //Toast.makeText(activity, "Data not available at the moment!", Toast.LENGTH_SHORT).show();
-            iFetchMissingChannelService_V1.processMissingChannelDataServiceError("Data not available at the moment!");
-            iFetchMissingChannelService_V1.hidePDialog();
+            iFetchChannelUsingSlugForSubscriptionStatusService_V1.fetchChannelUsingSlugServiceError("Data not available at the moment!");
+            iFetchChannelUsingSlugForSubscriptionStatusService_V1.hidePDialog();
             return;
         }
 
@@ -153,7 +143,6 @@ public class FetchMissingChannelService_V1 implements CommonAsyncHttpClient_V1.I
             try {
                 JSONObject channel = channelsArray.getJSONObject(i);
                 JSONObject spotLightCategoriesDTOOBJ = new JSONObject();
-                SpotLightCategoriesDTO spotLightCategoriesDTO = new SpotLightCategoriesDTO();
                 SpotLightChannelDTO spotLightChannelDTO = new SpotLightChannelDTO();
                 spotLightChannelDTO.setId(channel.getString("_id"));
                 try {
@@ -248,102 +237,7 @@ public class FetchMissingChannelService_V1 implements CommonAsyncHttpClient_V1.I
 
                 boolean noCategoriesFound = true;
                 JSONArray categoriesArray = channel.getJSONArray("categories");
-                /*for (int j = 0; j < categoriesArray.length(); j++) {
-                    spotLightChannelDTO.getCategories().add(categoriesArray.getJSONObject(j).getString("_id"));
 
-                    for (int k = 0; k < spotLightCategoriesDTOList.size(); k++) {
-                        if (categoriesArray.getJSONObject(j).getString("_id").equals(spotLightCategoriesDTOList.get(k).getCategoryValue())) {
-                            spotLightCategoriesDTOList.get(k).getSpotLightChannelDTOList().add(spotLightChannelDTO);
-                            noCategoriesFound = false;
-                        }
-                    }
-                }*/
-
-                if (noCategoriesFound) {
-                    if (categoriesArray.length() > 0) {
-                        try {
-                            spotLightCategoriesDTOOBJ = categoriesArray.getJSONObject(0);
-                            spotLightCategoriesDTO = new SpotLightCategoriesDTO();
-                            try {
-                                spotLightCategoriesDTO.setCategoryId(obj.getString("_id"));
-                            } catch (JSONException e) {
-                                spotLightCategoriesDTO.setCategoryId("");
-                            }
-                            try {
-                                spotLightCategoriesDTO.setCompanyId(spotLightCategoriesDTOOBJ.getString("company_id"));
-                            } catch (JSONException e) {
-                                spotLightCategoriesDTO.setCompanyId("");
-                            }
-                            try {
-                                spotLightCategoriesDTO.setEnabled(spotLightCategoriesDTOOBJ.getBoolean("enabled"));
-                            } catch (JSONException e) {
-                                spotLightCategoriesDTO.setEnabled(false);
-                            }
-                            try {
-                                spotLightCategoriesDTO.setHomepage(spotLightCategoriesDTOOBJ.getBoolean("homepage"));
-                            } catch (JSONException e) {
-                                spotLightCategoriesDTO.setHomepage(false);
-                            }
-                            try {
-                                String isAndroidEnabled = ((JSONObject) obj.getJSONArray("platforms").get(0)).getString("andriod");
-                                if (isAndroidEnabled.equals("true"))
-                                    spotLightCategoriesDTO.setPlatform(true);
-                                else
-                                    spotLightCategoriesDTO.setPlatform(false);
-                            } catch (JSONException e) {
-                                spotLightCategoriesDTO.setPlatform(false);
-                            }
-                            try {
-                                spotLightCategoriesDTO.setImageHeight(spotLightCategoriesDTOOBJ.getJSONObject("image").getInt("height"));
-                            } catch (JSONException e) {
-                                spotLightCategoriesDTO.setImageHeight(0);
-                            }
-                            try {
-                                spotLightCategoriesDTO.setImageWidth(spotLightCategoriesDTOOBJ.getJSONObject("image").getInt("width"));
-                            } catch (JSONException e) {
-                                spotLightCategoriesDTO.setImageWidth(0);
-                            }
-                            try {
-                                spotLightCategoriesDTO.setMenu(spotLightCategoriesDTOOBJ.getBoolean("menu"));
-                            } catch (JSONException e) {
-                                spotLightCategoriesDTO.setMenu(false);
-                            }
-                            try {
-                                spotLightCategoriesDTO.setCategoryName(spotLightCategoriesDTOOBJ.getString("name"));
-                            } catch (JSONException e) {
-                                spotLightCategoriesDTO.setCategoryName("");
-                            }
-                            try {
-                                spotLightCategoriesDTO.setCategorySlug(spotLightCategoriesDTOOBJ.getString("slug"));
-                            } catch (JSONException e) {
-                                spotLightCategoriesDTO.setCategorySlug("");
-                            }
-                            try {
-                                spotLightCategoriesDTO.setCategoryWeight(spotLightCategoriesDTOOBJ.getInt("weight"));
-                            } catch (JSONException e) {
-                                spotLightCategoriesDTO.setCategoryWeight(0);
-                            }
-                            try {
-                                spotLightCategoriesDTO.setPath(spotLightCategoriesDTOOBJ.getString("path"));
-                            } catch (JSONException e) {
-                                spotLightCategoriesDTO.setPath("");
-                            }
-                            try {
-                                spotLightCategoriesDTO.setChannels(spotLightCategoriesDTOOBJ.getString("channels"));
-                            } catch (JSONException e) {
-                                spotLightCategoriesDTO.setChannels("");
-                            }
-
-                            //spotLightCategoriesDTO.setCategoryName(obj.getString("slug"));
-                            spotLightCategoriesDTO.setCategoryValue(spotLightCategoriesDTOOBJ.getString("_id"));
-                            if (spotLightCategoriesDTO.isPlatform()) {
-                                spotLightCategoriesDTOList.add(spotLightCategoriesDTO);
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
 
 
                 boolean isChildChannelPresent = false;
@@ -454,8 +348,8 @@ public class FetchMissingChannelService_V1 implements CommonAsyncHttpClient_V1.I
                                                     }
 
                                                     spotLightChannelDTO.getVideoInfoDTOList().add(videoInfoDTO);
-                                                    missingVideoInfoDTOList = new ArrayList<>();
-                                                    missingVideoInfoDTOList.add(videoInfoDTO);
+                                                    videoInfoDTOList = new ArrayList<>();
+                                                    videoInfoDTOList.add(videoInfoDTO);
                                                 } catch (Exception e) {
                                                     e.printStackTrace();
                                                 }
@@ -550,8 +444,8 @@ public class FetchMissingChannelService_V1 implements CommonAsyncHttpClient_V1.I
                                                 }
 
                                                 spotLightChannelDTO.getVideoInfoDTOList().add(videoInfoDTO);
-                                                missingVideoInfoDTOList = new ArrayList<>();
-                                                missingVideoInfoDTOList.add(videoInfoDTO);
+                                                videoInfoDTOList = new ArrayList<>();
+                                                videoInfoDTOList.add(videoInfoDTO);
                                             } catch (Exception e) {
                                                 e.printStackTrace();
                                             }
@@ -569,7 +463,7 @@ public class FetchMissingChannelService_V1 implements CommonAsyncHttpClient_V1.I
                     if (!isVideo) {
                         try {
                             JSONArray playlistArray = channel.getJSONArray("playlist");
-                            missingVideoInfoDTOList = new ArrayList<>();
+                            videoInfoDTOList = new ArrayList<>();
                             for (int j = 0; j < playlistArray.length(); j++) {
                                 VideoInfoDTO videoInfoDTO = new VideoInfoDTO();
                                 videoInfoDTO.setChannelID(channel.getString("_id"));
@@ -621,7 +515,7 @@ public class FetchMissingChannelService_V1 implements CommonAsyncHttpClient_V1.I
                                 if(((JSONObject) playlistArray.get(j)).has("slug"))
                                     videoInfoDTO.setSlug(playlistArray.getJSONObject(j).getString("slug"));
 
-                                missingVideoInfoDTOList.add(videoInfoDTO);
+                                videoInfoDTOList.add(videoInfoDTO);
 
                             }
                             isPlaylist = true;
@@ -630,7 +524,7 @@ public class FetchMissingChannelService_V1 implements CommonAsyncHttpClient_V1.I
                         }
                     }
 
-                    spotLightChannelDTO.setVideoInfoDTOList(missingVideoInfoDTOList);
+                    spotLightChannelDTO.setVideoInfoDTOList(videoInfoDTOList);
                     //channelDTOList.add(spotLightChannelDTO);
                 } else {
                     spotLightChannelDTO.setIsSeasonsPresent(true);
@@ -641,60 +535,24 @@ public class FetchMissingChannelService_V1 implements CommonAsyncHttpClient_V1.I
                         try {
                             if(childChannel.has("channel_type") && childChannel.getString("channel_type").equals("single")) {
                                 try {
-                                    try {
-                                        if (childChannel.has("video"))
-                                            childSpotLightChannelDTO.setVideo(childChannel.getString("video"));
-                                    } catch(Exception ep) {
-                                        ep.printStackTrace();
-                                    }
-                                    try {
-                                        if (childChannel.has("slug"))
-                                            childSpotLightChannelDTO.setSlug(childChannel.getString("slug"));
-                                    } catch(Exception ep) {
-                                        ep.printStackTrace();
-                                    }
-                                    try {
-                                        if (childChannel.has("poster"))
-                                            childSpotLightChannelDTO.setPoster(childChannel.getString("poster"));
-                                    } catch(Exception ep) {
-                                        ep.printStackTrace();
-                                    }
-                                    try {
-                                        if (childChannel.has("spotlight_poster"))
-                                            childSpotLightChannelDTO.setSpotlightImage(childChannel.getString("spotlight_poster"));
-                                    } catch(Exception ep) {
-                                        ep.printStackTrace();
-                                    }
-                                    try {
-                                        if (childChannel.has("company"))
-                                            childSpotLightChannelDTO.setCompany(childChannel.getString("company"));
-                                    } catch(Exception ep) {
-                                        ep.printStackTrace();
-                                    }
-                                    try {
-                                        if (childChannel.has("channel_url"))
-                                            childSpotLightChannelDTO.setLink(childChannel.getString("channel_url"));
-                                    } catch(Exception ep) {
-                                        ep.printStackTrace();
-                                    }
-                                    try {
-                                        if (childChannel.has("title"))
-                                            childSpotLightChannelDTO.setTitle(childChannel.getString("title"));
-                                    } catch(Exception ep) {
-                                        ep.printStackTrace();
-                                    }
-                                    try {
-                                        if (childChannel.has("channel_logo"))
-                                            childSpotLightChannelDTO.setChannelLogo(childChannel.getString("channel_logo"));
-                                    } catch(Exception ep) {
-                                        ep.printStackTrace();
-                                    }
-                                    try {
-                                        if (childChannel.has("dspro_id"))
-                                            childSpotLightChannelDTO.setDspro_id(childChannel.getString("dspro_id"));
-                                    } catch(Exception ep) {
-                                        ep.printStackTrace();
-                                    }
+                                    if (childChannel.has("video"))
+                                        childSpotLightChannelDTO.setVideo(childChannel.getString("video"));
+                                    if (childChannel.has("slug"))
+                                        childSpotLightChannelDTO.setSlug(childChannel.getString("slug"));
+                                    if (childChannel.has("poster"))
+                                        childSpotLightChannelDTO.setPoster(childChannel.getString("poster"));
+                                    if (childChannel.has("spotlight_poster"))
+                                        childSpotLightChannelDTO.setSpotlightImage(childChannel.getString("spotlight_poster"));
+                                    if (childChannel.has("company"))
+                                        childSpotLightChannelDTO.setCompany(childChannel.getString("company"));
+                                    if (childChannel.has("channel_url"))
+                                        childSpotLightChannelDTO.setLink(childChannel.getString("channel_url"));
+                                    if (childChannel.has("title"))
+                                        childSpotLightChannelDTO.setTitle(childChannel.getString("title"));
+                                    if (childChannel.has("channel_logo"))
+                                        childSpotLightChannelDTO.setChannelLogo(childChannel.getString("channel_logo"));
+                                    if (childChannel.has("dspro_id"))
+                                        childSpotLightChannelDTO.setDspro_id(childChannel.getString("dspro_id"));
                                 } catch(Exception e) {
                                     e.printStackTrace();
                                 }
@@ -704,8 +562,6 @@ public class FetchMissingChannelService_V1 implements CommonAsyncHttpClient_V1.I
                                     if (childChannel.has("video") && childChannel.getJSONObject("video").has("_id"))
                                         childSpotLightChannelDTO.setId(childChannel.getJSONObject("video").getString("_id"));
                                     childSpotLightChannelDTO.setCompany(childChannel.getString("company").toUpperCase());
-                                    if (childChannel.has("dspro_id"))
-                                        childSpotLightChannelDTO.setDspro_id(childChannel.getString("dspro_id"));
                                     try {
                                         String imageString = childChannel.getString("videos_thumb");
                                         imageString = CommonServiceUtils.replaceDotstudioproWithMyspotlightForImage(imageString);
@@ -748,18 +604,19 @@ public class FetchMissingChannelService_V1 implements CommonAsyncHttpClient_V1.I
                     //channelDTOList.add(spotLightChannelDTO);
                 }
 
-                iFetchMissingChannelService_V1.postProcessingMissingChannelDataServiceResponse(selectedChannelID, spotLightChannelDTO, spotLightCategoriesDTO, channel, missingVideoInfoDTOList);
+                iFetchChannelUsingSlugForSubscriptionStatusService_V1.fetchChannelUsingSlugServiceResponse(spotLightChannelDTO);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public interface IFetchMissingChannelService_V1 {
+    public interface IFetchChannelUsingSlugForSubscriptionStatusService_V1 {
         void showProgress(String message);
         void hidePDialog();
-        void postProcessingMissingChannelDataServiceResponse(String selectedChannelID, SpotLightChannelDTO spotLightChannelDTO, SpotLightCategoriesDTO spotLightCategoriesDTO, JSONObject channel, ArrayList<VideoInfoDTO> missingVideoInfoDTOList);
-        void processMissingChannelDataServiceError(String ERROR);
+        void fetchChannelUsingSlugServiceResponse(SpotLightChannelDTO spotLightChannelDTO);
+        void fetchChannelUsingSlugServiceError(String ERROR);
         void accessTokenExpired();
     }
 }
+

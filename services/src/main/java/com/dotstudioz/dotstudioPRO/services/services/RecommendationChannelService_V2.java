@@ -136,7 +136,7 @@ public class RecommendationChannelService_V2 implements CommonAsyncHttpClient_V1
                 }
             }
         } catch(Exception e) {
-
+            e.printStackTrace();
             iRecommendationService.recommendationServiceError(ERROR);
         }
     }

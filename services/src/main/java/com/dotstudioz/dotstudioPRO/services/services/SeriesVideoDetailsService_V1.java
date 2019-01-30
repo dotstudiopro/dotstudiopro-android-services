@@ -75,7 +75,7 @@ public class SeriesVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.IC
 
     boolean someVideoDataMissing = false;
     public void processJSONResponseObject(JSONObject response) {
-        Log.d("SeriesVideoDetailsService_V1", response.toString());
+        Log.d("processJSONResponse", response.toString());
         JSONObject obj = response;
 
         boolean isGeoBlocked = false;
@@ -238,7 +238,7 @@ public class SeriesVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.IC
                         videoInfoDTO.setIsTeaserAvailable(false);
 
                         if (videoInfoDTO.getAccessValue().equals("paywall")) {
-                            videoInfoDTO.setTeaserID(obj.getJSONObject("teaser").getString("_id"));
+                            videoInfoDTO.setTeaserID(obj.getJSONObject("teaser_trailer").getString("_id"));
                             videoInfoDTO.setIsTeaserAvailable(true);
                         } else {
                             videoInfoDTO.setIsTeaserAvailable(false);
@@ -254,16 +254,37 @@ public class SeriesVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.IC
                     }
 
                     try {
+                        if(obj.getJSONObject("paywall").has("presell")) {
+                            try {
+                                JSONObject presell = obj.getJSONObject("paywall").getJSONObject("presell");
+                                if(presell.has("stream_start")) {
+                                    videoInfoDTO.getPresellDTO().streamStart = presell.getString("stream_start");
+                                }
+                                if(presell.has("stream_end")) {
+                                    videoInfoDTO.getPresellDTO().streamEnd = presell.getString("stream_end");
+                                }
+                                if(presell.has("rental_price")) {
+                                    videoInfoDTO.getPresellDTO().rentalPrice = presell.getString("rental_price");
+                                }
+                            } catch(Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    try {
                         videoInfoDTO.setRentalPeriod(obj.getJSONObject("paywall").getString("rental_period"));
                     } catch (JSONException e) {
                         videoInfoDTO.setRentalPeriod("");
                     }
 
-                                    /*try {
-                                        videoInfoDTO.setS(obj.getString("access"));
-                                    } catch (JSONException e) {
-                                        videoInfoDTO.setIsTeaserAvailable(false);
-                                    }*/
+                    /*try {
+                        videoInfoDTO.setS(obj.getString("access"));
+                    } catch (JSONException e) {
+                        videoInfoDTO.setIsTeaserAvailable(false);
+                    }*/
 
                     try {
                         videoInfoDTO.setAndroidZoneID(obj.getJSONObject("company").getJSONObject("adserver").getString("android"));
@@ -274,8 +295,20 @@ public class SeriesVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.IC
 
                     if (videoInfoDTO.isTeaserAvailable()) {
                         String teaserURL = "";
-                        try {
+                        /*try {
                             teaserURL = ApplicationConstantURL.getInstance().TEASER_DOMAIN + obj.getJSONObject("teaser").getString("paths");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }*/
+                        try {
+                            teaserURL = obj.getJSONObject("teaser_trailer").getString("url");
+                            if(teaserURL.indexOf("https:") < 0 && teaserURL.indexOf("http:") < 0) {
+                                if(teaserURL.substring(0, 2).equalsIgnoreCase("//")) {
+                                    teaserURL = "https:" + teaserURL;
+                                } else {
+                                    teaserURL = "https://" + teaserURL;
+                                }
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -318,10 +351,14 @@ public class SeriesVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.IC
                         videoInfoDTO.setTeaserTrailerThumb("");
                     }
 
-                    if (obj.getJSONObject("ads").getString("pre").equals("yes"))
-                        videoInfoDTO.setIsPreRollToBePlayed(true);
-                    else
-                        videoInfoDTO.setIsPreRollToBePlayed(false);
+                    try {
+                        if (obj.getJSONObject("ads").getString("pre").equals("yes"))
+                            videoInfoDTO.setIsPreRollToBePlayed(true);
+                        else
+                            videoInfoDTO.setIsPreRollToBePlayed(false);
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                    }
 
                     try {
                         if(obj.has("ad_tag")) {
@@ -470,10 +507,14 @@ public class SeriesVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.IC
                     }
                     //videoInfoDTO.setIsMidRollToBePlayed(false);
 
-                    if (obj.getJSONObject("ads").getString("post").equals("yes"))
-                        videoInfoDTO.setIsPostRollToBePlayed(true);
-                    else
-                        videoInfoDTO.setIsPostRollToBePlayed(false);
+                    try {
+                        if (obj.getJSONObject("ads").getString("post").equals("yes"))
+                            videoInfoDTO.setIsPostRollToBePlayed(true);
+                        else
+                            videoInfoDTO.setIsPostRollToBePlayed(false);
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                    }
 
                     //videoInfoDTO.setPostRollToBePlayed(true);
                     //videoInfoDTO.setNoOfPostRollToBePlayed(2);

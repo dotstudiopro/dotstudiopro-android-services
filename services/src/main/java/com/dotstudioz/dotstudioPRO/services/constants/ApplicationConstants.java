@@ -16,6 +16,7 @@ import java.util.Date;
 
 public class ApplicationConstants {
 
+    public static String PLATFORM ;
     public static String TAG;
     public static String APP_NAME;
     public static String APP_VERSION;
@@ -39,22 +40,13 @@ public class ApplicationConstants {
 
     public static boolean channelRailScrolledFlag = false;
 
-    public static String PLATFORM_ENABLED;
-    public  String PLATFORM_ENABLE_ANDROID_MOBILE = "andriod";
-    public  String PLATFORM_ENABLE_ANDROID_TV = "android_TV";
-    public  String PLATFORM_ENABLE_FIRE_TV = "amazon_fire";
-    //Set Page TYPE for analytics
-    public  String ANDROID_PAGE_TYPE            = "android";
-    public  String ANDROID_TV_PAGE_TYPE         = "androidtv";
-    public  String FIRE_TV_PAGE_TYPE            = "firetv";
-
     private static ApplicationConstants ourInstance = new ApplicationConstants();
 
     public static ApplicationConstants getInstance() {
         return ourInstance;
     }
 
-    public static void initializeInstance(String tag, String appName, String appVersion, String appCodeName, String companyKey, String color1, String color2) {
+    public static void initializeInstance(String tag, String appName, String appVersion, String appCodeName, String companyKey, String color1, String color2, String platform) {
         TAG = tag;
         APP_NAME = appName;
         APP_VERSION = appVersion;
@@ -62,6 +54,7 @@ public class ApplicationConstants {
         COMPANY_KEY = companyKey;
         EPISODE_LIST_COLOR_1 = color1;
         EPISODE_LIST_COLOR_2 = color2;
+        PLATFORM = platform;
     }
 
 

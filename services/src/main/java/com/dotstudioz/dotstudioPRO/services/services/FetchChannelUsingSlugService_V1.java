@@ -169,6 +169,7 @@ public class FetchChannelUsingSlugService_V1 {
                     } else {
                         //TODO:Error Handling
                         // Toast.makeText(LoginActivity.this, INVALID_RESPONSE_MESSAGE, Toast.LENGTH_SHORT).show();
+                        iFetchChannelUsingSlugService_V1.processMissingChannelDataServiceError("");
                     }
                 } catch (Exception e) {
                     iFetchChannelUsingSlugService_V1.processMissingChannelDataServiceError(e.getMessage());
@@ -224,6 +225,15 @@ public class FetchChannelUsingSlugService_V1 {
                     } catch (JSONException e) {
                         spotLightChannelDTO.setPoster("");
                     }
+                    try {
+                        if(channel.has("dspro_id")) {
+                            String dsproId = channel.getString("dspro_id");
+                            spotLightChannelDTO.setDspro_id(dsproId);
+                        }
+                    } catch (JSONException e) {
+                        spotLightChannelDTO.setDspro_id("");
+                    }
+
 
                     String imageString = "";
                     try {
@@ -286,6 +296,9 @@ public class FetchChannelUsingSlugService_V1 {
 
                 boolean noCategoriesFound = true;
                 JSONArray categoriesArray = channel.getJSONArray("categories");
+                spotLightChannelDTO.setCategoriesJSONArray(categoriesArray);
+
+
                 /*for (int j = 0; j < categoriesArray.length(); j++) {
                     spotLightChannelDTO.getCategories().add(categoriesArray.getJSONObject(j).getString("_id"));
 

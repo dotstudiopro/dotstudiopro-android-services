@@ -211,7 +211,7 @@ public class VideoDetailsService_V1 implements CommonAsyncHttpClient_V1.ICommonA
                         videoInfoDTO.setIsTeaserAvailable(false);
 
                         if (videoInfoDTO.getAccessValue().equals("paywall")) {
-                            videoInfoDTO.setTeaserID(obj.getJSONObject("teaser").getString("_id"));
+                            videoInfoDTO.setTeaserID(obj.getJSONObject("teaser_trailer").getString("_id"));
                             videoInfoDTO.setIsTeaserAvailable(true);
                         } else {
                             videoInfoDTO.setIsTeaserAvailable(false);
@@ -221,6 +221,40 @@ public class VideoDetailsService_V1 implements CommonAsyncHttpClient_V1.ICommonA
                             videoInfoDTO.setRentalPrice(obj.getJSONObject("paywall").getString("rental_price"));
                         } catch(JSONException e) {
                             videoInfoDTO.setRentalPrice("");
+                        }
+
+                        try {
+                            if(obj.getJSONObject("paywall").has("presell")) {
+                                try {
+                                    JSONObject presell = obj.getJSONObject("paywall").getJSONObject("presell");
+                                    if(presell.has("stream_start")) {
+                                        videoInfoDTO.getPresellDTO().streamStart = presell.getString("stream_start");
+                                    }
+                                    if(presell.has("stream_end")) {
+                                        videoInfoDTO.getPresellDTO().streamEnd = presell.getString("stream_end");
+                                    }
+                                    if(presell.has("rental_price")) {
+                                        videoInfoDTO.getPresellDTO().rentalPrice = presell.getString("rental_price");
+                                    }
+                                } catch(Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            if(obj.getJSONObject("paywall").has("apple_price_tier")) {
+                                    try {
+                                        JSONObject paywall = obj.getJSONObject("paywall");
+                                        if(paywall.has("apple_price_tier")) {
+                                            videoInfoDTO.setApplePriceTier(paywall.getInt("apple_price_tier"));
+                                        }
+
+                                    } catch(Exception e) {
+                                        e.printStackTrace();
+                                        //videoInfoDTO.setApplePriceTier("");
+                                    }
+                                }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
 
                         try {
@@ -241,8 +275,20 @@ public class VideoDetailsService_V1 implements CommonAsyncHttpClient_V1.ICommonA
 
                     if (videoInfoDTO.isTeaserAvailable()) {
                         String teaserURL = "";
-                        try {
+                        /*try {
                             teaserURL = ApplicationConstantURL.getInstance().TEASER_DOMAIN + obj.getJSONObject("teaser").getString("paths");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }*/
+                        try {
+                            teaserURL = obj.getJSONObject("teaser_trailer").getString("url");
+                            if(teaserURL.indexOf("https:") < 0 && teaserURL.indexOf("http:") < 0) {
+                                if(teaserURL.substring(0, 2).equalsIgnoreCase("//")) {
+                                    teaserURL = "https:" + teaserURL;
+                                } else {
+                                    teaserURL = "https://" + teaserURL;
+                                }
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -285,10 +331,14 @@ public class VideoDetailsService_V1 implements CommonAsyncHttpClient_V1.ICommonA
                         videoInfoDTO.setTeaserTrailerThumb("");
                     }
 
-                    if (obj.getJSONObject("ads").getString("pre").equals("yes"))
-                        videoInfoDTO.setIsPreRollToBePlayed(true);
-                    else
-                        videoInfoDTO.setIsPreRollToBePlayed(false);
+                    try {
+                        if (obj.getJSONObject("ads").getString("pre").equals("yes"))
+                            videoInfoDTO.setIsPreRollToBePlayed(true);
+                        else
+                            videoInfoDTO.setIsPreRollToBePlayed(false);
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                    }
 
                     try {
                         if(obj.has("ad_tag")) {
@@ -431,10 +481,14 @@ public class VideoDetailsService_V1 implements CommonAsyncHttpClient_V1.ICommonA
                         e.printStackTrace();
                     }
 
-                    if (obj.getJSONObject("ads").getString("post").equals("yes")) {
-                        videoInfoDTO.setIsPostRollToBePlayed(true);
-                    } else {
-                        videoInfoDTO.setIsPostRollToBePlayed(false);
+                    try {
+                        if (obj.getJSONObject("ads").getString("post").equals("yes")) {
+                            videoInfoDTO.setIsPostRollToBePlayed(true);
+                        } else {
+                            videoInfoDTO.setIsPostRollToBePlayed(false);
+                        }
+                    } catch(Exception e) {
+                        e.printStackTrace();
                     }
 
                     /*int numberOfAdsExpected = 0;

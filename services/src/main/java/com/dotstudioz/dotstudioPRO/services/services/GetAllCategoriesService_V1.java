@@ -20,7 +20,9 @@ import java.util.ArrayList;
 
 public class GetAllCategoriesService_V1 implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
 
+    public String PLATFORM = "";
     public IGetAllCategoriesService_V1 iGetAllCategoriesService_V1;
+    Context context;
     public interface IGetAllCategoriesService_V1 {
         void getAllCategoriesServiceResponse(
                 ArrayList<SpotLightCategoriesDTO> spotLightCategoriesDTOListALL,
@@ -35,6 +37,7 @@ public class GetAllCategoriesService_V1 implements CommonAsyncHttpClient_V1.ICom
     }
 
     public GetAllCategoriesService_V1(Context ctx) {
+        context = ctx;
         if (ctx instanceof GetAllCategoriesService_V1.IGetAllCategoriesService_V1)
             iGetAllCategoriesService_V1 = (GetAllCategoriesService_V1.IGetAllCategoriesService_V1) ctx;
         else
@@ -44,6 +47,10 @@ public class GetAllCategoriesService_V1 implements CommonAsyncHttpClient_V1.ICom
     public void getAllCategoriesService(String xAccessToken, String API_URL) {
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));
+
+        if(PLATFORM == null || PLATFORM.length() == 0) {
+            throw new RuntimeException(context.toString()+ " must implement IGetAllCategoriesService_V1");
+        }
 
        CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, null,
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
@@ -111,9 +118,11 @@ public class GetAllCategoriesService_V1 implements CommonAsyncHttpClient_V1.ICom
                     spotLightCategoriesDTO.setHomepage(false);
                 }
                 try {
-                   // String isAndroidEnabled = ((JSONObject) obj.getJSONArray("platforms").get(0)).getString("andriod");
+                    String isAndroidEnabled = "false";
+                    isAndroidEnabled = ((JSONObject) obj.getJSONArray("platforms").get(0)).getString(PLATFORM);
+                    //String isAndroidEnabled = ((JSONObject) obj.getJSONArray("platforms").get(0)).getString("andriod");
                     //String isAndroidEnabled = ((JSONObject) obj.getJSONArray("platforms").get(0)).getString("android_TV");
-                    String isAndroidEnabled = ((JSONObject) obj.getJSONArray("platforms").get(0)).getString(ApplicationConstants.PLATFORM_ENABLED);
+                    //String isAndroidEnabled = ((JSONObject) obj.getJSONArray("platforms").get(0)).getString("amazon_fire");
                     if (isAndroidEnabled.equals("true"))
                         spotLightCategoriesDTO.setPlatform(true);
                     else

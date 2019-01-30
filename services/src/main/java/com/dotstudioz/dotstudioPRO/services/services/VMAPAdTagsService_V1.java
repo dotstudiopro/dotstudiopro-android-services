@@ -115,10 +115,13 @@ public class VMAPAdTagsService_V1 implements CommonAsyncHttpClient_V1.ICommonAsy
                             e.printStackTrace();
                         }
                     }
+                } else {
+                    iVMAPAdTagsService_V1.getVMAPAdTagsServiceError("ERROR");
                 }
             }
         } catch(Exception e) {
             e.printStackTrace();
+            iVMAPAdTagsService_V1.getVMAPAdTagsServiceError("ERROR");
         }
 
         return videoInfoDTO;

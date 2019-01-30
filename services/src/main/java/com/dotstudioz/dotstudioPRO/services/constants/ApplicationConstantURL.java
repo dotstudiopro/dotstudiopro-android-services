@@ -8,7 +8,6 @@ public  class ApplicationConstantURL {
     private static ApplicationConstantURL ourInstance = new ApplicationConstantURL();
 
     public static ApplicationConstantURL getInstance() {
-       
         return ourInstance;
     }
 
@@ -20,6 +19,7 @@ public  class ApplicationConstantURL {
     public static String API_DOMAIN; //PRODUCTION SERVER
     public static String API_DOMAIN_S; //PRODUCTION SERVER
     public static String BLOG_LIST_ABS;
+    public static String BLOG_LIST_BY_CATEGORY;
     public static String SPOTLIGHT_DOMAIN;
     public static String API_DSPRO_DOMAIN_S;
     public static String API_SPOTLIGHT_DOMAIN;
@@ -106,6 +106,9 @@ public  class ApplicationConstantURL {
     public  static String CLIENT_TOKEN_API = ApplicationConstantURL.API_DOMAIN_S + "/users/payment/token";
     //public  static String RENT_API = MYSPOTLIGHT_DOMAIN +"/rent";
     public  static String RENT_API = ApplicationConstantURL.API_DOMAIN_S + "/users/payment/purchase";
+    public  static String RENT_API_ANDROID = ApplicationConstantURL.API_DOMAIN_S + "/users/payment/android";
+
+    public  static String RECEIPT_VERIFY_API_FIRE_TV = ApplicationConstantURL.API_DOMAIN_S + "/users/payment/fire_tv";
     public  static String SHARING_DOMAIN_NAME = MYSPOTLIGHT_DOMAIN +"/watch";
 
     public  static String ADSERVER_API = ADSERVER_DOMAIN +"/adserver/www/delivery/fc.php?script=apVideo:vast2&zoneid=";
@@ -123,6 +126,8 @@ public  class ApplicationConstantURL {
 
     public  static String ANALYTICS_TESTING_URL = ApplicationConstantURL.API_DOMAIN_S + "/testing/analytics";
     public  static String CLIENT_REFRESH_TOKEN = ApplicationConstantURL.API_DOMAIN_S + "/users/token/refresh";
+
+    public  static String SUBSCRIPTION_API = ApplicationConstantURL.API_DOMAIN_S + "/subscriptions/google/parse";
 
     public  static String RECOMMENDATION_CHANNEL_FIRE_TV_API = "/channel/"+COUNTRY_CODE+"/recommendationsamazonfire";
 
@@ -153,7 +158,8 @@ public  class ApplicationConstantURL {
         ApplicationConstantURL.APP_VERSION_ANDROID_TV_API = ApplicationConstantURL.API_DOMAIN_S + "/latestAppVersion/android_tv";
         ApplicationConstantURL.APP_VERSION_ANDROID_TV_API_s = ApplicationConstantURL.API_DOMAIN_S + "/latestAppVersion/android_tv";
 
-        ApplicationConstantURL.BLOG_LIST = BLOG_LIST_ABS+"/wp-json/dsp/v1/featured/blog/carousel";
+        ApplicationConstantURL.BLOG_LIST = BLOG_LIST_ABS + "/wp-json/dsp/v1/featured/blog/carousel";
+        ApplicationConstantURL.BLOG_LIST_BY_CATEGORY = BLOG_LIST_BY_CATEGORY + "/wp-json/abs/v1/posts/bycategory/";
 
         //this.AVATAR = SPOTLIGHT_DOMAIN + "/user/avatar/";
         ApplicationConstantURL.AVATAR = ApplicationConstantURL.API_DOMAIN_S + "/users/avatar/";
@@ -192,9 +198,9 @@ public  class ApplicationConstantURL {
         ApplicationConstantURL.SAVE_FIRST_LAST_NAME_API = API_DSPRO_DOMAIN_S + "/v2/universalapi/customer_details/edit";
         ApplicationConstantURL.FORGOT_PASSWORD_API = API_DSPRO_DOMAIN_S +"/v2/universalapi/forgotpassword";
 
-    /*this.CREATE_ANALYTICS_USER_API = COLLECTOR_DEV_DOMAIN_S +"/users";
-    ApplicationConstantURL.SAVE_PLAYER_DATA_API = COLLECTOR_DEV_DOMAIN_S +"/plays";
-    ApplicationConstantURL.SAVE_APP_DATA_API = COLLECTOR_DEV_DOMAIN_S +"/players";*/
+        /*this.CREATE_ANALYTICS_USER_API = COLLECTOR_DEV_DOMAIN_S +"/users";
+        ApplicationConstantURL.SAVE_PLAYER_DATA_API = COLLECTOR_DEV_DOMAIN_S +"/plays";
+        ApplicationConstantURL.SAVE_APP_DATA_API = COLLECTOR_DEV_DOMAIN_S +"/players";*/
         ApplicationConstantURL.CREATE_ANALYTICS_USER_API = COLLECTOR_DSPRO_DOMAIN_S +"/users";
         ApplicationConstantURL.SAVE_PLAYER_DATA_API = COLLECTOR_DSPRO_DOMAIN_S +"/plays";
         ApplicationConstantURL.SAVE_APP_DATA_API = COLLECTOR_DSPRO_DOMAIN_S +"/players";
@@ -202,6 +208,10 @@ public  class ApplicationConstantURL {
         //this.CLIENT_TOKEN_API = MYSPOTLIGHT_DOMAIN +"/dotstudio_token";
         ApplicationConstantURL.CLIENT_TOKEN_API = ApplicationConstantURL.API_DOMAIN_S + "/users/payment/token";
         //this.RENT_API = MYSPOTLIGHT_DOMAIN +"/rent";
+        ApplicationConstantURL.RENT_API = ApplicationConstantURL.API_DOMAIN_S + "/users/payment/purchase";
+        ApplicationConstantURL.RENT_API_ANDROID = ApplicationConstantURL.API_DOMAIN_S + "/users/payment/android";
+
+        ApplicationConstantURL.RECEIPT_VERIFY_API_FIRE_TV = ApplicationConstantURL.API_DOMAIN_S + "/users/payment/fire_tv";
         ApplicationConstantURL.RENT_API = ApplicationConstantURL.API_DOMAIN_S + "/users/payment/purchase";
         ApplicationConstantURL.SHARING_DOMAIN_NAME = MYSPOTLIGHT_DOMAIN +"/watch";
 
@@ -221,6 +231,8 @@ public  class ApplicationConstantURL {
         ApplicationConstantURL.ANALYTICS_TESTING_URL = ApplicationConstantURL.API_DOMAIN_S + "/testing/analytics";
         ApplicationConstantURL.CLIENT_REFRESH_TOKEN = ApplicationConstantURL.API_DOMAIN_S + "/users/token/refresh";
 
+        ApplicationConstantURL.SUBSCRIPTION_API = ApplicationConstantURL.API_DOMAIN_S + "/subscriptions/google/parse";
+
         ApplicationConstantURL.RECOMMENDATION_CHANNEL_FIRE_TV_API = "/channel/"+COUNTRY_CODE+"/recommendationsamazonfire";
     }
 
@@ -229,7 +241,9 @@ public  class ApplicationConstantURL {
 
     public void setCountryCode(String countryCode) {
         this.COUNTRY_CODE = countryCode;
+
         this.CATEGORIES_LIST = ApplicationConstantURL.API_DOMAIN_S + "/categories/"+countryCode+"/";
+        this.CHANNEL = ApplicationConstantURL.API_DOMAIN_S + "/channel/"+countryCode+"/";
         this.CHANNELS = ApplicationConstantURL.API_DOMAIN_S + "/channels/"+countryCode+"/";
         this.CHANNELS_DETAILS = ApplicationConstantURL.API_DOMAIN_S + "/channels/"+countryCode+"/";
         this.VIDEOS_API = ApplicationConstantURL.API_DOMAIN_S + "/channels/"+countryCode+"/";

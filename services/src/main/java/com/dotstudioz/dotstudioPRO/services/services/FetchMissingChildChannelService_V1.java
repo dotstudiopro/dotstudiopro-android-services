@@ -31,11 +31,21 @@ public class FetchMissingChildChannelService_V1 implements CommonAsyncHttpClient
     private boolean isSeasonClicked;
     private int seasonToLoad;
 
+    public JSONObject responseJSONOjbect;
+
     public FetchMissingChildChannelService_V1(Context ctx) {
         if (ctx instanceof FetchMissingChildChannelService_V1.IFetchMissingChildChannelService_V1)
             iFetchMissingChildChannelService_V1 = (FetchMissingChildChannelService_V1.IFetchMissingChildChannelService_V1) ctx;
         else
             throw new RuntimeException(ctx.toString()+ " must implement IFetchMissingChildChannelService_V1");
+    }
+
+    public void initializeParams(String selectedParentCategorySlug, String selectedParentChannelSlug, String channelSlug, ArrayList<SpotLightCategoriesDTO> spotLightCategoriesDTOArrayList, boolean isSeasonClicked, int seasonToLoad) {
+        this.selectedParentCategorySlug = selectedParentCategorySlug;
+        this.selectedParentChannelSlug = selectedParentChannelSlug;
+        this.spotLightCategoriesDTOList = spotLightCategoriesDTOArrayList;
+        this.isSeasonClicked = isSeasonClicked;
+        this.seasonToLoad = seasonToLoad;
     }
 
     public void fetchMissingChildChannelData(String selectedParentCategorySlug, String selectedParentChannelSlug, String channelSlug, ArrayList<SpotLightCategoriesDTO> spotLightCategoriesDTOArrayList, boolean isSeasonClicked, int seasonToLoad) {
@@ -59,60 +69,13 @@ public class FetchMissingChildChannelService_V1 implements CommonAsyncHttpClient
 
             CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, null,
                     ApplicationConstantURL.getInstance().CHANNEL + channelSlug, AccessTokenHandler.getInstance().fetchTokenCalledInChannelPageString);
-
-            /*client.get(ApplicationConstantURL.getInstance().CHANNEL + channelSlug, null, new JsonHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject responseBody) {
-
-                    boolean isSuccess = true;
-                    try {
-                        isSuccess = responseBody.getBoolean("success");
-                    } catch (JSONException e) {
-                        //throws error, because on success there is no boolean returned, so
-                        // we are assuming that it is a success
-                        isSuccess = true;
-                    }
-
-                    if (isSuccess) {
-                        fetchMissingChildChannelData(responseBody);
-                    } else {
-                        if (AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
-                            AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInChannelPageString);
-                            if (AccessTokenHandler.getInstance().foundAnyError)
-                                iFetchMissingChildChannelService_V1.accessTokenExpired();
-                        }
-                    }
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable error, JSONObject responseBody) {
-                    iFetchMissingChildChannelService_V1.hidePDialog();
-                    if (responseBody != null) {
-                        boolean isSuccess = true;
-                        try {
-                            isSuccess = responseBody.getBoolean("success");
-                        } catch (JSONException e) {
-                            //throws error, because on success there is no boolean returned, so
-                            // we are assuming that it is a success
-                            isSuccess = true;
-                        }
-
-                        if (!isSuccess) {
-                            if (AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
-                                AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInChannelPageString);
-                                if (AccessTokenHandler.getInstance().foundAnyError)
-                                    iFetchMissingChildChannelService_V1.accessTokenExpired();
-                            }
-                        }
-                    }
-                }
-            });*/
         } catch (Exception e) {
             iFetchMissingChildChannelService_V1.hidePDialog();
         }
     }
     @Override
     public void onResultHandler(JSONObject responseBody) {
+        this.responseJSONOjbect = responseBody;
         //iFetchMissingChannelService_V1(response);
         try {
             boolean isSuccess = true;
@@ -178,7 +141,7 @@ public class FetchMissingChildChannelService_V1 implements CommonAsyncHttpClient
     ArrayList<VideoInfoDTO> missingVideoInfoDTOList;
     String selectedChannelID;
     private ArrayList episodesArrayList;
-    private void fetchMissingChildChannelData(JSONObject response) {
+    public void fetchMissingChildChannelData(JSONObject response) {
         JSONObject obj = response;
 
         try {
@@ -202,7 +165,11 @@ public class FetchMissingChildChannelService_V1 implements CommonAsyncHttpClient
                 SpotLightChannelDTO spotLightChannelDTO = new SpotLightChannelDTO();
                 spotLightChannelDTO.setId(channel.getString("_id"));
                 selectedChannelID = spotLightChannelDTO.getId();
-
+                try {
+                    spotLightChannelDTO.setDspro_id(channel.getString("dspro_id"));
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
                 spotLightChannelDTO.setTitle(channel.getString("title"));
                 try {
                     try {
@@ -644,24 +611,60 @@ public class FetchMissingChildChannelService_V1 implements CommonAsyncHttpClient
                                     //we are using the isReallySingle flag because we found some chanels with type as single, but still it had playlist with multiple videos
                                     if (isReallySingle && childChannel.has("channel_type") && childChannel.getString("channel_type").equals("single")) {
                                         try {
-                                            if (childChannel.has("video"))
-                                                childSpotLightChannelDTO.setVideo(childChannel.getString("video"));
-                                            if (childChannel.has("slug"))
-                                                childSpotLightChannelDTO.setSlug(childChannel.getString("slug"));
-                                            if (childChannel.has("poster"))
-                                                childSpotLightChannelDTO.setPoster(childChannel.getString("poster"));
-                                            if (childChannel.has("spotlight_poster"))
-                                                childSpotLightChannelDTO.setSpotlightImage(childChannel.getString("spotlight_poster"));
-                                            if (childChannel.has("company"))
-                                                childSpotLightChannelDTO.setCompany(childChannel.getString("company"));
-                                            if (childChannel.has("channel_url"))
-                                                childSpotLightChannelDTO.setLink(childChannel.getString("channel_url"));
-                                            if (childChannel.has("title"))
-                                                childSpotLightChannelDTO.setTitle(childChannel.getString("title"));
-                                            if (childChannel.has("channel_logo"))
-                                                childSpotLightChannelDTO.setChannelLogo(childChannel.getString("channel_logo"));
-                                            if (childChannel.has("dspro_id"))
-                                                childSpotLightChannelDTO.setDspro_id(childChannel.getString("dspro_id"));
+                                            try {
+                                                if (childChannel.has("video"))
+                                                    childSpotLightChannelDTO.setVideo(childChannel.getString("video"));
+                                            } catch(Exception ep) {
+                                                ep.printStackTrace();
+                                            }
+                                            try {
+                                                if (childChannel.has("slug"))
+                                                    childSpotLightChannelDTO.setSlug(childChannel.getString("slug"));
+                                            } catch(Exception ep) {
+                                                ep.printStackTrace();
+                                            }
+                                            try {
+                                                if (childChannel.has("poster"))
+                                                    childSpotLightChannelDTO.setPoster(childChannel.getString("poster"));
+                                            } catch(Exception ep) {
+                                                ep.printStackTrace();
+                                            }
+                                            try {
+                                                if (childChannel.has("spotlight_poster"))
+                                                    childSpotLightChannelDTO.setSpotlightImage(childChannel.getString("spotlight_poster"));
+                                            } catch(Exception ep) {
+                                                ep.printStackTrace();
+                                            }
+                                            try {
+                                                if (childChannel.has("company"))
+                                                    childSpotLightChannelDTO.setCompany(childChannel.getString("company"));
+                                            } catch(Exception ep) {
+                                                ep.printStackTrace();
+                                            }
+                                            try {
+                                                if (childChannel.has("channel_url"))
+                                                    childSpotLightChannelDTO.setLink(childChannel.getString("channel_url"));
+                                            } catch(Exception ep) {
+                                                ep.printStackTrace();
+                                            }
+                                            try {
+                                                if (childChannel.has("title"))
+                                                    childSpotLightChannelDTO.setTitle(childChannel.getString("title"));
+                                            } catch(Exception ep) {
+                                                ep.printStackTrace();
+                                            }
+                                            try {
+                                                if (childChannel.has("channel_logo"))
+                                                    childSpotLightChannelDTO.setChannelLogo(childChannel.getString("channel_logo"));
+                                            } catch(Exception ep) {
+                                                ep.printStackTrace();
+                                            }
+                                            try {
+                                                if (childChannel.has("dspro_id"))
+                                                    childSpotLightChannelDTO.setDspro_id(childChannel.getString("dspro_id"));
+                                            } catch(Exception ep) {
+                                                ep.printStackTrace();
+                                            }
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
@@ -671,6 +674,12 @@ public class FetchMissingChildChannelService_V1 implements CommonAsyncHttpClient
                                             if (childChannel.has("video") && childChannel.getJSONObject("video").has("_id"))
                                                 childSpotLightChannelDTO.setId(childChannel.getJSONObject("video").getString("_id"));
                                             childSpotLightChannelDTO.setCompany(childChannel.getString("company").toUpperCase());
+                                            try {
+                                                if (childChannel.has("dspro_id"))
+                                                    childSpotLightChannelDTO.setDspro_id(childChannel.getString("dspro_id"));
+                                            } catch(Exception ep) {
+                                                ep.printStackTrace();
+                                            }
                                             try {
                                                 String imageString = childChannel.getString("videos_thumb");
                                                 imageString = CommonServiceUtils.replaceDotstudioproWithMyspotlightForImage(imageString);
@@ -858,7 +867,8 @@ public class FetchMissingChildChannelService_V1 implements CommonAsyncHttpClient
                     iFetchMissingChildChannelService_V1.hidePDialog();
                     return;
                 } else {
-                    iFetchMissingChildChannelService_V1.postProcessingMissingChildChannelDataServiceResponse(selectedChannelID, spotLightChannelDTO1, spotLightCategoriesDTO1);
+                    //iFetchMissingChildChannelService_V1.postProcessingMissingChildChannelDataServiceResponse(selectedChannelID, spotLightChannelDTO1, spotLightCategoriesDTO1);
+                    iFetchMissingChildChannelService_V1.postProcessingMissingChildChannelDataServiceResponse(selectedChannelID, response, spotLightChannelDTO1, spotLightCategoriesDTO1);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -870,6 +880,7 @@ public class FetchMissingChildChannelService_V1 implements CommonAsyncHttpClient
         void showProgress(String message);
         void hidePDialog();
         void postProcessingMissingChildChannelDataServiceResponse(String selectedChannelID, SpotLightChannelDTO spotLightChannelDTO, SpotLightCategoriesDTO spotLightCategoriesDTO);
+        void postProcessingMissingChildChannelDataServiceResponse(String selectedChannelID, JSONObject response, SpotLightChannelDTO spotLightChannelDTO, SpotLightCategoriesDTO spotLightCategoriesDTO);
         void populateEpisodesListWithNewData(ArrayList<VideoInfoDTO> videoInfoDtosList);
         void processMissingChildChannelDataServiceError(String ERROR);
         void accessTokenExpired();

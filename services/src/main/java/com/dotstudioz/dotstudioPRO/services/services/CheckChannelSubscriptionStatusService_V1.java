@@ -6,11 +6,16 @@ import android.util.Log;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.SubscriptionDTO;
+import com.google.gson.Gson;
 
-
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
 
 /**
  * Created by mohsin on 08-10-2016.
@@ -20,7 +25,7 @@ public class CheckChannelSubscriptionStatusService_V1 implements CommonAsyncHttp
 
     public ICheckChannelSubscriptionStatusService iCheckChannelSubscriptionStatusService;
     public interface ICheckChannelSubscriptionStatusService {
-        void checkChannelSubscriptionStatusServiceResponse(boolean flag);
+        void checkChannelSubscriptionStatusServiceResponse(boolean unlockedFlag, boolean adsEnabledFlag);
         void checkChannelSubscriptionStatusServiceError(String ERROR);
         void accessTokenExpired();
         void clientTokenExpired();
@@ -49,10 +54,10 @@ public class CheckChannelSubscriptionStatusService_V1 implements CommonAsyncHttp
             if (response != null)
                 resultProcessingForSubscriptions(response);
             else
-                iCheckChannelSubscriptionStatusService.checkChannelSubscriptionStatusServiceResponse(false);
+                iCheckChannelSubscriptionStatusService.checkChannelSubscriptionStatusServiceResponse(false, true);
         } catch(Exception e) {
             e.printStackTrace();
-            iCheckChannelSubscriptionStatusService.checkChannelSubscriptionStatusServiceResponse(false);
+            iCheckChannelSubscriptionStatusService.checkChannelSubscriptionStatusServiceResponse(false, true);
         }
     }
     @Override
@@ -85,6 +90,59 @@ public class CheckChannelSubscriptionStatusService_V1 implements CommonAsyncHttp
 
         return false;
     }
+
+    /**
+     * expecting 3 parameters in the response
+     * success=true/false
+     * unlocked=true/false
+     * adsenabled=true/false
+     * @param response boolean flag
+     * @param paramName it could be either unlocked or adsenabled
+     * @return
+     */
+    public boolean resultProcessingForSubscriptions(JSONObject response, String paramName) {
+        try {
+            if (response != null) {
+                if (response.has(paramName)) {
+                    return response.getBoolean(paramName);
+                } else {
+                    return false;
+                }
+            }
+        } catch(Exception e) {
+            return false;
+        }
+
+        return false;
+    }
+
+    public boolean resultProcessingForPurchase(JSONObject response) {
+         try {
+                if (response != null) {
+                    // if let bSuccess = infoDict["success"] as? Bool, bSuccess == true {
+                    if (response.has("success")) {
+                        if(response.getBoolean("success"))
+                        {
+                            if (response.has("unlocked")) {
+                                return response.getBoolean("unlocked");
+                            } else {
+                                return false;
+                            }
+                        }else{
+                            return false;
+                        }
+                    }else{
+                        return false;
+                    }
+                }
+            } catch(Exception e) {
+                return false;
+            }
+
+            return false;
+    }
+
+
     /*private void resultProcessingForSubscriptions(JSONObject response) {
         try {
             if (response != null) {
@@ -107,4 +165,100 @@ public class CheckChannelSubscriptionStatusService_V1 implements CommonAsyncHttp
      "ads_enabled": false
      }
      */
+
+
+    /**
+     * call to check subscription status of a channel
+     * Usage in MainActivity in Revry:-
+     * public int noOfChannelSubscriptionStatusCallsMade = 0;
+     *     public ArrayList<ChannelSubscriptionStatusDTO> checkChannelSubscriptionStatusCallArrayList = new ArrayList();
+     *     public void checkChannelSubscriptionStatusCall() {
+     *         if(noOfChannelSubscriptionStatusCallsMade < checkChannelSubscriptionStatusCallArrayList.size()) {
+     *             checkChannelSubscriptionStatusService(checkChannelSubscriptionStatusCallArrayList.get(noOfChannelSubscriptionStatusCallsMade).dsproChannelId);
+     *
+     *             noOfChannelSubscriptionStatusCallsMade++;
+     *         } else {
+     *             //check if everything is ok, and mark the flags appropriately
+     *             //selectedChannelIDUnLocked = true or false;
+     *             if(calledFromPostProcessingMissingChannelDataServiceResponse) {
+     *                 postProcessingMissingChannelDataServiceResponseFromSubscriptionStatusCheck(fetchMissingChannelSelectedChannelID, fetchMissingChannelSpotLightChannelDTO, fetchMissingChannelSpotLightCategoriesDTO, fetchMissingChannelResponseObject, fetchMissingChannelMissingVideoInfoDTOList);
+     *             } else if(calledFromPostProcessingMissingChildChannelDataServiceResponse) {
+     *                 postProcessingMissingChildChannelDataServiceResponseFromSubscriptionStatusCheck(fetchMissingChannelSelectedChannelID, fetchMissingChannelSpotLightChannelDTO, fetchMissingChannelSpotLightCategoriesDTO);
+     *             }
+     *             calledFromPostProcessingMissingChannelDataServiceResponse = false;
+     *             calledFromPostProcessingMissingChildChannelDataServiceResponse = false;
+     *         }
+     *     }
+     *     CheckChannelSubscriptionStatusService_V1 checkChannelSubscriptionStatusServiceV1;
+     *     public void checkChannelSubscriptionStatusService(String idToPass) {
+     *         if(ApplicationConstants.CLIENT_TOKEN != null && ApplicationConstants.CLIENT_TOKEN.length() > 0) {
+     *             checkChannelSubscriptionStatusServiceV1 = new CheckChannelSubscriptionStatusService_V1(this);
+     *
+     *             //check status of the subscription
+     *             apiInterface = APIClient.getClient(ApplicationConstants.xAccessToken, ApplicationConstants.CLIENT_TOKEN).create(APIInterface.class);
+     *
+     *             if(idToPass != null && idToPass.length() > 0) {
+     *                 Call<Object> call1 = apiInterface.checkSubscriptions(idToPass);
+     *                 checkChannelSubscriptionStatusServiceV1.checkChannelSubscription(call1);
+     *             } else {
+     *                 checkChannelSubscriptionStatusCallResponse(false);
+     *             }
+     *         } else {
+     *             checkChannelSubscriptionStatusCallResponse(false);
+     *         }
+     *     }
+     *     @Override
+     *     public void checkChannelSubscriptionStatusServiceResponse(boolean flag) {
+     *         checkChannelSubscriptionStatusCallResponse(flag);
+     *     }
+     *     @Override
+     *     public void checkChannelSubscriptionStatusServiceError(String ERROR) {
+     *         if(ERROR != null) {
+     *             Log.d("checkChannelSubscriptionStatusServiceError", "ERROR==>"+ERROR);
+     *         }
+     *         checkChannelSubscriptionStatusCallResponse(false);
+     *     }
+     *     public void checkChannelSubscriptionStatusCallResponse(boolean flag) {
+     *         checkChannelSubscriptionStatusCallArrayList.get(noOfChannelSubscriptionStatusCallsMade).unlocked = flag;
+     *         checkChannelSubscriptionStatusCallArrayList.get(noOfChannelSubscriptionStatusCallsMade).assigned = true;
+     *         noOfChannelSubscriptionStatusCallsMade++;
+     *
+     *         checkChannelSubscriptionStatusCall();
+     *     }
+     * @param call1
+     */
+    public void checkChannelSubscription(Call call1) {
+        call1.enqueue(new Callback<Object>() {
+            @Override
+            public void onResponse(Call<Object> call, retrofit2.Response<Object> response) {
+                try {
+                    if(response.body() != null) {
+                        Log.d("checkChanSubs", "" + (new Gson().toJson(response.body())));
+                        JSONObject obj = new JSONObject("" + (new Gson().toJson(response.body())));
+                        try {
+                            if (obj.has("success") && obj.getBoolean("success")) {
+                                iCheckChannelSubscriptionStatusService.checkChannelSubscriptionStatusServiceResponse(resultProcessingForSubscriptions(obj, "unlocked"), resultProcessingForSubscriptions(obj, "adsenabled"));
+                            } else {
+                                iCheckChannelSubscriptionStatusService.checkChannelSubscriptionStatusServiceResponse(false, true);
+                            }
+                        } catch(Exception e) {
+                            e.printStackTrace();
+                            iCheckChannelSubscriptionStatusService.checkChannelSubscriptionStatusServiceResponse(false, true);
+                        }
+                    } else {
+                        iCheckChannelSubscriptionStatusService.checkChannelSubscriptionStatusServiceResponse(false, true);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iCheckChannelSubscriptionStatusService.checkChannelSubscriptionStatusServiceResponse(false, true);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Object> call, Throwable t) {
+                call.cancel();
+                iCheckChannelSubscriptionStatusService.checkChannelSubscriptionStatusServiceResponse(false, true);
+            }
+        });
+    }
 }

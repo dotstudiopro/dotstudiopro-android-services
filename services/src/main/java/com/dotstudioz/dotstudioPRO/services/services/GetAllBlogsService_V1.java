@@ -5,6 +5,7 @@ import android.content.Context;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.SpotLightBlogDTO;
+import com.google.gson.internal.LinkedTreeMap;
 
 
 import org.json.JSONArray;
@@ -36,25 +37,36 @@ public class GetAllBlogsService_V1 implements CommonAsyncHttpClient_V1.ICommonAs
             throw new RuntimeException(ctx.toString()+ " must implement IGetAllBlogService_V1");
     }
 
-    public void getAllBlogService(String xAccessToken, String API_URL) {
+    public String slug;
+    public void getAllBlogService(String xAccessToken, String API_URL, String slug) {
+        this.slug = slug;
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));
 
         CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, null,
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
     }
+    /*@Override
+    public void onResultHandler(JSONArray response) {
+        try {
+            resultProcessingForBlog(response);
+        } catch(Exception e) {
+            e.printStackTrace();
+            resultProcessingForBlog(response);
+        }
+    }*/
     @Override
     public void onResultHandler(JSONObject response) {
         try {
-            if (response.has("result")) {
-                for(int i = 0; i < 10; i++) {
-                    System.out.println("onResultHandler==>" + response.getJSONArray("result").toString());
-                }
-
-                resultProcessingForBlog(response.getJSONArray("result"));
-            }
-        } catch(JSONException e) {
+            resultProcessingForBlog(response.getJSONArray("result"));
+        } catch(Exception e) {
             e.printStackTrace();
+            try {
+                resultProcessingForBlog((ArrayList) response.get("result"));
+            } catch(Exception e1) {
+                e1.printStackTrace();
+                iGetAllBlogService_V1.getAllBlogError("ERROR");
+            }
         }
     }
     @Override
@@ -86,6 +98,8 @@ public class GetAllBlogsService_V1 implements CommonAsyncHttpClient_V1.ICommonAs
                 } catch (JSONException e) {
                     spotLightBlogDTO.setId("");
                 }
+
+                spotLightBlogDTO.setBlogSlug(slug);
 
                 try {
                     if(obj.has("post_title")) {
@@ -196,14 +210,114 @@ public class GetAllBlogsService_V1 implements CommonAsyncHttpClient_V1.ICommonAs
             }
         }
 
-        /*for (int j = 0; j < spotLightCategoriesDTOList.size(); j++) {
-            if (!spotLightCategoriesDTOList.get(j).getCategorySlug().equals("slider-showcase") &&
-                    !spotLightCategoriesDTOList.get(j).getCategorySlug().equals("hero-showcase")) {
-                if (spotLightCategoriesDTOList.get(j).isMenu()) {
-                    spotLightCategoriesDTOListForGenre.add(spotLightCategoriesDTOList.get(j));
+        iGetAllBlogService_V1.getAllBlogServiceResponse(
+                spotLightBlogDTOListALL
+        );
+    }
+    private void resultProcessingForBlog(ArrayList response) {
+        spotLightBlogDTOListALL = new ArrayList<SpotLightBlogDTO>();
+
+        // Parsing json response
+        for (int i = 0; i < response.size(); i++) {
+            try {
+
+                LinkedTreeMap obj = (LinkedTreeMap) response.get(i);
+                SpotLightBlogDTO spotLightBlogDTO = new SpotLightBlogDTO();
+                try {
+                    spotLightBlogDTO.setId(""+(int)Double.parseDouble(obj.get("ID").toString()));
+                } catch (Exception e) {
+                    spotLightBlogDTO.setId("");
                 }
+
+                spotLightBlogDTO.setBlogSlug(slug);
+
+                try {
+                    spotLightBlogDTO.setPostTitle(obj.get("post_title").toString());
+                } catch (Exception e) {
+                    spotLightBlogDTO.setPostTitle("");
+                }
+
+                try {
+                    spotLightBlogDTO.setPostExcerpt(obj.get("post_excerpt").toString());
+                } catch (Exception e) {
+                    spotLightBlogDTO.setPostExcerpt("");
+                }
+
+                try {
+                    spotLightBlogDTO.setPostContent(obj.get("post_content").toString());
+                } catch (Exception e) {
+                    spotLightBlogDTO.setPostContent("");
+                }
+
+                try {
+                    LinkedTreeMap metaObj = (LinkedTreeMap) obj.get("meta");
+                    LinkedTreeMap imageJSONArray = (LinkedTreeMap) metaObj.get("dspabs_blog_page_mobile_image");
+                    if(imageJSONArray.size() > 0) {
+                        LinkedTreeMap imageJSONObject = (LinkedTreeMap)imageJSONArray.get(0);
+                        LinkedTreeMap childImageJSONObject = (LinkedTreeMap) imageJSONObject.get("image");
+                        try {
+                            spotLightBlogDTO.setPostImage(childImageJSONObject.get("url").toString());
+                        } catch(Exception e) {
+                            spotLightBlogDTO.setPostImage("");
+                        }
+                        try {
+                            spotLightBlogDTO.setPostImageWidth(""+(int)Double.parseDouble(childImageJSONObject.get("width").toString()));
+                        } catch(Exception e) {
+                            spotLightBlogDTO.setPostImageWidth("");
+                        }
+                        try {
+                            spotLightBlogDTO.setPostImageHeight(""+(int)Double.parseDouble(childImageJSONObject.get("height").toString()));
+                        } catch(Exception e) {
+                            spotLightBlogDTO.setPostImageHeight("");
+                        }
+                    }
+                } catch (Exception e) {
+                    spotLightBlogDTO.setPostImage("");
+                }
+
+                try {
+                    LinkedTreeMap metaObj = (LinkedTreeMap) obj.get("meta");
+
+                    ArrayList imageJSONArray = (ArrayList) metaObj.get("dspabs_blurb");
+                    if(imageJSONArray.size() > 0) {
+                        spotLightBlogDTO.setPostBlurb(imageJSONArray.get(0).toString());
+                    }
+
+                } catch (Exception e) {
+                    spotLightBlogDTO.setPostBlurb("");
+                }
+
+                try {
+                    LinkedTreeMap metaObj = (LinkedTreeMap) obj.get("meta");
+
+                    ArrayList imageJSONArray = (ArrayList) metaObj.get("dspabs_video_id");
+                    if(imageJSONArray.size() > 0) {
+                        spotLightBlogDTO.setPostVideoId(imageJSONArray.get(0).toString());
+                    }
+                } catch (Exception e) {
+                    spotLightBlogDTO.setPostVideoId("");
+                }
+
+                try {
+                    LinkedTreeMap featuredImage = (LinkedTreeMap) obj.get("featured_image");
+                    spotLightBlogDTO.setPostFeaturedImage(featuredImage.get("url").toString());
+                } catch (Exception e) {
+                    spotLightBlogDTO.setPostFeaturedImage("");
+                }
+
+                try {
+                    LinkedTreeMap blogOption = (LinkedTreeMap) obj.get("blog_options");
+                    spotLightBlogDTO.setPostCategory(blogOption.get("title").toString());
+                } catch (Exception e) {
+                    spotLightBlogDTO.setPostCategory("");
+                }
+
+
+                spotLightBlogDTOListALL.add(spotLightBlogDTO);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        }*/
+        }
 
         iGetAllBlogService_V1.getAllBlogServiceResponse(
                 spotLightBlogDTOListALL

@@ -152,7 +152,7 @@ public class GetAllHomePageCategoriesService_V1 implements CommonAsyncHttpClient
     public void getSpotLightCategoryDTOFromJSONObject(JSONObject obj) {
         SpotLightCategoriesDTO spotLightCategoriesDTO = new SpotLightCategoriesDTO();
         try {
-            spotLightCategoriesDTO.setCategoryId(obj.getString("term_id"));
+            spotLightCategoriesDTO.setCategoryId(""+(int)Double.parseDouble(obj.getString("term_id")));
         } catch (JSONException e) {
             spotLightCategoriesDTO.setCategoryId("");
         }
@@ -298,7 +298,7 @@ public class GetAllHomePageCategoriesService_V1 implements CommonAsyncHttpClient
     public void getOriginalSpotLightCategoryDTOFromJSONObject(JSONObject obj) {
         SpotLightCategoriesDTO spotLightCategoriesDTO = new SpotLightCategoriesDTO();
         try {
-            spotLightCategoriesDTO.setCategoryId(obj.getString("term_id"));
+            spotLightCategoriesDTO.setCategoryId(""+(int)Double.parseDouble(obj.getString("term_id")));
         } catch (JSONException e) {
             spotLightCategoriesDTO.setCategoryId("");
         }

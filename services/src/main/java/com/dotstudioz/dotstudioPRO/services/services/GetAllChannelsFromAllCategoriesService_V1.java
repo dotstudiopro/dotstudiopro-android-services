@@ -293,8 +293,12 @@ public class GetAllChannelsFromAllCategoriesService_V1 implements CommonAsyncHtt
                                 if (!isChildChannelPresent) {
                                     if (ApplicationConstants.CHANNEL_TYPE_FULL) {
                                         try {
-                                            spotLightChannelDTO.setVideo(channel.getString("video_id"));
-                                            isVideo = true;
+                                            if(channel.has("playlist_id") && channel.getString("playlist_id") != null && channel.getString("playlist_id").length() > 0) {
+
+                                            } else {
+                                                spotLightChannelDTO.setVideo(channel.getString("video_id"));
+                                                isVideo = true;
+                                            }
                                         } catch (JSONException e) {
                                             e.printStackTrace();
                                         }
@@ -308,8 +312,12 @@ public class GetAllChannelsFromAllCategoriesService_V1 implements CommonAsyncHtt
                                         }
                                     } else if (ApplicationConstants.CHANNEL_TYPE_LEAN) {
                                         try {
-                                            spotLightChannelDTO.setVideo(channel.getString("video_id"));
-                                            isVideo = true;
+                                            if(channel.has("playlist_id") && channel.getString("playlist_id") != null && channel.getString("playlist_id").length() > 0) {
+
+                                            } else {
+                                                spotLightChannelDTO.setVideo(channel.getString("video_id"));
+                                                isVideo = true;
+                                            }
                                         } catch (JSONException e) {
                                             //e.printStackTrace();
                                         }

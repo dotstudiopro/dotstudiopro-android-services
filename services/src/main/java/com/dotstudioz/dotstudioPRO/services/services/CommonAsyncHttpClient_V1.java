@@ -1,5 +1,7 @@
 package com.dotstudioz.dotstudioPRO.services.services;
 
+import android.util.Log;
+
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
@@ -65,7 +67,7 @@ public class CommonAsyncHttpClient_V1 {
      * @param API_CALLED_FOR          - if the token is expired, then this variable can be used to
      *                                  set the failed call API in some variable
      */
-    public void getAsyncHttpClient(ArrayList<ParameterItem> headersArrayList, ArrayList<ParameterItem> requestParamsArrayList, String API_URL, final String API_CALLED_FOR) {
+ /*   public void getAsyncHttpClient(ArrayList<ParameterItem> headersArrayList, ArrayList<ParameterItem> requestParamsArrayList, String API_URL, final String API_CALLED_FOR) {
 
         //Asynchronous Http client for making the GET request
         //Using com.loopj.android.http library, which internally uses the DefaultHttpClient
@@ -120,12 +122,12 @@ public class CommonAsyncHttpClient_V1 {
                     //if the data was fetched successfully then the"success" is true or else it will
                     //be false with a reason, this is being done so as to handle the token failure
                     //sample of failure result looks like
-                    /**
+                    *//**
                      * {
                      * "success": false,
                      * "reason": "Auth failed"
                      * }
-                     **/
+                     **//*
                     isSuccess = responseBody.getBoolean("success");
                 } catch (JSONException e) {
                     //there is a case, for example categories_api, there is no parameter named "success"
@@ -211,14 +213,14 @@ public class CommonAsyncHttpClient_V1 {
         });
     }
 
-    /**
+    *//**
      * All GET requests will be made using this method
      * @param headersArrayList        - list of parameters to be included in header
      * @param requestParamsArrayList  - list of parameters to be included in body
      * @param API_URL                 - the URL of the API
      * @param API_CALLED_FOR          - if the token is expired, then this variable can be used to
      *                                  set the failed call API in some variable
-     */
+     *//*
     public void getAsyncHttpsClient1(ArrayList<ParameterItem> headersArrayList, ArrayList<ParameterItem> requestParamsArrayList, String API_URL, final String API_CALLED_FOR) {
 
         //Asynchronous Http client for making the GET request
@@ -275,12 +277,12 @@ public class CommonAsyncHttpClient_V1 {
                     //if the data was fetched successfully then the"success" is true or else it will
                     //be false with a reason, this is being done so as to handle the token failure
                     //sample of failure result looks like
-                    /**
+                    *//**
                      * {
                      * "success": false,
                      * "reason": "Auth failed"
                      * }
-                     **/
+                     **//*
                     isSuccess = responseBody.getBoolean("success");
                 } catch (JSONException e) {
                     //there is a case, for example categories_api, there is no parameter named "success"
@@ -366,14 +368,14 @@ public class CommonAsyncHttpClient_V1 {
         });
     }
 
-    /**
+    *//**
      * All POST requests will be made using this method
      * @param headersArrayList        - list of parameters to be included in header
      * @param requestParamsArrayList  - list of parameters to be included in body
      * @param API_URL                 - the URL of the API
      * @param API_CALLED_FOR          - if the token is expired, then this variable can be used to
      *                                  set the failed call API in some variable
-     */
+     *//*
     public void postAsyncHttpClient(ArrayList<ParameterItem> headersArrayList, ArrayList<ParameterItem> requestParamsArrayList, String API_URL, final String API_CALLED_FOR) {
 
         //Asynchronous Http client for making the POST request
@@ -429,12 +431,12 @@ public class CommonAsyncHttpClient_V1 {
                     //if the data was fetched successfully then the"success" is true or else it will
                     //be false with a reason, this is being done so as to handle the token failure
                     //sample of failure result looks like
-                    /**
+                    *//**
                      * {
                      * "success": false,
                      * "reason": "Auth failed"
                      * }
-                     **/
+                     **//*
                     isSuccess = responseBody.getBoolean("success");
                 } catch (JSONException e) {
                     //there is a case, for example categories_api, there is no parameter named "success"
@@ -557,12 +559,12 @@ public class CommonAsyncHttpClient_V1 {
                     //if the data was fetched successfully then the"success" is true or else it will
                     //be false with a reason, this is being done so as to handle the token failure
                     //sample of failure result looks like
-                    /**
+                    *//**
                      * {
                      * "success": false,
                      * "reason": "Auth failed"
                      * }
-                     **/
+                     **//*
                     isSuccess = responseBody.getBoolean("success");
                 } catch (JSONException e) {
                     //there is a case, for example categories_api, there is no parameter named "success"
@@ -628,14 +630,14 @@ public class CommonAsyncHttpClient_V1 {
         });
     }
 
-    /**
+    *//**
      * All DELETE requests will be made using this method
      * @param headersArrayList        - list of parameters to be included in header
      * @param requestParamsArrayList  - list of parameters to be included in body
      * @param API_URL                 - the URL of the API
      * @param API_CALLED_FOR          - if the token is expired, then this variable can be used to
      *                                  set the failed call API in some variable
-     */
+     *//*
     public void deleteAsyncHttpClient(ArrayList<ParameterItem> headersArrayList, ArrayList<ParameterItem> requestParamsArrayList, String API_URL, final String API_CALLED_FOR) {
 
         //Asynchronous Http client for making the POST request
@@ -691,12 +693,12 @@ public class CommonAsyncHttpClient_V1 {
                     //if the data was fetched successfully then the"success" is true or else it will
                     //be false with a reason, this is being done so as to handle the token failure
                     //sample of failure result looks like
-                    /**
+                    *//**
                      * {
                      * "success": false,
                      * "reason": "Auth failed"
                      * }
-                     **/
+                     **//*
                     isSuccess = responseBody.getBoolean("success");
                 } catch (JSONException e) {
                     //there is a case, for example categories_api, there is no parameter named "success"
@@ -764,7 +766,7 @@ public class CommonAsyncHttpClient_V1 {
         });
     }
 
-
+*/
     /**
      * All GET requests will be made using this method
      *
@@ -797,36 +799,49 @@ public class CommonAsyncHttpClient_V1 {
         {
             call1 = restClientInterface.requestGet(API_URL);
         }
-        call1.enqueue(new Callback<Object>() {
-            @Override
-            public void onResponse(Call<Object> call, retrofit2.Response<Object> response) {
-                try {
-                    if (response != null && !response.isSuccessful() && response.errorBody() != null) {
-                        handleError(response, API_CALLED_FOR);
-                        return;
+        try {
+            call1.enqueue(new Callback<Object>() {
+                @Override
+                public void onResponse(Call<Object> call, retrofit2.Response<Object> response) {
+                    Log.d("CommonAsyncHttp", "getAsyncHttpsClient onResponse!!!");
+                    try {
+                        if (response != null && !response.isSuccessful() && response.errorBody() != null) {
+                            handleError(response, API_CALLED_FOR);
+                            return;
+                        }
+                        if (response != null && response.isSuccessful() && response.body() != null) {
+                            handleSuccess(response, API_CALLED_FOR);
+                        } else {
+                            //TODO:Error Handling
+                            // Toast.makeText(LoginActivity.this, INVALID_RESPONSE_MESSAGE, Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        iCommonAsyncHttpClient_V1.onErrorHandler(e.getMessage());
                     }
-                    if (response != null && response.isSuccessful() && response.body() != null) {
-                        handleSuccess(response, API_CALLED_FOR);
-                    } else {
-                        //TODO:Error Handling
-                        // Toast.makeText(LoginActivity.this, INVALID_RESPONSE_MESSAGE, Toast.LENGTH_SHORT).show();
-                    }
-                } catch (Exception e) {
-                    iCommonAsyncHttpClient_V1.onErrorHandler(e.getMessage());
                 }
-            }
 
-            @Override
-            public void onFailure(Call<Object> call, Throwable t) {
-                call.cancel();
-                iCommonAsyncHttpClient_V1.onErrorHandler(t.getMessage());
-            }
-        });
+                @Override
+                public void onFailure(Call<Object> call, Throwable t) {
+                    call.cancel();
+                    iCommonAsyncHttpClient_V1.onErrorHandler(t.getMessage());
+                }
+            });
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void handleSuccess(retrofit2.Response<Object> response, final String API_CALLED_FOR) {
         try {
             if (response.body() instanceof JSONArray) {
+                JSONObject newJSONObject = new JSONObject();
+                try {
+                    newJSONObject.put("result", response.body());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                iCommonAsyncHttpClient_V1.onResultHandler(newJSONObject);
+            } else if (response.body() instanceof ArrayList) {
                 JSONObject newJSONObject = new JSONObject();
                 try {
                     newJSONObject.put("result", response.body());
@@ -918,6 +933,8 @@ public class CommonAsyncHttpClient_V1 {
                         iCommonAsyncHttpClient_V1.accessTokenExpired();
                     else if (AccessTokenHandler.getInstance().foundAnyErrorForClientToken)
                         iCommonAsyncHttpClient_V1.clientTokenExpired();
+                } else {
+                    iCommonAsyncHttpClient_V1.onErrorHandler("ERROR");
                 }
             } else {
                 if (responseBody.has("error"))
@@ -926,6 +943,7 @@ public class CommonAsyncHttpClient_V1 {
 
         } catch (Exception e) {
             e.printStackTrace();
+            iCommonAsyncHttpClient_V1.onErrorHandler("ERROR ==>"+response);
         }
     }
 
