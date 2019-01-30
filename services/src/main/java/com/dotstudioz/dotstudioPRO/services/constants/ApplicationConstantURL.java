@@ -109,6 +109,7 @@ public  class ApplicationConstantURL {
     public  static String RENT_API_ANDROID = ApplicationConstantURL.API_DOMAIN_S + "/users/payment/android";
 
     public  static String RECEIPT_VERIFY_API_FIRE_TV = ApplicationConstantURL.API_DOMAIN_S + "/users/payment/fire_tv";
+    public static  String RENT_STATUS_API = API_DOMAIN_S + "/users/payment/status";
     public  static String SHARING_DOMAIN_NAME = MYSPOTLIGHT_DOMAIN +"/watch";
 
     public  static String ADSERVER_API = ADSERVER_DOMAIN +"/adserver/www/delivery/fc.php?script=apVideo:vast2&zoneid=";
@@ -212,7 +213,7 @@ public  class ApplicationConstantURL {
         ApplicationConstantURL.RENT_API_ANDROID = ApplicationConstantURL.API_DOMAIN_S + "/users/payment/android";
 
         ApplicationConstantURL.RECEIPT_VERIFY_API_FIRE_TV = ApplicationConstantURL.API_DOMAIN_S + "/users/payment/fire_tv";
-        ApplicationConstantURL.RENT_API = ApplicationConstantURL.API_DOMAIN_S + "/users/payment/purchase";
+        ApplicationConstantURL.RENT_STATUS_API = ApplicationConstantURL.API_DOMAIN_S + "/users/payment/status";
         ApplicationConstantURL.SHARING_DOMAIN_NAME = MYSPOTLIGHT_DOMAIN +"/watch";
 
         ApplicationConstantURL.ADSERVER_API = ADSERVER_DOMAIN +"/adserver/www/delivery/fc.php?script=apVideo:vast2&zoneid=";
