@@ -96,6 +96,12 @@ public class GetAllChannelsFromAllCategoriesService_V1 implements CommonAsyncHtt
                                 JSONObject channel = channelsArray.getJSONObject(i);
                                 SpotLightChannelDTO spotLightChannelDTO = new SpotLightChannelDTO();
                                 spotLightChannelDTO.setId(channel.getString("_id"));
+                                try {
+                                    String catSlugChanSlugSorting = ((JSONObject) dataArrayFromResponse.get(x)).getString("category_slug") + "|" + channel.getString("slug") + "|" + i;
+                                    spotLightChannelDTO.setCatSlugChanSlugWeight(catSlugChanSlugSorting);
+                                } catch(Exception e) {
+                                    e.printStackTrace();
+                                }
                                 spotLightChannelDTO.setDspro_id(channel.getString("dspro_id"));
                                 //spotLightChannelDTO.setWeight(i);
 
