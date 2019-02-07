@@ -97,7 +97,7 @@ public class GetAllChannelsFromAllCategoriesService_V1 implements CommonAsyncHtt
                                 SpotLightChannelDTO spotLightChannelDTO = new SpotLightChannelDTO();
                                 spotLightChannelDTO.setId(channel.getString("_id"));
                                 spotLightChannelDTO.setDspro_id(channel.getString("dspro_id"));
-                                spotLightChannelDTO.setWeight(i);
+                                //spotLightChannelDTO.setWeight(i);
 
                                 if(channel.has("is_product")) {
                                     if(channel.getString("is_product")!= null) {

@@ -99,7 +99,7 @@ public class GetAllChannelsFromAllHomePageCategoriesService_V1 implements Common
                                 spotLightChannelDTO.setId(channel.getString("_id"));
                                 spotLightChannelDTO.setDspro_id(channel.getString("dspro_id"));
 
-                                spotLightChannelDTO.setWeight(i);
+                                //spotLightChannelDTO.setWeight(i);
 
                                 spotLightChannelDTO.setTitle(channel.getString("title"));
                                 try {
