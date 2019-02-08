@@ -54,8 +54,8 @@ public class UnsafeOkHttpClient {
             });
 
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-            //interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-            interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            //interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
             OkHttpClient okHttpClient = builder.connectTimeout(60, TimeUnit.SECONDS).readTimeout(60, TimeUnit.SECONDS).addInterceptor(interceptor).addNetworkInterceptor(new AddHeaderInterceptor(accessToken, clientToken,contentType)).build();
             return okHttpClient;
         } catch (Exception e) {
@@ -100,8 +100,8 @@ public class UnsafeOkHttpClient {
             });
 
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-            //interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-            interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            //interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
             OkHttpClient okHttpClient = builder.connectTimeout(60, TimeUnit.SECONDS).readTimeout(60, TimeUnit.SECONDS).addInterceptor(interceptor).addNetworkInterceptor(new AddHeaderInterceptor(headersArrayList)).build();
             return okHttpClient;
         } catch (Exception e) {
