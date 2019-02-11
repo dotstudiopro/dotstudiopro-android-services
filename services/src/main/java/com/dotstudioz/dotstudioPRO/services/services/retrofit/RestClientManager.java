@@ -18,8 +18,8 @@ public class RestClientManager {
         BASE_URL = baseURL;
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        //interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+        //interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
         //OkHttpClient client = new OkHttpClient.Builder().connectTimeout(60, TimeUnit.SECONDS).readTimeout(60, TimeUnit.SECONDS).addInterceptor(interceptor).addNetworkInterceptor(new AddHeaderInterceptor(accessToken, clientToken,contentType)).build();
         OkHttpClient client = UnsafeOkHttpClient.getUnsafeOkHttpClient(accessToken, clientToken, contentType);//.Builder().connectTimeout(60, TimeUnit.SECONDS).readTimeout(60, TimeUnit.SECONDS).addInterceptor(interceptor).addNetworkInterceptor(new AddHeaderInterceptor(accessToken, clientToken,contentType)).build();
 
@@ -35,8 +35,8 @@ public class RestClientManager {
         BASE_URL = baseURL;
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        //interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+        //interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
         //OkHttpClient client = new OkHttpClient.Builder().connectTimeout(60, TimeUnit.SECONDS).readTimeout(60, TimeUnit.SECONDS).addInterceptor(interceptor).addNetworkInterceptor(new AddHeaderInterceptor(headersArrayList)).build();
         OkHttpClient client = UnsafeOkHttpClient.getUnsafeOkHttpClient(headersArrayList);//.Builder().connectTimeout(60, TimeUnit.SECONDS).readTimeout(60, TimeUnit.SECONDS).addInterceptor(interceptor).addNetworkInterceptor(new AddHeaderInterceptor(headersArrayList)).build();
 
