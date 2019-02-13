@@ -809,6 +809,146 @@ public class FetchMissingChildChannelService_V1 implements CommonAsyncHttpClient
                                             } catch (JSONException e) {
                                                 e.printStackTrace();
                                             }
+                                        } else {
+                                            if (childChannel.has("video") &&
+                                                    childChannel.getJSONObject("video").has("_id")) {
+
+                                                if (childChannel.has("video") && childChannel.getJSONObject("video").has("_id"))
+                                                    childSpotLightChannelDTO.setId(childChannel.getJSONObject("video").getString("_id"));
+                                                childSpotLightChannelDTO.setCompany(childChannel.getString("company").toUpperCase());
+                                                try {
+                                                    if (childChannel.has("dspro_id"))
+                                                        childSpotLightChannelDTO.setDspro_id(childChannel.getString("dspro_id"));
+                                                } catch(Exception ep) {
+                                                    ep.printStackTrace();
+                                                }
+                                                try {
+                                                    String imageString = childChannel.getString("videos_thumb");
+                                                    imageString = CommonServiceUtils.replaceDotstudioproWithMyspotlightForImage(imageString);
+                                                    childSpotLightChannelDTO.setImage(imageString);
+                                                } catch (JSONException e) {
+                                                    childSpotLightChannelDTO.setImage("");
+                                                    e.printStackTrace();
+                                                }
+
+                                                childSpotLightChannelDTO.setTitle(childChannel.getString("title"));
+                                                try {
+                                                    String imageString = childChannel.getString("spotlight_poster");
+                                                    imageString = CommonServiceUtils.replaceDotstudioproWithMyspotlightForImage(imageString);
+                                                    childSpotLightChannelDTO.setSpotlightImage(imageString);
+                                                } catch (JSONException e) {
+                                                    childSpotLightChannelDTO.setSpotlightImage("");
+                                                    e.printStackTrace();
+                                                }
+                                                childSpotLightChannelDTO.setSlug(childChannel.getString("slug"));
+                                                try {
+                                                    if (childChannel.getJSONObject("video").getString("_id").length() > 0) {
+                                                        childSpotLightChannelDTO.getPlaylist().add(childChannel.getJSONObject("video").getString("_id"));
+                                                        VideoInfoDTO videoInfoDTO = new VideoInfoDTO();
+                                                        videoInfoDTO.setVideoID(childChannel.getJSONObject("video").getString("_id"));
+
+                                                        try {
+                                                            String duraString = childChannel.getJSONObject("video").getString("duration");
+                                                            float floatVideoDuration = Float.parseFloat(duraString);
+                                                            int videoDurationInt = (int) floatVideoDuration;
+                                                            videoInfoDTO.setVideoDuration(videoDurationInt);
+                                                        } catch (Exception e) {
+                                                            videoInfoDTO.setVideoDuration(0);
+                                                        }
+                                                        try {
+                                                            if(childChannel.getJSONObject("video").has("thumb"))
+                                                                videoInfoDTO.setThumb(childChannel.getJSONObject("video").getString("thumb"));
+                                                        } catch(Exception ee) {
+                                                            ee.printStackTrace();
+                                                        }
+                                                        try {
+                                                            if(childChannel.getJSONObject("video").has("description"))
+                                                                videoInfoDTO.setDescription(childChannel.getJSONObject("video").getString("description"));
+                                                        } catch(Exception ee) {
+                                                            ee.printStackTrace();
+                                                        }
+                                                        try {
+                                                            if(childChannel.getJSONObject("video").has("slug"))
+                                                                videoInfoDTO.setSlug(childChannel.getJSONObject("video").getString("slug"));
+                                                        } catch(Exception ee) {
+                                                            ee.printStackTrace();
+                                                        }
+                                                        try {
+                                                            if(childChannel.getJSONObject("video").has("year"))
+                                                                videoInfoDTO.setVideoYear(childChannel.getJSONObject("video").getString("year"));
+                                                        } catch(Exception ee) {
+                                                            ee.printStackTrace();
+                                                        }
+                                                        try {
+                                                            if(childChannel.getJSONObject("video").has("language"))
+                                                                videoInfoDTO.setVideoLanguage(childChannel.getJSONObject("video").getString("language"));
+                                                        } catch(Exception ee) {
+                                                            ee.printStackTrace();
+                                                        }
+                                                        try {
+                                                            if(childChannel.getJSONObject("video").has("country"))
+                                                                videoInfoDTO.setCountry(childChannel.getJSONObject("video").getString("country"));
+                                                        } catch(Exception ee) {
+                                                            ee.printStackTrace();
+                                                        }
+                                                        try {
+                                                            if(childChannel.getJSONObject("video").has("title"))
+                                                                videoInfoDTO.setVideoTitle(childChannel.getJSONObject("video").getString("title"));
+                                                        } catch(Exception ee) {
+                                                            ee.printStackTrace();
+                                                        }
+                                                        try {
+                                                            if(childChannel.getJSONObject("video").has("seriestitle"))
+                                                                videoInfoDTO.setSeriesTitle(childChannel.getJSONObject("video").getString("seriestitle"));
+                                                        } catch(Exception ee) {
+                                                            ee.printStackTrace();
+                                                        }
+
+                                                        String casting = "";
+                                                        String writterDirector = "";
+                                                        JSONArray castingArray = new JSONArray();
+                                                        try {
+                                                            castingArray = childChannel.getJSONObject("video").getJSONArray("actors");
+                                                        } catch (Exception e) {
+                                                        }
+                                                        for (int k = 0; k < castingArray.length(); k++) {
+                                                            if (k == 0) {
+                                                                //casting = "Starring: " + castingArray.get(k).toString();
+                                                                casting = castingArray.get(k).toString();
+                                                            } else
+                                                                casting = casting + ", " + castingArray.get(k).toString();
+                                                        }
+                                                        videoInfoDTO.setCasting("");
+                                                        if (casting.length() > 11)
+                                                            videoInfoDTO.setCasting(casting);
+
+                                                        JSONArray writterDirectorArray = new JSONArray();
+                                                        try {
+                                                            writterDirectorArray = childChannel.getJSONObject("video").getJSONArray("directors");
+                                                        } catch (Exception e) {
+                                                        }
+                                                        for (int k = 0; k < writterDirectorArray.length(); k++) {
+                                                            if (k == 0) {
+                                                                //writterDirector = "Written & Directed by " + writterDirectorArray.get(k).toString();
+                                                                writterDirector = writterDirectorArray.get(k).toString();
+                                                            } else
+                                                                writterDirector = writterDirector + ", " + writterDirectorArray.get(k).toString();
+                                                        }
+                                                        videoInfoDTO.setWritterDirector("");
+                                                        if (writterDirector.length() > 23)
+                                                            videoInfoDTO.setWritterDirector(writterDirector);
+
+                                                        if(childChannel.getJSONObject("video").has("slug"))
+                                                            videoInfoDTO.setSlug(childChannel.getJSONObject("video").getString("slug"));
+
+
+
+                                                        childSpotLightChannelDTO.getVideoInfoDTOList().add(videoInfoDTO);
+                                                    }
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
                                         }
                                     }
                                 } catch (Exception e) {

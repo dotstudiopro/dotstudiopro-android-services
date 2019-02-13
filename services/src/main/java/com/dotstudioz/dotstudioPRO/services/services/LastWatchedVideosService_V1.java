@@ -64,7 +64,7 @@ public class LastWatchedVideosService_V1 implements CommonAsyncHttpClient_V1.ICo
 
     @Override
     public void onResultHandler(JSONObject responseBody) {
-        Log.d("LastWatchedVideosService_V1", "responseBody==>"+responseBody);
+        Log.d("LastWatVidSer", "responseBody==>"+responseBody);
         LastWatchedVideosPairDTO lastWatchedVideosPairDTO = new LastWatchedVideosPairDTO();
         try {
             if(responseBody.has("data")) {

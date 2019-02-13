@@ -46,7 +46,7 @@ public class SubscriptionsService_V1 implements CommonAsyncHttpClient_V1.ICommon
         isBraintreeServiceCall = true;
         isChargifyServiceCall = false;
 
-        Log.d("createBrainTreeCustomerUsingNonce", "API_URL==>"+API_URL);
+        Log.d("tag", "API_URL==>"+API_URL);
 
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));
@@ -65,7 +65,7 @@ public class SubscriptionsService_V1 implements CommonAsyncHttpClient_V1.ICommon
         isBraintreeServiceCall = false;
         isChargifyServiceCall = true;
 
-        Log.d("createChargifyCustomerUsingSubscriptionID", "API_URL==>"+API_URL);
+        Log.d("tag", "API_URL==>"+API_URL);
 
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));
