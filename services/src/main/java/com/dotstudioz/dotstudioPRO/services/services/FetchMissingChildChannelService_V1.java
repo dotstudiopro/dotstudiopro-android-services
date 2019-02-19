@@ -251,7 +251,7 @@ public class FetchMissingChildChannelService_V1 implements CommonAsyncHttpClient
                     isVideo = true;
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    iFetchMissingChildChannelService_V1.hidePDialog();
+                    //iFetchMissingChildChannelService_V1.hidePDialog();
                 }
                 try {
                     if(channel.has("playlist")) {
