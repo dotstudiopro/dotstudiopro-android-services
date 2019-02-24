@@ -58,6 +58,16 @@ public class VideoDetailsService_V1 implements CommonAsyncHttpClient_V1.ICommonA
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInSingleVideoPageString);
 
     }
+    public void fetchVideoDetailsUsingSlug(String API_URL) {
+        ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
+        headerItemsArrayList.add(new ParameterItem("x-access-token", ApplicationConstants.xAccessToken));
+        if(ApplicationConstants.CLIENT_TOKEN != null && ApplicationConstants.CLIENT_TOKEN.length() > 0)
+            headerItemsArrayList.add(new ParameterItem("x-client-token", ApplicationConstants.CLIENT_TOKEN));
+
+        CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, null,
+                API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInSingleVideoPageString);
+
+    }
 
     boolean someVideoDataMissing = false;
     public void processJSONResponseObject(JSONObject response) {
