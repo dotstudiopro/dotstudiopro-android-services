@@ -59,7 +59,7 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
 
     // All Models of DotStudioPro Android
-    implementation ('com.github.dotstudiopro:dotstudiopro-android-model:1.0.6')
+    implementation ('com.github.dotstudiopro:dotstudiopro-android-model:1.0.7')
             {
                 exclude group: 'com.android.support'
             }

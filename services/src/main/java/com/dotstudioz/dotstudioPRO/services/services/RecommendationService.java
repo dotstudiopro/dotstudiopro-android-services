@@ -37,58 +37,7 @@ public class RecommendationService {
             throw new RuntimeException(ctx.toString()+ " must implement IRecommendationService");
     }
 
-    public void getRecommendation1(String xAccessToken, String RECOMMENDATION_API, String id, int size, int from) {
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.setMaxRetriesAndTimeout(2, 30000);
-        client.setTimeout(30000);
-        client.addHeader("x-access-token", xAccessToken);
 
-        Map<String, String> jsonParams = new HashMap<>();
-        //jsonParams.put("q", "5acef45299f8154417181dc4");
-        jsonParams.put("q", id);
-        jsonParams.put("size", ""+size);
-        jsonParams.put("from", ""+from);
-
-        RequestParams rp = new RequestParams(jsonParams);
-
-        //System.out.println(id+"<==id=======RECOMMENDATION_API==>"+RECOMMENDATION_API);
-
-        client.get(RECOMMENDATION_API, rp, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject responseBody) {
-                processResponse(responseBody);
-                //System.out.println("responseBody from RECOMMENDATION API==>"+responseBody);
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable error, JSONObject responseBody) {
-                iRecommendationService.recommendationServiceError(error.getMessage());
-                boolean isSuccess = true;
-                try {
-                    isSuccess = responseBody.getBoolean("success");
-                } catch (JSONException e) {
-                    //throws error, because on success there is no boolean returned, so
-                    // we are assuming that it is a success
-                    isSuccess = false;
-                }
-
-                if (!isSuccess) {
-                    if(AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
-                        AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInRentNowPageString);
-                        if(AccessTokenHandler.getInstance().foundAnyError)
-                            iRecommendationService.accessTokenExpired();
-                        else if(AccessTokenHandler.getInstance().foundAnyErrorForClientToken)
-                            iRecommendationService.clientTokenExpired();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(int code, Header[] headers, String responseString, Throwable throwable) {
-                iRecommendationService.recommendationServiceError(responseString);
-            }
-        });
-    }
     public void getRecommendation(String xAccessToken, String RECOMMENDATION_API, String id, int size, int from) {
 
         RestClientInterface restClientInterface = RestClientManager.getClient(ApplicationConstantURL.getInstance().API_DOMAIN_S, xAccessToken, null, null).create(RestClientInterface.class);
@@ -185,6 +134,9 @@ public class RecommendationService {
                                     }
                                     if(recommendedItemJSONObject.getJSONObject("_source").has("title")) {
                                         recommendedItemDTO.setTitle(recommendedItemJSONObject.getJSONObject("_source").getString("title"));
+                                    }
+                                    if(recommendedItemJSONObject.getJSONObject("_source").has("is_product")) {
+                                        recommendedItemDTO.setProduct(recommendedItemJSONObject.getJSONObject("_source").getBoolean("is_product"));
                                     }
                                 }
                                 if(recommendedItemDTO.getId() != null && recommendedItemDTO.getId().length() > 0)
