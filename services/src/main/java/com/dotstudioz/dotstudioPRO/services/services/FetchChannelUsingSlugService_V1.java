@@ -683,6 +683,20 @@ public class FetchChannelUsingSlugService_V1 {
                     for (int c = 0; c < childChannelsArray.length(); c++) {
                         JSONObject childChannel = childChannelsArray.getJSONObject(c);
                         SpotLightChannelDTO childSpotLightChannelDTO = new SpotLightChannelDTO();
+                        try {
+                            if(childChannel.has("is_product")) {
+                                if(childChannel.getString("is_product")!= null) {
+                                    if(childChannel.getString("is_product").equals("true"))
+                                        childSpotLightChannelDTO.setProduct(true);
+                                    else
+                                        childSpotLightChannelDTO.setProduct(false);
+                                } else {
+                                    childSpotLightChannelDTO.setProduct(false);
+                                }
+                            }
+                        } catch(Exception em) {
+                            em.printStackTrace();
+                        }
                         if(childChannel.has("playlist")) {
                             if (childChannel.getJSONArray("playlist").length() > 0) {
                                 if (childChannel.has("video") && childChannel.getJSONObject("video").has("_id"))

@@ -533,6 +533,20 @@ public class FetchChannelUsingSlugForSubscriptionStatusService_V1 implements Com
                         JSONObject childChannel = childChannelsArray.getJSONObject(c);
                         SpotLightChannelDTO childSpotLightChannelDTO = new SpotLightChannelDTO();
                         try {
+                            try {
+                                if(childChannel.has("is_product")) {
+                                    if(childChannel.getString("is_product")!= null) {
+                                        if(childChannel.getString("is_product").equals("true"))
+                                            childSpotLightChannelDTO.setProduct(true);
+                                        else
+                                            childSpotLightChannelDTO.setProduct(false);
+                                    } else {
+                                        childSpotLightChannelDTO.setProduct(false);
+                                    }
+                                }
+                            } catch(Exception em) {
+                                em.printStackTrace();
+                            }
                             if(childChannel.has("channel_type") && childChannel.getString("channel_type").equals("single")) {
                                 try {
                                     if (childChannel.has("video"))
