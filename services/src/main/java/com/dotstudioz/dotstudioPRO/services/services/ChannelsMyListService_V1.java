@@ -71,6 +71,21 @@ public class ChannelsMyListService_V1 implements CommonAsyncHttpClient_V1.ICommo
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
     }
 
+    public void addChannelToMyList(String channelID, String parentChannelID, String xAccessToken, String xClientToken, String API_URL) {
+        ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
+        headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));
+        headerItemsArrayList.add(new ParameterItem("x-client-token", xClientToken));
+
+        ArrayList<ParameterItem> requestParamsArrayList = new ArrayList<>();
+        requestParamsArrayList.add(new ParameterItem("channel_id", channelID));
+        requestParamsArrayList.add(new ParameterItem("parent_channel_id", parentChannelID));
+
+        setFlagFor(ADDING_SERVICE_FLAG);
+
+        CommonAsyncHttpClient_V1.getInstance(this).postAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
+                API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
+    }
+
     public void deleteChannelFromMyList(String channelID, String xAccessToken, String xClientToken, String API_URL) {
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));
@@ -136,6 +151,51 @@ public class ChannelsMyListService_V1 implements CommonAsyncHttpClient_V1.ICommo
                                     channelsMyListDTOForMyList.getChannelMyListDTO1().setSlug(jsonObject.getString("slug"));
                                 }
 
+                                try {
+                                    if (jsonObject.has("categories")) {
+                                        for (int j = 0; j < jsonObject.getJSONArray("categories").length(); j++) {
+                                            channelsMyListDTOForMyList.getChannelMyListDTO1().getCategoriesArrayList().add(jsonObject.getJSONArray("categories").getString(j));
+                                        }
+                                    }
+                                } catch(Exception e) {
+                                    e.printStackTrace();
+                                }
+
+                                try {
+                                    if (jsonObject.has("parent_channel")) {
+                                        if(jsonObject.getJSONObject("parent_channel").has("_id")) {
+                                            channelsMyListDTOForMyList.getChannelMyListDTO1().getParentChannelMyListDTO().setId(jsonObject.getJSONObject("parent_channel").getString("_id"));
+                                        }
+                                        if(jsonObject.getJSONObject("parent_channel").has("title")) {
+                                            channelsMyListDTOForMyList.getChannelMyListDTO1().getParentChannelMyListDTO().setTitle(jsonObject.getJSONObject("parent_channel").getString("title"));
+                                        }
+                                        if(jsonObject.getJSONObject("parent_channel").has("company_id")) {
+                                            channelsMyListDTOForMyList.getChannelMyListDTO1().getParentChannelMyListDTO().setCompanyId(jsonObject.getJSONObject("parent_channel").getString("company_id"));
+                                        }
+                                        if(jsonObject.getJSONObject("parent_channel").has("poster")) {
+                                            channelsMyListDTOForMyList.getChannelMyListDTO1().getParentChannelMyListDTO().setPoster(jsonObject.getJSONObject("parent_channel").getString("poster"));
+                                        }
+                                        if(jsonObject.getJSONObject("parent_channel").has("spotlight_poster")) {
+                                            channelsMyListDTOForMyList.getChannelMyListDTO1().getParentChannelMyListDTO().setSpotlightPoster(jsonObject.getJSONObject("parent_channel").getString("spotlight_poster"));
+                                        }
+                                        if(jsonObject.getJSONObject("parent_channel").has("slug")) {
+                                            channelsMyListDTOForMyList.getChannelMyListDTO1().getParentChannelMyListDTO().setSlug(jsonObject.getJSONObject("parent_channel").getString("slug"));
+                                        }
+
+                                        try {
+                                            if (jsonObject.getJSONObject("parent_channel").has("categories")) {
+                                                for (int j = 0; j < jsonObject.getJSONObject("parent_channel").getJSONArray("categories").length(); j++) {
+                                                    channelsMyListDTOForMyList.getChannelMyListDTO1().getParentChannelMyListDTO().getCategoriesArrayList().add(jsonObject.getJSONObject("parent_channel").getJSONObject("parent_channel").getJSONArray("categories").getString(j));
+                                                }
+                                            }
+                                        } catch(Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                } catch(Exception e) {
+                                    e.printStackTrace();
+                                }
+
                                 i++;
 
                                 if(i < channelsArray.length()) {
@@ -157,6 +217,51 @@ public class ChannelsMyListService_V1 implements CommonAsyncHttpClient_V1.ICommo
                                     }
                                     if(jsonObject2.has("slug")) {
                                         channelsMyListDTOForMyList.getChannelMyListDTO2().setSlug(jsonObject2.getString("slug"));
+                                    }
+
+                                    try {
+                                        if (jsonObject2.has("categories")) {
+                                            for (int j = 0; j < jsonObject2.getJSONArray("categories").length(); j++) {
+                                                channelsMyListDTOForMyList.getChannelMyListDTO2().getCategoriesArrayList().add(jsonObject2.getJSONArray("categories").getString(j));
+                                            }
+                                        }
+                                    } catch(Exception e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    try {
+                                        if (jsonObject2.has("parent_channel")) {
+                                            if(jsonObject2.getJSONObject("parent_channel").has("_id")) {
+                                                channelsMyListDTOForMyList.getChannelMyListDTO2().getParentChannelMyListDTO().setId(jsonObject2.getJSONObject("parent_channel").getString("_id"));
+                                            }
+                                            if(jsonObject2.getJSONObject("parent_channel").has("title")) {
+                                                channelsMyListDTOForMyList.getChannelMyListDTO2().getParentChannelMyListDTO().setTitle(jsonObject2.getJSONObject("parent_channel").getString("title"));
+                                            }
+                                            if(jsonObject2.getJSONObject("parent_channel").has("company_id")) {
+                                                channelsMyListDTOForMyList.getChannelMyListDTO2().getParentChannelMyListDTO().setCompanyId(jsonObject2.getJSONObject("parent_channel").getString("company_id"));
+                                            }
+                                            if(jsonObject2.getJSONObject("parent_channel").has("poster")) {
+                                                channelsMyListDTOForMyList.getChannelMyListDTO2().getParentChannelMyListDTO().setPoster(jsonObject2.getJSONObject("parent_channel").getString("poster"));
+                                            }
+                                            if(jsonObject2.getJSONObject("parent_channel").has("spotlight_poster")) {
+                                                channelsMyListDTOForMyList.getChannelMyListDTO2().getParentChannelMyListDTO().setSpotlightPoster(jsonObject2.getJSONObject("parent_channel").getString("spotlight_poster"));
+                                            }
+                                            if(jsonObject2.getJSONObject("parent_channel").has("slug")) {
+                                                channelsMyListDTOForMyList.getChannelMyListDTO2().getParentChannelMyListDTO().setSlug(jsonObject2.getJSONObject("parent_channel").getString("slug"));
+                                            }
+
+                                            try {
+                                                if (jsonObject2.getJSONObject("parent_channel").has("categories")) {
+                                                    for (int j = 0; j < jsonObject2.getJSONObject("parent_channel").getJSONArray("categories").length(); j++) {
+                                                        channelsMyListDTOForMyList.getChannelMyListDTO2().getParentChannelMyListDTO().getCategoriesArrayList().add(jsonObject2.getJSONObject("parent_channel").getJSONObject("parent_channel").getJSONArray("categories").getString(j));
+                                                    }
+                                                }
+                                            } catch(Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    } catch(Exception e) {
+                                        e.printStackTrace();
                                     }
                                 }
 
@@ -182,6 +287,51 @@ public class ChannelsMyListService_V1 implements CommonAsyncHttpClient_V1.ICommo
                                     if(jsonObject3.has("slug")) {
                                         channelsMyListDTOForMyList.getChannelMyListDTO3().setSlug(jsonObject3.getString("slug"));
                                     }
+
+                                    try {
+                                        if (jsonObject3.has("categories")) {
+                                            for (int j = 0; j < jsonObject3.getJSONArray("categories").length(); j++) {
+                                                channelsMyListDTOForMyList.getChannelMyListDTO3().getCategoriesArrayList().add(jsonObject3.getJSONArray("categories").getString(j));
+                                            }
+                                        }
+                                    } catch(Exception e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    try {
+                                        if (jsonObject3.has("parent_channel")) {
+                                            if(jsonObject3.getJSONObject("parent_channel").has("_id")) {
+                                                channelsMyListDTOForMyList.getChannelMyListDTO3().getParentChannelMyListDTO().setId(jsonObject3.getJSONObject("parent_channel").getString("_id"));
+                                            }
+                                            if(jsonObject3.getJSONObject("parent_channel").has("title")) {
+                                                channelsMyListDTOForMyList.getChannelMyListDTO3().getParentChannelMyListDTO().setTitle(jsonObject3.getJSONObject("parent_channel").getString("title"));
+                                            }
+                                            if(jsonObject3.getJSONObject("parent_channel").has("company_id")) {
+                                                channelsMyListDTOForMyList.getChannelMyListDTO3().getParentChannelMyListDTO().setCompanyId(jsonObject3.getJSONObject("parent_channel").getString("company_id"));
+                                            }
+                                            if(jsonObject3.getJSONObject("parent_channel").has("poster")) {
+                                                channelsMyListDTOForMyList.getChannelMyListDTO3().getParentChannelMyListDTO().setPoster(jsonObject3.getJSONObject("parent_channel").getString("poster"));
+                                            }
+                                            if(jsonObject3.getJSONObject("parent_channel").has("spotlight_poster")) {
+                                                channelsMyListDTOForMyList.getChannelMyListDTO3().getParentChannelMyListDTO().setSpotlightPoster(jsonObject3.getJSONObject("parent_channel").getString("spotlight_poster"));
+                                            }
+                                            if(jsonObject3.getJSONObject("parent_channel").has("slug")) {
+                                                channelsMyListDTOForMyList.getChannelMyListDTO3().getParentChannelMyListDTO().setSlug(jsonObject3.getJSONObject("parent_channel").getString("slug"));
+                                            }
+
+                                            try {
+                                                if (jsonObject3.getJSONObject("parent_channel").has("categories")) {
+                                                    for (int j = 0; j < jsonObject3.getJSONObject("parent_channel").getJSONArray("categories").length(); j++) {
+                                                        channelsMyListDTOForMyList.getChannelMyListDTO3().getParentChannelMyListDTO().getCategoriesArrayList().add(jsonObject3.getJSONObject("parent_channel").getJSONObject("parent_channel").getJSONArray("categories").getString(j));
+                                                    }
+                                                }
+                                            } catch(Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    } catch(Exception e) {
+                                        e.printStackTrace();
+                                    }
                                 }
 
                                 i++;
@@ -205,6 +355,51 @@ public class ChannelsMyListService_V1 implements CommonAsyncHttpClient_V1.ICommo
                                     }
                                     if(jsonObject4.has("slug")) {
                                         channelsMyListDTOForMyList.getChannelMyListDTO4().setSlug(jsonObject4.getString("slug"));
+                                    }
+
+                                    try {
+                                        if (jsonObject4.has("categories")) {
+                                            for (int j = 0; j < jsonObject4.getJSONArray("categories").length(); j++) {
+                                                channelsMyListDTOForMyList.getChannelMyListDTO4().getCategoriesArrayList().add(jsonObject4.getJSONArray("categories").getString(j));
+                                            }
+                                        }
+                                    } catch(Exception e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    try {
+                                        if (jsonObject4.has("parent_channel")) {
+                                            if(jsonObject4.getJSONObject("parent_channel").has("_id")) {
+                                                channelsMyListDTOForMyList.getChannelMyListDTO4().getParentChannelMyListDTO().setId(jsonObject4.getJSONObject("parent_channel").getString("_id"));
+                                            }
+                                            if(jsonObject4.getJSONObject("parent_channel").has("title")) {
+                                                channelsMyListDTOForMyList.getChannelMyListDTO4().getParentChannelMyListDTO().setTitle(jsonObject4.getJSONObject("parent_channel").getString("title"));
+                                            }
+                                            if(jsonObject4.getJSONObject("parent_channel").has("company_id")) {
+                                                channelsMyListDTOForMyList.getChannelMyListDTO4().getParentChannelMyListDTO().setCompanyId(jsonObject4.getJSONObject("parent_channel").getString("company_id"));
+                                            }
+                                            if(jsonObject4.getJSONObject("parent_channel").has("poster")) {
+                                                channelsMyListDTOForMyList.getChannelMyListDTO4().getParentChannelMyListDTO().setPoster(jsonObject4.getJSONObject("parent_channel").getString("poster"));
+                                            }
+                                            if(jsonObject4.getJSONObject("parent_channel").has("spotlight_poster")) {
+                                                channelsMyListDTOForMyList.getChannelMyListDTO4().getParentChannelMyListDTO().setSpotlightPoster(jsonObject4.getJSONObject("parent_channel").getString("spotlight_poster"));
+                                            }
+                                            if(jsonObject4.getJSONObject("parent_channel").has("slug")) {
+                                                channelsMyListDTOForMyList.getChannelMyListDTO4().getParentChannelMyListDTO().setSlug(jsonObject4.getJSONObject("parent_channel").getString("slug"));
+                                            }
+
+                                            try {
+                                                if (jsonObject4.getJSONObject("parent_channel").has("categories")) {
+                                                    for (int j = 0; j < jsonObject4.getJSONObject("parent_channel").getJSONArray("categories").length(); j++) {
+                                                        channelsMyListDTOForMyList.getChannelMyListDTO4().getParentChannelMyListDTO().getCategoriesArrayList().add(jsonObject4.getJSONObject("parent_channel").getJSONObject("parent_channel").getJSONArray("categories").getString(j));
+                                                    }
+                                                }
+                                            } catch(Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    } catch(Exception e) {
+                                        e.printStackTrace();
                                     }
                                 }
                                 channelsMyListDTOForMyListArrayList.add(channelsMyListDTOForMyList);
@@ -232,6 +427,51 @@ public class ChannelsMyListService_V1 implements CommonAsyncHttpClient_V1.ICommo
                                 }
                                 if(jsonObject.has("slug")) {
                                     channelMyListDTO.setSlug(jsonObject.getString("slug"));
+                                }
+
+                                try {
+                                    if (jsonObject.has("categories")) {
+                                        for (int j = 0; j < jsonObject.getJSONArray("categories").length(); j++) {
+                                            channelMyListDTO.getCategoriesArrayList().add(jsonObject.getJSONArray("categories").getString(j));
+                                        }
+                                    }
+                                } catch(Exception e) {
+                                    e.printStackTrace();
+                                }
+
+                                try {
+                                    if (jsonObject.has("parent_channel")) {
+                                        if(jsonObject.getJSONObject("parent_channel").has("_id")) {
+                                            channelMyListDTO.getParentChannelMyListDTO().setId(jsonObject.getJSONObject("parent_channel").getString("_id"));
+                                        }
+                                        if(jsonObject.getJSONObject("parent_channel").has("title")) {
+                                            channelMyListDTO.getParentChannelMyListDTO().setTitle(jsonObject.getJSONObject("parent_channel").getString("title"));
+                                        }
+                                        if(jsonObject.getJSONObject("parent_channel").has("company_id")) {
+                                            channelMyListDTO.getParentChannelMyListDTO().setCompanyId(jsonObject.getJSONObject("parent_channel").getString("company_id"));
+                                        }
+                                        if(jsonObject.getJSONObject("parent_channel").has("poster")) {
+                                            channelMyListDTO.getParentChannelMyListDTO().setPoster(jsonObject.getJSONObject("parent_channel").getString("poster"));
+                                        }
+                                        if(jsonObject.getJSONObject("parent_channel").has("spotlight_poster")) {
+                                            channelMyListDTO.getParentChannelMyListDTO().setSpotlightPoster(jsonObject.getJSONObject("parent_channel").getString("spotlight_poster"));
+                                        }
+                                        if(jsonObject.getJSONObject("parent_channel").has("slug")) {
+                                            channelMyListDTO.getParentChannelMyListDTO().setSlug(jsonObject.getJSONObject("parent_channel").getString("slug"));
+                                        }
+
+                                        try {
+                                            if (jsonObject.getJSONObject("parent_channel").has("categories")) {
+                                                for (int j = 0; j < jsonObject.getJSONObject("parent_channel").getJSONArray("categories").length(); j++) {
+                                                    channelMyListDTO.getParentChannelMyListDTO().getCategoriesArrayList().add(jsonObject.getJSONObject("parent_channel").getJSONObject("parent_channel").getJSONArray("categories").getString(j));
+                                                }
+                                            }
+                                        } catch(Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                } catch(Exception e) {
+                                    e.printStackTrace();
                                 }
                                 channelMyListDTOArrayList.add(channelMyListDTO);
                             }
