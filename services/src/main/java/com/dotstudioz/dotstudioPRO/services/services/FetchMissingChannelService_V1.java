@@ -246,6 +246,21 @@ public class FetchMissingChannelService_V1 implements CommonAsyncHttpClient_V1.I
                     spotLightChannelDTO.setChannelDescription(channel.getString("description"));
                 } catch (JSONException e) { /*e.printStackTrace();*/ }
 
+                try {
+                    if(channel.has("is_product")) {
+                        if(channel.getString("is_product")!= null) {
+                            if(channel.getString("is_product").equals("true"))
+                                spotLightChannelDTO.setProduct(true);
+                            else
+                                spotLightChannelDTO.setProduct(false);
+                        } else {
+                            spotLightChannelDTO.setProduct(false);
+                        }
+                    }
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+
                 boolean noCategoriesFound = true;
                 JSONArray categoriesArray = channel.getJSONArray("categories");
                 /*for (int j = 0; j < categoriesArray.length(); j++) {
