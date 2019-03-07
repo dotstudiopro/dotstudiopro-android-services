@@ -143,7 +143,20 @@ public class FetchSingleChannelService_V1 implements CommonAsyncHttpClient_V1.IC
                 SpotLightChannelDTO spotLightChannelDTO = new SpotLightChannelDTO();
                 spotLightChannelDTO.setId(channel.getString("_id"));
                 selectedChannelID = spotLightChannelDTO.getId();
-
+                try {
+                    if(channel.has("is_product")) {
+                        if(channel.getString("is_product")!= null) {
+                            if(channel.getString("is_product").equals("true"))
+                                spotLightChannelDTO.setProduct(true);
+                            else
+                                spotLightChannelDTO.setProduct(false);
+                        } else {
+                            spotLightChannelDTO.setProduct(false);
+                        }
+                    }
+                } catch(Exception em) {
+                    em.printStackTrace();
+                }
                 spotLightChannelDTO.setTitle(channel.getString("title"));
                 try {
                     try {
