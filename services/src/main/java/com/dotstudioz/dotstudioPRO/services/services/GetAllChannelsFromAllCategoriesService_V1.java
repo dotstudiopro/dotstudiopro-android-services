@@ -81,6 +81,14 @@ public class GetAllChannelsFromAllCategoriesService_V1 implements CommonAsyncHtt
                 dataArrayFromResponse = response.getJSONArray("data");
                 for(int x = 0; x < dataArrayFromResponse.length(); x++) {
                     if(((JSONObject)dataArrayFromResponse.get(x)).has("channels")) {
+                        String categorySlug = "";
+                        String categoryID = "";
+                        if(((JSONObject)dataArrayFromResponse.get(x)).has("category_slug")) {
+                            categorySlug = ((JSONObject) dataArrayFromResponse.get(x)).getString("category_slug");
+                        }
+                        if(((JSONObject)dataArrayFromResponse.get(x)).has("category_id")) {
+                            categoryID = ((JSONObject) dataArrayFromResponse.get(x)).getString("category_id");
+                        }
                         JSONObject obj = ((JSONObject) dataArrayFromResponse.get(x)).getJSONObject("channels");
 
                         JSONArray channelsArray = null;
@@ -202,7 +210,8 @@ public class GetAllChannelsFromAllCategoriesService_V1 implements CommonAsyncHtt
                                     for (int k = 0; k < spotLightCategoriesDTOList.size(); k++) {
                                         if(categoriesArray.get(j) instanceof JSONObject) {
                                             try {
-                                                if (((JSONObject)categoriesArray.get(j)).getString("_id").toString().equals(spotLightCategoriesDTOList.get(k).getCategoryValue())) {
+                                                if (((JSONObject)categoriesArray.get(j)).getString("_id").toString().equalsIgnoreCase(categoryID) &&
+                                                        ((JSONObject)categoriesArray.get(j)).getString("_id").toString().equals(spotLightCategoriesDTOList.get(k).getCategoryValue())) {
                                                     boolean flagToCheckIfChannelAlreadyAdded = false;
                                                     for (int l = 0; l < spotLightCategoriesDTOList.get(k).getSpotLightChannelDTOList().size(); l++) {
                                                         if (spotLightCategoriesDTOList.get(k).getSpotLightChannelDTOList().get(l).getId().equals(spotLightChannelDTO.getId())) {
@@ -218,7 +227,8 @@ public class GetAllChannelsFromAllCategoriesService_V1 implements CommonAsyncHtt
                                             }
                                         } else if(categoriesArray.get(j) instanceof String) {
                                             try {
-                                                if (categoriesArray.get(j).toString().equals(spotLightCategoriesDTOList.get(k).getCategoryValue())) {
+                                                if (categoriesArray.get(j).toString().equals(categoryID) &&
+                                                        categoriesArray.get(j).toString().equals(spotLightCategoriesDTOList.get(k).getCategoryValue())) {
                                                     boolean flagToCheckIfChannelAlreadyAdded = false;
                                                     for (int l = 0; l < spotLightCategoriesDTOList.get(k).getSpotLightChannelDTOList().size(); l++) {
                                                         if (spotLightCategoriesDTOList.get(k).getSpotLightChannelDTOList().get(l).getId().equals(spotLightChannelDTO.getId())) {
