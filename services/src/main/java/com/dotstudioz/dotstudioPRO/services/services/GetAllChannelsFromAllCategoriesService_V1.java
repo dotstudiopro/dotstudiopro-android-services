@@ -205,8 +205,10 @@ public class GetAllChannelsFromAllCategoriesService_V1 implements CommonAsyncHtt
                                                 if (((JSONObject)categoriesArray.get(j)).getString("_id").toString().equals(spotLightCategoriesDTOList.get(k).getCategoryValue())) {
                                                     boolean flagToCheckIfChannelAlreadyAdded = false;
                                                     for (int l = 0; l < spotLightCategoriesDTOList.get(k).getSpotLightChannelDTOList().size(); l++) {
-                                                        if (spotLightCategoriesDTOList.get(k).getSpotLightChannelDTOList().get(l).getId().equals(spotLightChannelDTO.getId()))
+                                                        if (spotLightCategoriesDTOList.get(k).getSpotLightChannelDTOList().get(l).getId().equals(spotLightChannelDTO.getId())) {
+                                                            spotLightCategoriesDTOList.get(k).getSpotLightChannelDTOList().set(l, spotLightChannelDTO);
                                                             flagToCheckIfChannelAlreadyAdded = true;
+                                                        }
                                                     }
                                                     if (!flagToCheckIfChannelAlreadyAdded)
                                                         spotLightCategoriesDTOList.get(k).getSpotLightChannelDTOList().add(spotLightChannelDTO);
@@ -219,8 +221,10 @@ public class GetAllChannelsFromAllCategoriesService_V1 implements CommonAsyncHtt
                                                 if (categoriesArray.get(j).toString().equals(spotLightCategoriesDTOList.get(k).getCategoryValue())) {
                                                     boolean flagToCheckIfChannelAlreadyAdded = false;
                                                     for (int l = 0; l < spotLightCategoriesDTOList.get(k).getSpotLightChannelDTOList().size(); l++) {
-                                                        if (spotLightCategoriesDTOList.get(k).getSpotLightChannelDTOList().get(l).getId().equals(spotLightChannelDTO.getId()))
+                                                        if (spotLightCategoriesDTOList.get(k).getSpotLightChannelDTOList().get(l).getId().equals(spotLightChannelDTO.getId())) {
+                                                            spotLightCategoriesDTOList.get(k).getSpotLightChannelDTOList().set(l, spotLightChannelDTO);
                                                             flagToCheckIfChannelAlreadyAdded = true;
+                                                        }
                                                     }
                                                     if (!flagToCheckIfChannelAlreadyAdded)
                                                         spotLightCategoriesDTOList.get(k).getSpotLightChannelDTOList().add(spotLightChannelDTO);
