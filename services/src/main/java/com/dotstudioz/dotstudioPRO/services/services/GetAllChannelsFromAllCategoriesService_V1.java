@@ -74,7 +74,7 @@ public class GetAllChannelsFromAllCategoriesService_V1 implements CommonAsyncHtt
     }
 
     public void resultProcessingForAllChannelsFromAllCategories(JSONObject response) {
-        System.out.println("resultProcessingForAllChannelsFromAllCategories==>"+response);
+        //System.out.println("resultProcessingForAllChannelsFromAllCategories==>"+response);
         JSONArray dataArrayFromResponse = new JSONArray();
         try {
             if(response.has("data")) {
