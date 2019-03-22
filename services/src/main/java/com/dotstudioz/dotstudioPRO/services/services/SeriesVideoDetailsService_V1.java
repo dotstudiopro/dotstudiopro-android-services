@@ -331,7 +331,7 @@ public class SeriesVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.IC
                     try {
                         if (obj.has("teaser_trailer")) {
                             if (obj.getJSONObject("teaser_trailer").has("_id")) {
-                                videoInfoDTO.setTeaserID(obj.getJSONObject("teaser_trailer").getString("_"));
+                                videoInfoDTO.setTeaserID(obj.getJSONObject("teaser_trailer").getString("_id"));
                             } else {
                                 videoInfoDTO.setTeaserID("");
                             }
