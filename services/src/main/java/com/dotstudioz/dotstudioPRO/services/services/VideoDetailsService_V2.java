@@ -250,6 +250,17 @@ public class VideoDetailsService_V2 implements CommonAsyncHttpClient_V1.ICommonA
 
                     try {
                         if (obj.has("teaser_trailer")) {
+                            if (obj.getJSONObject("teaser_trailer").has("_id")) {
+                                videoInfoDTO.setTeaserID(obj.getJSONObject("teaser_trailer").getString("_"));
+                            } else {
+                                videoInfoDTO.setTeaserID("");
+                            }
+                        }
+                    } catch (JSONException e) {
+                        videoInfoDTO.setTeaserID("");
+                    }
+                    try {
+                        if (obj.has("teaser_trailer")) {
                             if (obj.getJSONObject("teaser_trailer").has("url")) {
                                 videoInfoDTO.setTeaserTrailer(obj.getJSONObject("teaser_trailer").getString("url"));
                             } else {
