@@ -95,7 +95,7 @@ public class CheckChannelSubscriptionStatusService_V1 implements CommonAsyncHttp
      * expecting 3 parameters in the response
      * success=true/false
      * unlocked=true/false
-     * adsenabled=true/false
+     * ads_enabled=true/false
      * @param response boolean flag
      * @param paramName it could be either unlocked or adsenabled
      * @return
@@ -237,7 +237,7 @@ public class CheckChannelSubscriptionStatusService_V1 implements CommonAsyncHttp
                         JSONObject obj = new JSONObject("" + (new Gson().toJson(response.body())));
                         try {
                             if (obj.has("success") && obj.getBoolean("success")) {
-                                iCheckChannelSubscriptionStatusService.checkChannelSubscriptionStatusServiceResponse(resultProcessingForSubscriptions(obj, "unlocked"), resultProcessingForSubscriptions(obj, "adsenabled"));
+                                iCheckChannelSubscriptionStatusService.checkChannelSubscriptionStatusServiceResponse(resultProcessingForSubscriptions(obj, "unlocked"), resultProcessingForSubscriptions(obj, "ads_enabled"));
                             } else {
                                 iCheckChannelSubscriptionStatusService.checkChannelSubscriptionStatusServiceResponse(false, true);
                             }
