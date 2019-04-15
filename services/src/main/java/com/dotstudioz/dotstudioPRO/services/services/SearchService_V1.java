@@ -132,6 +132,17 @@ public class SearchService_V1 implements CommonAsyncHttpClient_V1.ICommonAsyncHt
                     }
                 }
 
+                try {
+                    searchResultDTO.setSpotlightPoster(channelsArray.getJSONObject(i).getString("spotlight_poster"));
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+                try {
+                    searchResultDTO.setPoster(channelsArray.getJSONObject(i).getString("poster"));
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+
                 if (!shudSkipThisResult) {
                     imageString = CommonServiceUtils.replaceDotstudioproWithMyspotlightForImage(imageString);
                     searchResultDTO.setSpotlightPoster(imageString);
