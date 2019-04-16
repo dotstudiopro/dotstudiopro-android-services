@@ -131,13 +131,6 @@ public class SearchService_V1 implements CommonAsyncHttpClient_V1.ICommonAsyncHt
                         }
                     }
                 }
-                    try {
-                        searchResultDTO.setPoster(channelsArray.getJSONObject(i).getString("poster"));
-                    } catch (JSONException e) {
-                        searchResultDTO.setPoster("");
-                    }
-
-
                 try {
                     searchResultDTO.setSpotlightPoster(channelsArray.getJSONObject(i).getString("spotlight_poster"));
                 } catch(Exception e) {
