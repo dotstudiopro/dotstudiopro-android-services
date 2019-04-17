@@ -751,6 +751,8 @@ public class FetchChannelUsingSlugService_V1 {
                                             childSpotLightChannelDTO.getPlaylist().add(playlistArray.getJSONObject(j).getString("_id"));
                                             VideoInfoDTO videoInfoDTO = new VideoInfoDTO();
                                             videoInfoDTO.setVideoID(playlistArray.getJSONObject(j).getString("_id"));
+                                            videoInfoDTO.setThumb(playlistArray.getJSONObject(j).getString("thumb"));
+                                            videoInfoDTO.setVideoTitle(playlistArray.getJSONObject(j).getString("title"));
                                             childSpotLightChannelDTO.getVideoInfoDTOList().add(videoInfoDTO);
                                         }
                                     }
