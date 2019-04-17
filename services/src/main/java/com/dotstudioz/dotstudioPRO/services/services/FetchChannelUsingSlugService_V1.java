@@ -725,6 +725,15 @@ public class FetchChannelUsingSlugService_V1 {
                                     e.printStackTrace();
                                 }
 
+                                try {
+                                    String imageString = childChannel.getString("poster");
+                                    imageString = CommonServiceUtils.replaceDotstudioproWithMyspotlightForImage(imageString);
+                                    childSpotLightChannelDTO.setPoster(imageString);
+                                } catch (JSONException e) {
+                                    childSpotLightChannelDTO.setPoster("");
+                                    e.printStackTrace();
+                                }
+
                                 childSpotLightChannelDTO.setTitle(childChannel.getString("title"));
                                 try {
                                     String imageString = childChannel.getString("spotlight_poster");
