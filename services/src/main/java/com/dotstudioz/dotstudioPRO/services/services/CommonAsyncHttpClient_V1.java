@@ -828,6 +828,7 @@ public class CommonAsyncHttpClient_V1 {
             });
         } catch(Exception e) {
             e.printStackTrace();
+            iCommonAsyncHttpClient_V1.onErrorHandler(e.getMessage());
         }
     }
 
@@ -999,7 +1000,8 @@ public class CommonAsyncHttpClient_V1 {
 
     private void handlePostError(Response<Object> response, String api_called_for) {
         try {
-            JSONObject responseBody = new JSONObject("" + (new Gson().toJson(response.errorBody())));
+            JSONObject responseBody = new JSONObject(response.errorBody().string());
+           // JSONObject responseBody = new JSONObject("" + (new Gson().toJson(response.errorBody())));
             if (responseBody != null) {
                 boolean isSuccess = true;
                 try {
@@ -1022,6 +1024,7 @@ public class CommonAsyncHttpClient_V1 {
                                 iCommonAsyncHttpClient_V1.onErrorHandler((responseBody.getString("message") != null) ? responseBody.getString("message") : "ERROR");
                             } catch (Exception e) {
                                 e.printStackTrace();
+                                iCommonAsyncHttpClient_V1.onErrorHandler("ERROR");
                             }
                         }
                     } else {
@@ -1036,10 +1039,10 @@ public class CommonAsyncHttpClient_V1 {
                         iCommonAsyncHttpClient_V1.onErrorHandler(responseBody.getString("error"));
                 }
             } else {
-                //TODO: Handle if the response body is null
+                   iCommonAsyncHttpClient_V1.onErrorHandler("No Response");
             }
         } catch (Exception e) {
-
+            iCommonAsyncHttpClient_V1.onErrorHandler(e.getMessage());
         }
     }
 
