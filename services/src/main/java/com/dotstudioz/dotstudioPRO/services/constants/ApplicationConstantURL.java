@@ -131,6 +131,9 @@ public  class ApplicationConstantURL {
     public  static String SUBSCRIPTION_API = ApplicationConstantURL.API_DOMAIN_S + "/subscriptions/google/parse";
 
     public  static String RECOMMENDATION_CHANNEL_FIRE_TV_API = "/channel/"+COUNTRY_CODE+"/recommendationsamazonfire";
+    public  static String HOMEPAGE_API_FIRE_TV = "/homepage/"+COUNTRY_CODE+"/firetv";
+    public  static String HOMEPAGE_API_ANDROID_TV = "/homepage/"+COUNTRY_CODE+"/androidtv";
+    public  static String HOMEPAGE_API_ANDROID = "/homepage/"+COUNTRY_CODE+"/android";
 
     public void setAPIDomain()
     {
@@ -235,6 +238,10 @@ public  class ApplicationConstantURL {
         ApplicationConstantURL.SUBSCRIPTION_API = ApplicationConstantURL.API_DOMAIN_S + "/subscriptions/google/parse";
 
         ApplicationConstantURL.RECOMMENDATION_CHANNEL_FIRE_TV_API = "/channel/"+COUNTRY_CODE+"/recommendationsamazonfire";
+
+        ApplicationConstantURL.HOMEPAGE_API_FIRE_TV = "/channel/"+COUNTRY_CODE+"/firetv";
+        ApplicationConstantURL.HOMEPAGE_API_ANDROID_TV = "/channel/"+COUNTRY_CODE+"/androidtv";
+        ApplicationConstantURL.HOMEPAGE_API_ANDROID = "/channel/"+COUNTRY_CODE+"/android";
     }
 
 
