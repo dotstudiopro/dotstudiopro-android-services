@@ -239,23 +239,27 @@ public  class ApplicationConstantURL {
 
         ApplicationConstantURL.RECOMMENDATION_CHANNEL_FIRE_TV_API = "/channel/"+COUNTRY_CODE+"/recommendationsamazonfire";
 
-        ApplicationConstantURL.HOMEPAGE_API_FIRE_TV = "/channel/"+COUNTRY_CODE+"/firetv";
-        ApplicationConstantURL.HOMEPAGE_API_ANDROID_TV = "/channel/"+COUNTRY_CODE+"/androidtv";
-        ApplicationConstantURL.HOMEPAGE_API_ANDROID = "/channel/"+COUNTRY_CODE+"/android";
+        ApplicationConstantURL.HOMEPAGE_API_FIRE_TV = "/homepage/"+COUNTRY_CODE+"/firetv";
+        ApplicationConstantURL.HOMEPAGE_API_ANDROID_TV = "/homepage/"+COUNTRY_CODE+"/androidtv";
+        ApplicationConstantURL.HOMEPAGE_API_ANDROID = "/homepage/"+COUNTRY_CODE+"/android";
     }
 
 
 
 
     public void setCountryCode(String countryCode) {
-        this.COUNTRY_CODE = countryCode;
+        this.COUNTRY_CODE                       = countryCode;
 
-        this.CATEGORIES_LIST = ApplicationConstantURL.API_DOMAIN_S + "/categories/"+countryCode+"/";
-        this.CHANNEL = ApplicationConstantURL.API_DOMAIN_S + "/channel/"+countryCode+"/";
-        this.CHANNELS = ApplicationConstantURL.API_DOMAIN_S + "/channels/"+countryCode+"/";
-        this.CHANNELS_DETAILS = ApplicationConstantURL.API_DOMAIN_S + "/channels/"+countryCode+"/";
-        this.VIDEOS_API = ApplicationConstantURL.API_DOMAIN_S + "/channels/"+countryCode+"/";
+        this.CATEGORIES_LIST                    = ApplicationConstantURL.API_DOMAIN_S + "/categories/"+countryCode+"/";
+        this.CHANNEL                            = ApplicationConstantURL.API_DOMAIN_S + "/channel/"+countryCode+"/";
+        this.CHANNELS                           = ApplicationConstantURL.API_DOMAIN_S + "/channels/"+countryCode+"/";
+        this.CHANNELS_DETAILS                   = ApplicationConstantURL.API_DOMAIN_S + "/channels/"+countryCode+"/";
+        this.VIDEOS_API                         = ApplicationConstantURL.API_DOMAIN_S + "/channels/"+countryCode+"/";
         this.RECOMMENDATION_CHANNEL_FIRE_TV_API = ApplicationConstantURL.API_DOMAIN_S + "/channel/"+countryCode+"/recommendationsamazonfire";
+
+        this.HOMEPAGE_API_FIRE_TV               = ApplicationConstantURL.API_DOMAIN_S + "/homepage/"+countryCode+"/firetv";
+        this.HOMEPAGE_API_ANDROID_TV            = ApplicationConstantURL.API_DOMAIN_S + "/homepage/"+countryCode+"/androidtv";
+        this.HOMEPAGE_API_ANDROID               = ApplicationConstantURL.API_DOMAIN_S + "/homepage/"+countryCode+"/android";
 
     }
 
