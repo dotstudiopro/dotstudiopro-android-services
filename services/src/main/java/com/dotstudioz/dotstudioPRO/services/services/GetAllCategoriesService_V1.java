@@ -21,6 +21,9 @@ import java.util.ArrayList;
 public class GetAllCategoriesService_V1 implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
 
     public String PLATFORM = "";
+    public final static String PLATFORM_TYPE_ANDROID = "andriod";
+    public final static String PLATFORM_TYPE_ANDROID_TV = "android_TV";
+    public final static String PLATFORM_TYPE_FIRE_TV = "amazon_fire";
     public IGetAllCategoriesService_V1 iGetAllCategoriesService_V1;
     Context context;
     public interface IGetAllCategoriesService_V1 {

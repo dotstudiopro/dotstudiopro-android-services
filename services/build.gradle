@@ -7,8 +7,8 @@ android {
         multiDexEnabled true
         minSdkVersion 17
         targetSdkVersion 28
-        versionCode 36
-        versionName "1.0.36"
+        versionCode 37
+        versionName "1.0.37"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -49,10 +49,10 @@ dependencies {
     }
 
     //implementation 'com.auth0.android:lock:2.2.1'
-    compile 'com.auth0.android:lock:2.12.1'
+    implementation 'com.auth0.android:lock:2.14.1'
     implementation 'com.auth0:java-jwt:2.1.0'
 
-    implementation 'com.google.code.gson:gson:2.6.2'
+    implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.4.1'
     implementation 'com.squareup.okhttp3:okhttp:3.4.1'
