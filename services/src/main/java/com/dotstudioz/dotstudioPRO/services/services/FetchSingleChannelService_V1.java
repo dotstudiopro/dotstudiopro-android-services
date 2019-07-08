@@ -26,76 +26,31 @@ public class FetchSingleChannelService_V1 implements CommonAsyncHttpClient_V1.IC
     public FetchSingleChannelService_V1.IFetchSingleChannelService_V1 iFetchSingleChannelService_V1;
 
     public FetchSingleChannelService_V1(Context ctx) {
-        if (ctx instanceof FetchSingleChannelService_V1.IFetchSingleChannelService_V1)
+        context = ctx;
+        /*if (ctx instanceof FetchSingleChannelService_V1.IFetchSingleChannelService_V1)
             iFetchSingleChannelService_V1 = (FetchSingleChannelService_V1.IFetchSingleChannelService_V1) ctx;
         else
-            throw new RuntimeException(ctx.toString()+ " must implement IFetchSingleChannelService_V1");
+            throw new RuntimeException(ctx.toString()+ " must implement IFetchSingleChannelService_V1");*/
     }
 
+    // Assign the listener implementing events interface that will receive the events
+    public void setFetchSingleChannelService_V1Listener(IFetchSingleChannelService_V1 callback) {
+        this.iFetchSingleChannelService_V1 = callback;
+    }
+
+    Context context;
     public void fetchSingleChannelData(String channelSlug) {
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.setMaxRetriesAndTimeout(2, 30000);
-        client.setTimeout(30000);
-        client.addHeader("x-access-token", ApplicationConstants.xAccessToken);
+        if (iFetchSingleChannelService_V1 == null)
+            throw new RuntimeException(context.toString()+ " must implement IFetchSingleChannelService_V1 or setFetchSingleChannelService_V1Listener");
 
         try {
             ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
             headerItemsArrayList.add(new ParameterItem("x-access-token", ApplicationConstants.xAccessToken));
 
-            /*ArrayList<ParameterItem> requestParamsArrayList = new ArrayList<>();
-            requestParamsArrayList.add(new ParameterItem("detail", "lean"));
-            requestParamsArrayList.add(new ParameterItem("categories", categoriesSlug));*/
-
             CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, null,
                     ApplicationConstantURL.getInstance().CHANNEL + channelSlug, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
 
-            /*client.get(ApplicationConstantURL.getInstance().CHANNEL + channelSlug, null, new JsonHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject responseBody) {
-
-                    boolean isSuccess = true;
-                    try {
-                        isSuccess = responseBody.getBoolean("success");
-                    } catch (JSONException e) {
-                        //throws error, because on success there is no boolean returned, so
-                        // we are assuming that it is a success
-                        isSuccess = true;
-                    }
-
-                    if (isSuccess) {
-                        fetchSingleChannelData(responseBody);
-                    } else {
-                        if(AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
-                            AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInChannelPageString);
-                            if(AccessTokenHandler.getInstance().foundAnyError)
-                                iFetchSingleChannelService_V1.accessTokenExpired();
-                        }
-                    }
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable error, JSONObject responseBody) {
-                    if (responseBody != null) {
-                        boolean isSuccess = true;
-                        try {
-                            isSuccess = responseBody.getBoolean("success");
-                        } catch (JSONException e) {
-                            //throws error, because on success there is no boolean returned, so
-                            // we are assuming that it is a success
-                            isSuccess = true;
-                        }
-
-                        if (!isSuccess) {
-                            if(AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
-                                AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInChannelPageString);
-                                if(AccessTokenHandler.getInstance().foundAnyError)
-                                    iFetchSingleChannelService_V1.accessTokenExpired();
-                            }
-                        }
-                    }
-                }
-            });*/
-        } catch (Exception e) {
+                    } catch (Exception e) {
             iFetchSingleChannelService_V1.hidePDialog();
         }
     }
