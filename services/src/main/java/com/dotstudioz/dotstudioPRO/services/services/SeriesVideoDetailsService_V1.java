@@ -41,19 +41,29 @@ public class SeriesVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.IC
     List<SpotLightCategoriesDTO> spotLightCategoriesDTOListForSliderShowcase;
     String channelLink = "";
     String channelID = "";
+    Context context;
     public SeriesVideoDetailsService_V1(Context ctx, ArrayList<VideoInfoDTO> videoInfoDTOArrayList,
                                         String channelLink, String channelID) {
         this.videoInfoDTOArrayList = videoInfoDTOArrayList;
         this.channelID = channelID;
         this.channelLink = channelLink;
+        context = ctx;
 
-        if (ctx instanceof SeriesVideoDetailsService_V1.ISeriesVideoDetailsService_V1)
+        /*if (ctx instanceof SeriesVideoDetailsService_V1.ISeriesVideoDetailsService_V1)
             iSeriesVideoDetailsService_V1 = (SeriesVideoDetailsService_V1.ISeriesVideoDetailsService_V1) ctx;
         else
-            throw new RuntimeException(ctx.toString()+ " must implement ISeriesVideoDetailsService_V1");
+            throw new RuntimeException(ctx.toString()+ " must implement ISeriesVideoDetailsService_V1");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setVideoDetailsService_V1Listener(ISeriesVideoDetailsService_V1 callback) {
+        this.iSeriesVideoDetailsService_V1 = callback;
     }
 
     public void fetchSeriesVideoDetails(String API_URL) {
+        if (iSeriesVideoDetailsService_V1 == null)
+            throw new RuntimeException(context.toString()+ " must implement ISeriesVideoDetailsService_V1 or setSeriesVideoDetailsService_V1Listener");
+
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", ApplicationConstants.xAccessToken));
         if(ApplicationConstants.CLIENT_TOKEN != null && ApplicationConstants.CLIENT_TOKEN.length() > 0)

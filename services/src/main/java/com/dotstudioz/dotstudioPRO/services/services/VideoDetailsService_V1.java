@@ -36,19 +36,29 @@ public class VideoDetailsService_V1 implements CommonAsyncHttpClient_V1.ICommonA
     ArrayList<VideoInfoDTO> videoInfoDTOArrayList = null;
     String channelLink = "";
     String channelID = "";
+    Context context;
     public VideoDetailsService_V1(Context ctx, ArrayList<VideoInfoDTO> videoInfoDTOArrayList,
                                   String channelLink, String channelID) {
         this.videoInfoDTOArrayList = videoInfoDTOArrayList;
         this.channelID = channelID;
         this.channelLink = channelLink;
+        context = ctx;
 
-        if (ctx instanceof VideoDetailsService_V1.IVideoDetailsService_V1)
+        /*if (ctx instanceof VideoDetailsService_V1.IVideoDetailsService_V1)
             iVideoDetailsService_V1 = (VideoDetailsService_V1.IVideoDetailsService_V1) ctx;
         else
-            throw new RuntimeException(ctx.toString()+ " must implement IVideoDetailsService_V1");
+            throw new RuntimeException(ctx.toString()+ " must implement IVideoDetailsService_V1");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setVideoDetailsService_V1Listener(IVideoDetailsService_V1 callback) {
+        this.iVideoDetailsService_V1 = callback;
     }
 
     public void fetchVideoDetails(String API_URL) {
+        if (iVideoDetailsService_V1 == null)
+            throw new RuntimeException(context.toString()+ " must implement IVideoDetailsService_V1 or setVideoDetailsService_V1Listener");
+
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", ApplicationConstants.xAccessToken));
         if(ApplicationConstants.CLIENT_TOKEN != null && ApplicationConstants.CLIENT_TOKEN.length() > 0)

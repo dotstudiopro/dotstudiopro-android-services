@@ -31,13 +31,23 @@ public class FetchMissingChannelService_V1 implements CommonAsyncHttpClient_V1.I
     public JSONObject responseJSONOjbect;
 
     public FetchMissingChannelService_V1(Context ctx) {
-        if (ctx instanceof FetchMissingChannelService_V1.IFetchMissingChannelService_V1)
+        context = ctx;
+        /*if (ctx instanceof FetchMissingChannelService_V1.IFetchMissingChannelService_V1)
             iFetchMissingChannelService_V1 = (FetchMissingChannelService_V1.IFetchMissingChannelService_V1) ctx;
         else
-            throw new RuntimeException(ctx.toString()+ " must implement IFetchMissingChannelService_V1");
+            throw new RuntimeException(ctx.toString()+ " must implement IFetchMissingChannelService_V1");*/
     }
 
+    // Assign the listener implementing events interface that will receive the events
+    public void setFetchMissingChannelService_V1Listener(IFetchMissingChannelService_V1 callback) {
+        this.iFetchMissingChannelService_V1 = callback;
+    }
+
+    Context context;
     public void fetchMissingChannelData(String channelSlug, ArrayList<SpotLightCategoriesDTO> spotLightCategoriesDTOArrayList) {
+        if (iFetchMissingChannelService_V1 == null)
+            throw new RuntimeException(context.toString()+ " must implement IFetchMissingChannelService_V1 or setFetchMissingChannelService_V1Listener");
+
         spotLightCategoriesDTOList = spotLightCategoriesDTOArrayList;
         AsyncHttpClient client = new AsyncHttpClient();
         client.setMaxRetriesAndTimeout(2, 30000);

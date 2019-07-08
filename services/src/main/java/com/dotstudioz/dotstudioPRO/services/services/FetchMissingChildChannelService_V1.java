@@ -33,11 +33,13 @@ public class FetchMissingChildChannelService_V1 implements CommonAsyncHttpClient
 
     public JSONObject responseJSONOjbect;
 
+    Context context;
     public FetchMissingChildChannelService_V1(Context ctx) {
-        if (ctx instanceof FetchMissingChildChannelService_V1.IFetchMissingChildChannelService_V1)
+        context = ctx;
+        /*if (ctx instanceof FetchMissingChildChannelService_V1.IFetchMissingChildChannelService_V1)
             iFetchMissingChildChannelService_V1 = (FetchMissingChildChannelService_V1.IFetchMissingChildChannelService_V1) ctx;
         else
-            throw new RuntimeException(ctx.toString()+ " must implement IFetchMissingChildChannelService_V1");
+            throw new RuntimeException(ctx.toString()+ " must implement IFetchMissingChildChannelService_V1");*/
     }
 
     public void initializeParams(String selectedParentCategorySlug, String selectedParentChannelSlug, String channelSlug, ArrayList<SpotLightCategoriesDTO> spotLightCategoriesDTOArrayList, boolean isSeasonClicked, int seasonToLoad) {
@@ -48,7 +50,15 @@ public class FetchMissingChildChannelService_V1 implements CommonAsyncHttpClient
         this.seasonToLoad = seasonToLoad;
     }
 
+    // Assign the listener implementing events interface that will receive the events
+    public void setFetchMissingChildChannelService_V1Listener(IFetchMissingChildChannelService_V1 callback) {
+        this.iFetchMissingChildChannelService_V1 = callback;
+    }
+
     public void fetchMissingChildChannelData(String selectedParentCategorySlug, String selectedParentChannelSlug, String channelSlug, ArrayList<SpotLightCategoriesDTO> spotLightCategoriesDTOArrayList, boolean isSeasonClicked, int seasonToLoad) {
+        if (iFetchMissingChildChannelService_V1 == null)
+            throw new RuntimeException(context.toString()+ " must implement IFetchMissingChildChannelService_V1 or setFetchMissingChildChannelService_V1Listener");
+
         this.selectedParentCategorySlug = selectedParentCategorySlug;
         this.selectedParentChannelSlug = selectedParentChannelSlug;
         this.spotLightCategoriesDTOList = spotLightCategoriesDTOArrayList;
