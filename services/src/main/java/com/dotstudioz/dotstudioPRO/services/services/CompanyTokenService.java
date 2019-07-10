@@ -23,18 +23,26 @@ import retrofit2.Callback;
  * Created by Admin on 23-02-2016.
  */
 public class CompanyTokenService {
-Context mContext;
+    Context mContext;
     public CompanyTokenService.ICompanyTokenService iCompanyTokenService;
 
     public CompanyTokenService(Context ctx) {
         mContext = ctx;
-        if (ctx instanceof CompanyTokenService.ICompanyTokenService)
+        /*if (ctx instanceof CompanyTokenService.ICompanyTokenService)
             iCompanyTokenService = (CompanyTokenService.ICompanyTokenService) ctx;
         else
-            throw new RuntimeException(ctx.toString()+ " must implement ICompanyTokenService");
+            throw new RuntimeException(ctx.toString()+ " must implement ICompanyTokenService");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setCompanyTokenServiceListener(ICompanyTokenService callback) {
+        this.iCompanyTokenService = callback;
     }
 
     public void requestForToken2(String companyKey, String TOKEN_URL) {
+
+        if (iCompanyTokenService == null)
+            throw new RuntimeException(mContext.toString()+ " must implement ICompanyTokenService or setCompanyTokenServiceListener");
 
         final TokenResponseDTO tokenResponseDTO = new TokenResponseDTO();
 
@@ -93,6 +101,9 @@ Context mContext;
     }
     public void requestForToken1(String companyKey, String TOKEN_URL) {
 
+        if (iCompanyTokenService == null)
+            throw new RuntimeException(mContext.toString()+ " must implement ICompanyTokenService or setCompanyTokenServiceListener");
+
         final TokenResponseDTO tokenResponseDTO = new TokenResponseDTO();
 
         // AsyncHttpClient client = new AsyncHttpClient(false,80,443);
@@ -121,6 +132,9 @@ Context mContext;
 
     public void requestForToken(String companyKey,String TOKEN_URL)
     {
+        if (iCompanyTokenService == null)
+            throw new RuntimeException(mContext.toString()+ " must implement ICompanyTokenService or setCompanyTokenServiceListener");
+
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("key",companyKey);
         RestClientInterface restClientInterface = RestClientManager.getClient(ApplicationConstantURL.getInstance().API_DOMAIN_S, null, null, null).create(RestClientInterface.class);

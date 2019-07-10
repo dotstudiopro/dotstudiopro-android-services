@@ -27,15 +27,24 @@ import retrofit2.Callback;
 public class LatitudeAndLongitudeService implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
 
     public LatitudeAndLongitudeInterface latitudeAndLongitudeInterface;
-
+    Context context;
     public LatitudeAndLongitudeService(Context ctx) {
-        if (ctx instanceof LatitudeAndLongitudeInterface)
+        context = ctx;
+        /*if (ctx instanceof LatitudeAndLongitudeInterface)
             latitudeAndLongitudeInterface = (LatitudeAndLongitudeInterface) ctx;
         else
-            throw new RuntimeException(ctx.toString()+ " must implement LatitudeAndLongitudeInterface");
+            throw new RuntimeException(ctx.toString()+ " must implement LatitudeAndLongitudeInterface");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setLatitudeAndLongitudeServiceListener(LatitudeAndLongitudeInterface callback) {
+        this.latitudeAndLongitudeInterface = callback;
     }
 
     public void getLatitudeAndLongitude1(String xAccessToken, String URL) {
+        if (latitudeAndLongitudeInterface == null)
+            throw new RuntimeException(context.toString()+ " must implement LatitudeAndLongitudeInterface or setLatitudeAndLongitudeServiceListener");
+
         AsyncHttpClient client = new AsyncHttpClient();
         client.setMaxRetriesAndTimeout(2, 30000);
         client.setTimeout(30000);
@@ -70,6 +79,9 @@ public class LatitudeAndLongitudeService implements CommonAsyncHttpClient_V1.ICo
         }
     }
     public void getLatitudeAndLongitude(String xAccessToken, String URL) {
+        if (latitudeAndLongitudeInterface == null)
+            throw new RuntimeException(context.toString()+ " must implement LatitudeAndLongitudeInterface or setLatitudeAndLongitudeServiceListener");
+
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));
 
