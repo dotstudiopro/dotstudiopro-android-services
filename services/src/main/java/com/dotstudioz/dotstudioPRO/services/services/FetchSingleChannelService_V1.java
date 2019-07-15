@@ -511,7 +511,16 @@ public class FetchSingleChannelService_V1 implements CommonAsyncHttpClient_V1.IC
                             } catch(Exception em) {
                                 em.printStackTrace();
                             }
-                            if(childChannel.has("channel_type") && childChannel.getString("channel_type").equals("single")) {
+                            boolean isPlaylist = false;
+                            try {
+                                if(childChannel.has("playlist") && childChannel.getJSONArray("playlist") != null &&
+                                        childChannel.getJSONArray("playlist").length() > 0) {
+                                    isPlaylist = true;
+                                }
+                            } catch(Exception e) {
+                                e.printStackTrace();
+                            }
+                            if(!isPlaylist && childChannel.has("channel_type") && childChannel.getString("channel_type").equals("single")) {
                                 try {
                                     try {
                                         if (childChannel.has("video"))
