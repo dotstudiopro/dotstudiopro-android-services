@@ -75,6 +75,7 @@ public class FetchSingleChannelService_V1 implements CommonAsyncHttpClient_V1.IC
     JSONArray channelsArray;
     ArrayList<VideoInfoDTO> missingVideoInfoDTOList;
     String selectedChannelID;
+    String selectedDSProChannelID;
     private void fetchSingleChannelData(JSONObject response) {
         JSONObject obj = response;
 
@@ -99,19 +100,25 @@ public class FetchSingleChannelService_V1 implements CommonAsyncHttpClient_V1.IC
                 spotLightChannelDTO.setId(channel.getString("_id"));
                 selectedChannelID = spotLightChannelDTO.getId();
                 try {
-                    if(channel.has("is_product")) {
-                        if(channel.getString("is_product")!= null) {
-                            if(channel.getString("is_product").equals("true"))
-                                spotLightChannelDTO.setProduct(true);
-                            else
-                                spotLightChannelDTO.setProduct(false);
-                        } else {
-                            spotLightChannelDTO.setProduct(false);
-                        }
-                    }
-                } catch(Exception em) {
-                    em.printStackTrace();
+                    spotLightChannelDTO.setDspro_id(channel.getString("dspro_id"));
+                } catch(Exception e) {
+                    e.printStackTrace();
                 }
+                selectedChannelID = spotLightChannelDTO.getId();
+                //selectedChannelID = spotLightChannelDTO.getDspro_id();
+                selectedDSProChannelID = spotLightChannelDTO.getDspro_id();
+
+                if(channel.has("is_product")) {
+                    if(channel.getString("is_product")!= null) {
+                        if(channel.getString("is_product").equals("true"))
+                            spotLightChannelDTO.setProduct(true);
+                        else
+                            spotLightChannelDTO.setProduct(false);
+                    } else {
+                        spotLightChannelDTO.setProduct(false);
+                    }
+                }
+
                 spotLightChannelDTO.setTitle(channel.getString("title"));
                 try {
                     try {
@@ -182,6 +189,21 @@ public class FetchSingleChannelService_V1 implements CommonAsyncHttpClient_V1.IC
                     spotLightChannelDTO.setChannelDescription(channel.getString("description"));
                 } catch (JSONException e) { /*e.printStackTrace();*/ }
 
+                try {
+                    if(channel.has("is_product")) {
+                        if(channel.getString("is_product")!= null) {
+                            if(channel.getString("is_product").equals("true"))
+                                spotLightChannelDTO.setProduct(true);
+                            else
+                                spotLightChannelDTO.setProduct(false);
+                        } else {
+                            spotLightChannelDTO.setProduct(false);
+                        }
+                    }
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+
                 boolean isChildChannelPresent = false;
                 JSONArray childChannelsArray = new JSONArray();
                 try {
@@ -213,6 +235,92 @@ public class FetchSingleChannelService_V1 implements CommonAsyncHttpClient_V1.IC
                                     try {
                                         spotLightChannelDTO.setVideo(channel.getJSONObject("video").getString("_id"));
                                         isVideo = true;
+
+                                        if(isVideo) {
+                                            try {
+                                                JSONArray playlistArray = channel.getJSONArray("playlist");
+                                                try {
+                                                    spotLightChannelDTO.getPlaylist().add(channel.getJSONObject("video").getString("_id"));
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+
+                                                try {
+                                                    VideoInfoDTO videoInfoDTO = new VideoInfoDTO();
+                                                    videoInfoDTO.setVideoID(channel.getJSONObject("video").getString("_id"));
+                                                    try {
+                                                        videoInfoDTO.setVideoTitle(channel.getJSONObject("video").getString("title"));
+                                                    } catch (Exception e) {
+                                                    }
+                                                    try {
+                                                        videoInfoDTO.setSeriesTitle(channel.getJSONObject("video").getString("seriestitle"));
+                                                    } catch (Exception e) {
+                                                    }
+                                                    try {
+                                                        videoInfoDTO.setDescription(channel.getJSONObject("video").getString("description"));
+                                                    } catch (Exception e) {
+                                                    }
+                                                    try {
+                                                        videoInfoDTO.setThumb(channel.getJSONObject("video").getString("thumb"));
+                                                    } catch (Exception e) {
+                                                    }
+                                                    try {
+                                                        videoInfoDTO.setSlug(channel.getJSONObject("video").getString("slug"));
+                                                    } catch (Exception e) {
+                                                    }
+
+                                                    try {
+                                                        videoInfoDTO.setVideoYear(channel.getJSONObject("video").getString("year"));
+                                                    } catch (JSONException e) {
+                                                        videoInfoDTO.setVideoYear("-");
+                                                    }
+                                                    try {
+                                                        videoInfoDTO.setVideoLanguage(channel.getJSONObject("video").getString("language"));
+                                                    } catch (JSONException e) {
+                                                        videoInfoDTO.setVideoLanguage("-");
+                                                    }
+                                                    try {
+                                                        videoInfoDTO.setCountry(channel.getJSONObject("video").getString("country"));
+                                                    } catch (JSONException e) {
+                                                        videoInfoDTO.setCountry("-");
+                                                    }
+
+                                                    try {
+                                                        String duraString = channel.getJSONObject("video").getString("duration");
+                                                        float floatVideoDuration = Float.parseFloat(duraString);
+                                                        int videoDurationInt = (int) floatVideoDuration;
+                                                        videoInfoDTO.setVideoDuration(videoDurationInt);
+                                                    } catch (Exception e) {
+                                                        videoInfoDTO.setVideoDuration(0);
+                                                    }
+                                                    if (videoInfoDTO.getVideoPausedPoint() == 0) {
+                                                        try {
+                                                            int duraInt = channel.getJSONObject("video").getInt("duration");
+                                                            videoInfoDTO.setVideoDuration(duraInt);
+                                                        } catch (Exception e) {
+                                                            videoInfoDTO.setVideoDuration(0);
+                                                        }
+                                                    }
+                                                    if (videoInfoDTO.getVideoPausedPoint() == 0) {
+                                                        try {
+                                                            float floatVideoDuration = (float) (channel.getJSONObject("video").getDouble("duration"));
+                                                            int videoDurationInt = (int) floatVideoDuration;
+                                                            videoInfoDTO.setVideoDuration(videoDurationInt);
+                                                        } catch (Exception e) {
+                                                            videoInfoDTO.setVideoDuration(0);
+                                                        }
+                                                    }
+
+                                                    spotLightChannelDTO.getVideoInfoDTOList().add(videoInfoDTO);
+                                                    missingVideoInfoDTOList = new ArrayList<>();
+                                                    missingVideoInfoDTOList.add(videoInfoDTO);
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
@@ -223,6 +331,92 @@ public class FetchSingleChannelService_V1 implements CommonAsyncHttpClient_V1.IC
                                 try {
                                     spotLightChannelDTO.setVideo(channel.getJSONObject("video").getString("_id"));
                                     isVideo = true;
+
+                                    if(isVideo) {
+                                        try {
+                                            JSONArray playlistArray = channel.getJSONArray("playlist");
+                                            try {
+                                                spotLightChannelDTO.getPlaylist().add(channel.getJSONObject("video").getString("_id"));
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+
+                                            try {
+                                                VideoInfoDTO videoInfoDTO = new VideoInfoDTO();
+                                                videoInfoDTO.setVideoID(channel.getJSONObject("video").getString("_id"));
+                                                try {
+                                                    videoInfoDTO.setVideoTitle(channel.getJSONObject("video").getString("title"));
+                                                } catch (Exception e) {
+                                                }
+                                                try {
+                                                    videoInfoDTO.setSeriesTitle(channel.getJSONObject("video").getString("seriestitle"));
+                                                } catch (Exception e) {
+                                                }
+                                                try {
+                                                    videoInfoDTO.setDescription(channel.getJSONObject("video").getString("description"));
+                                                } catch (Exception e) {
+                                                }
+                                                try {
+                                                    videoInfoDTO.setThumb(channel.getJSONObject("video").getString("thumb"));
+                                                } catch (Exception e) {
+                                                }
+                                                try {
+                                                    videoInfoDTO.setSlug(channel.getJSONObject("video").getString("slug"));
+                                                } catch (Exception e) {
+                                                }
+
+                                                try {
+                                                    videoInfoDTO.setVideoYear(channel.getJSONObject("video").getString("year"));
+                                                } catch (JSONException e) {
+                                                    videoInfoDTO.setVideoYear("-");
+                                                }
+                                                try {
+                                                    videoInfoDTO.setVideoLanguage(channel.getJSONObject("video").getString("language"));
+                                                } catch (JSONException e) {
+                                                    videoInfoDTO.setVideoLanguage("-");
+                                                }
+                                                try {
+                                                    videoInfoDTO.setCountry(channel.getJSONObject("video").getString("country"));
+                                                } catch (JSONException e) {
+                                                    videoInfoDTO.setCountry("-");
+                                                }
+
+                                                try {
+                                                    String duraString = channel.getJSONObject("video").getString("duration");
+                                                    float floatVideoDuration = Float.parseFloat(duraString);
+                                                    int videoDurationInt = (int) floatVideoDuration;
+                                                    videoInfoDTO.setVideoDuration(videoDurationInt);
+                                                } catch (Exception e) {
+                                                    videoInfoDTO.setVideoDuration(0);
+                                                }
+                                                if (videoInfoDTO.getVideoPausedPoint() == 0) {
+                                                    try {
+                                                        int duraInt = channel.getJSONObject("video").getInt("duration");
+                                                        videoInfoDTO.setVideoDuration(duraInt);
+                                                    } catch (Exception e) {
+                                                        videoInfoDTO.setVideoDuration(0);
+                                                    }
+                                                }
+                                                if (videoInfoDTO.getVideoPausedPoint() == 0) {
+                                                    try {
+                                                        float floatVideoDuration = (float) (channel.getJSONObject("video").getDouble("duration"));
+                                                        int videoDurationInt = (int) floatVideoDuration;
+                                                        videoInfoDTO.setVideoDuration(videoDurationInt);
+                                                    } catch (Exception e) {
+                                                        videoInfoDTO.setVideoDuration(0);
+                                                    }
+                                                }
+
+                                                spotLightChannelDTO.getVideoInfoDTOList().add(videoInfoDTO);
+                                                missingVideoInfoDTOList = new ArrayList<>();
+                                                missingVideoInfoDTOList.add(videoInfoDTO);
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -245,6 +439,8 @@ public class FetchSingleChannelService_V1 implements CommonAsyncHttpClient_V1.IC
                                     videoInfoDTO.setVideoTitle(playlistArray.getJSONObject(j).getString("title"));
                                 if(((JSONObject) playlistArray.get(j)).has("seriestitle"))
                                     videoInfoDTO.setSeriesTitle(((JSONObject) playlistArray.get(j)).getString("seriestitle"));
+                                if(((JSONObject) playlistArray.get(j)).has("description"))
+                                    videoInfoDTO.setDescription(((JSONObject) playlistArray.get(j)).getString("description"));
 
                                 String casting = "";
                                 String writterDirector = "";
@@ -286,14 +482,13 @@ public class FetchSingleChannelService_V1 implements CommonAsyncHttpClient_V1.IC
                                 missingVideoInfoDTOList.add(videoInfoDTO);
 
                             }
-
-                            spotLightChannelDTO.setVideoInfoDTOList(missingVideoInfoDTOList);
                             isPlaylist = true;
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
 
+                    spotLightChannelDTO.setVideoInfoDTOList(missingVideoInfoDTOList);
                     //channelDTOList.add(spotLightChannelDTO);
                 } else {
                     spotLightChannelDTO.setIsSeasonsPresent(true);
@@ -302,55 +497,191 @@ public class FetchSingleChannelService_V1 implements CommonAsyncHttpClient_V1.IC
                         JSONObject childChannel = childChannelsArray.getJSONObject(c);
                         SpotLightChannelDTO childSpotLightChannelDTO = new SpotLightChannelDTO();
                         try {
-                            if(childChannel.has("is_product")) {
-                                if(childChannel.getString("is_product")!= null) {
-                                    if(childChannel.getString("is_product").equals("true"))
-                                        childSpotLightChannelDTO.setProduct(true);
-                                    else
+                            try {
+                                if(childChannel.has("is_product")) {
+                                    if(childChannel.getString("is_product")!= null) {
+                                        if(childChannel.getString("is_product").equals("true"))
+                                            childSpotLightChannelDTO.setProduct(true);
+                                        else
+                                            childSpotLightChannelDTO.setProduct(false);
+                                    } else {
                                         childSpotLightChannelDTO.setProduct(false);
-                                } else {
-                                    childSpotLightChannelDTO.setProduct(false);
-                                }
-                            }
-                        } catch(Exception em) {
-                            em.printStackTrace();
-                        }
-                        if (childChannel.getJSONArray("playlist").length() > 0) {
-                            if(childChannel.has("video") && childChannel.getJSONObject("video").has("_id"))
-                                childSpotLightChannelDTO.setId(childChannel.getJSONObject("video").getString("_id"));
-                            childSpotLightChannelDTO.setCompany(childChannel.getString("company").toUpperCase());
-                            try {
-                                String imageString = childChannel.getString("videos_thumb");
-                                imageString = CommonServiceUtils.replaceDotstudioproWithMyspotlightForImage(imageString);
-                                childSpotLightChannelDTO.setImage(imageString);
-                            } catch (JSONException e) {
-                                childSpotLightChannelDTO.setImage("");
-                                e.printStackTrace();
-                            }
-
-                            childSpotLightChannelDTO.setTitle(childChannel.getString("title"));
-                            try {
-                                String imageString = childChannel.getString("spotlight_poster");
-                                imageString = CommonServiceUtils.replaceDotstudioproWithMyspotlightForImage(imageString);
-                                childSpotLightChannelDTO.setSpotlightImage(imageString);
-                            } catch (JSONException e) {
-                                childSpotLightChannelDTO.setSpotlightImage("");
-                                e.printStackTrace();
-                            }
-                            childSpotLightChannelDTO.setSlug(childChannel.getString("slug"));
-                            try {
-                                JSONArray playlistArray = childChannel.getJSONArray("playlist");
-                                for (int j = 0; j < playlistArray.length(); j++) {
-                                    if (playlistArray.getJSONObject(j).getString("_id").length() > 0) {
-                                        childSpotLightChannelDTO.getPlaylist().add(playlistArray.getJSONObject(j).getString("_id"));
-                                        VideoInfoDTO videoInfoDTO = new VideoInfoDTO();
-                                        videoInfoDTO.setVideoID(playlistArray.getJSONObject(j).getString("_id"));
-                                        childSpotLightChannelDTO.getVideoInfoDTOList().add(videoInfoDTO);
                                     }
                                 }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                            } catch(Exception em) {
+                                em.printStackTrace();
                             }
+                            if(childChannel.has("channel_type") && childChannel.getString("channel_type").equals("single")) {
+                                try {
+                                    try {
+                                        if (childChannel.has("video"))
+                                            childSpotLightChannelDTO.setVideo(childChannel.getString("video"));
+                                    } catch(Exception ep) {
+                                        ep.printStackTrace();
+                                    }
+                                    try {
+                                        if (childChannel.has("slug"))
+                                            childSpotLightChannelDTO.setSlug(childChannel.getString("slug"));
+                                    } catch(Exception ep) {
+                                        ep.printStackTrace();
+                                    }
+                                    try {
+                                        if (childChannel.has("poster"))
+                                            childSpotLightChannelDTO.setPoster(childChannel.getString("poster"));
+                                    } catch(Exception ep) {
+                                        ep.printStackTrace();
+                                    }
+                                    try {
+                                        if (childChannel.has("spotlight_poster"))
+                                            childSpotLightChannelDTO.setSpotlightImage(childChannel.getString("spotlight_poster"));
+                                    } catch(Exception ep) {
+                                        ep.printStackTrace();
+                                    }
+                                    try {
+                                        if (childChannel.has("company"))
+                                            childSpotLightChannelDTO.setCompany(childChannel.getString("company"));
+                                    } catch(Exception ep) {
+                                        ep.printStackTrace();
+                                    }
+                                    try {
+                                        if (childChannel.has("channel_url"))
+                                            childSpotLightChannelDTO.setLink(childChannel.getString("channel_url"));
+                                    } catch(Exception ep) {
+                                        ep.printStackTrace();
+                                    }
+                                    try {
+                                        if (childChannel.has("title"))
+                                            childSpotLightChannelDTO.setTitle(childChannel.getString("title"));
+                                    } catch(Exception ep) {
+                                        ep.printStackTrace();
+                                    }
+                                    try {
+                                        if (childChannel.has("channel_logo"))
+                                            childSpotLightChannelDTO.setChannelLogo(childChannel.getString("channel_logo"));
+                                    } catch(Exception ep) {
+                                        ep.printStackTrace();
+                                    }
+                                    try {
+                                        if (childChannel.has("dspro_id"))
+                                            childSpotLightChannelDTO.setDspro_id(childChannel.getString("dspro_id"));
+                                    } catch(Exception ep) {
+                                        ep.printStackTrace();
+                                    }
+                                } catch(Exception e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                if (childChannel.has("playlist") && childChannel.getJSONArray("playlist") != null &&
+                                        childChannel.getJSONArray("playlist").length() > 0) {
+                                    if (childChannel.has("video") && childChannel.getJSONObject("video").has("_id"))
+                                        childSpotLightChannelDTO.setId(childChannel.getJSONObject("video").getString("_id"));
+                                    childSpotLightChannelDTO.setCompany(childChannel.getString("company").toUpperCase());
+                                    if (childChannel.has("dspro_id"))
+                                        childSpotLightChannelDTO.setDspro_id(childChannel.getString("dspro_id"));
+                                    try {
+                                        String imageString = childChannel.getString("videos_thumb");
+                                        imageString = CommonServiceUtils.replaceDotstudioproWithMyspotlightForImage(imageString);
+                                        childSpotLightChannelDTO.setImage(imageString);
+                                    } catch (JSONException e) {
+                                        childSpotLightChannelDTO.setImage("");
+                                        e.printStackTrace();
+                                    }
+
+                                    childSpotLightChannelDTO.setTitle(childChannel.getString("title"));
+                                    try {
+                                        String imageString = childChannel.getString("spotlight_poster");
+                                        imageString = CommonServiceUtils.replaceDotstudioproWithMyspotlightForImage(imageString);
+                                        childSpotLightChannelDTO.setSpotlightImage(imageString);
+                                    } catch (JSONException e) {
+                                        childSpotLightChannelDTO.setSpotlightImage("");
+                                        e.printStackTrace();
+                                    }
+                                    childSpotLightChannelDTO.setSlug(childChannel.getString("slug"));
+                                    try {
+                                        JSONArray playlistArray = childChannel.getJSONArray("playlist");
+                                        for (int j = 0; j < playlistArray.length(); j++) {
+                                            if (playlistArray.getJSONObject(j).getString("_id").length() > 0) {
+                                                childSpotLightChannelDTO.getPlaylist().add(playlistArray.getJSONObject(j).getString("_id"));
+                                                try {
+                                                    VideoInfoDTO videoInfoDTO = new VideoInfoDTO();
+                                                    videoInfoDTO.setVideoID(playlistArray.getJSONObject(j).getString("_id"));
+                                                    videoInfoDTO.setVideoID(playlistArray.getJSONObject(j).getString("_id"));
+                                                    try {
+                                                        videoInfoDTO.setVideoTitle(playlistArray.getJSONObject(j).getString("title"));
+                                                    } catch (Exception e) {
+                                                    }
+                                                    try {
+                                                        videoInfoDTO.setSeriesTitle(playlistArray.getJSONObject(j).getString("seriestitle"));
+                                                    } catch (Exception e) {
+                                                    }
+                                                    try {
+                                                        videoInfoDTO.setDescription(playlistArray.getJSONObject(j).getString("description"));
+                                                    } catch (Exception e) {
+                                                    }
+                                                    try {
+                                                        videoInfoDTO.setThumb(playlistArray.getJSONObject(j).getString("thumb"));
+                                                    } catch (Exception e) {
+                                                    }
+                                                    try {
+                                                        videoInfoDTO.setSlug(playlistArray.getJSONObject(j).getString("slug"));
+                                                    } catch (Exception e) {
+                                                    }
+
+                                                    try {
+                                                        videoInfoDTO.setVideoYear(playlistArray.getJSONObject(j).getString("year"));
+                                                    } catch (JSONException e) {
+                                                        videoInfoDTO.setVideoYear("-");
+                                                    }
+                                                    try {
+                                                        videoInfoDTO.setVideoLanguage(playlistArray.getJSONObject(j).getString("language"));
+                                                    } catch (JSONException e) {
+                                                        videoInfoDTO.setVideoLanguage("-");
+                                                    }
+                                                    try {
+                                                        videoInfoDTO.setCountry(playlistArray.getJSONObject(j).getString("country"));
+                                                    } catch (JSONException e) {
+                                                        videoInfoDTO.setCountry("-");
+                                                    }
+
+                                                    try {
+                                                        String duraString = playlistArray.getJSONObject(j).getString("duration");
+                                                        float floatVideoDuration = Float.parseFloat(duraString);
+                                                        int videoDurationInt = (int) floatVideoDuration;
+                                                        videoInfoDTO.setVideoDuration(videoDurationInt);
+                                                    } catch (Exception e) {
+                                                        videoInfoDTO.setVideoDuration(0);
+                                                    }
+                                                    if (videoInfoDTO.getVideoPausedPoint() == 0) {
+                                                        try {
+                                                            int duraInt = playlistArray.getJSONObject(j).getInt("duration");
+                                                            videoInfoDTO.setVideoDuration(duraInt);
+                                                        } catch (Exception e) {
+                                                            videoInfoDTO.setVideoDuration(0);
+                                                        }
+                                                    }
+                                                    if (videoInfoDTO.getVideoPausedPoint() == 0) {
+                                                        try {
+                                                            float floatVideoDuration = (float) (playlistArray.getJSONObject(j).getDouble("duration"));
+                                                            int videoDurationInt = (int) floatVideoDuration;
+                                                            videoInfoDTO.setVideoDuration(videoDurationInt);
+                                                        } catch (Exception e) {
+                                                            videoInfoDTO.setVideoDuration(0);
+                                                        }
+                                                    }
+
+                                                    childSpotLightChannelDTO.getVideoInfoDTOList().add(videoInfoDTO);
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        } catch(Exception e) {
+                            e.printStackTrace();
                         }
                         spotLightChannelDTO.getSeasonsList().add(childSpotLightChannelDTO);
                     }
