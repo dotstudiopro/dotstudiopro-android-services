@@ -30,15 +30,31 @@ import retrofit2.Callback;
 public class RecommendationService {
     public RecommendationService.IRecommendationService iRecommendationService;
 
+    Context context;
     public RecommendationService(Context ctx) {
+        context = ctx;
         if (ctx instanceof RecommendationService.IRecommendationService)
             iRecommendationService = (RecommendationService.IRecommendationService) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IRecommendationService");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IRecommendationService");*/
     }
 
+    // Assign the listener implementing events interface that will receive the events
+    public void setRecommendationServiceListener(IRecommendationService callback) {
+        this.iRecommendationService = callback;
+    }
 
     public void getRecommendation(String xAccessToken, String RECOMMENDATION_API, String id, int size, int from) {
+
+        if (iRecommendationService == null) {
+            if (context != null && context instanceof RecommendationService.IRecommendationService) {
+                iRecommendationService = (RecommendationService.IRecommendationService) context;
+            }
+            if (iRecommendationService == null) {
+                throw new RuntimeException(context.toString()+ " must implement IRecommendationService or setRecommendationServiceListener");
+            }
+        }
+
 
         RestClientInterface restClientInterface = RestClientManager.getClient(ApplicationConstantURL.getInstance().API_DOMAIN_S, xAccessToken, null, null).create(RestClientInterface.class);
         Call<Object> call1 = restClientInterface.getRecommendation(RECOMMENDATION_API,id,size,from);

@@ -28,9 +28,9 @@ public class CompanyTokenService {
 
     public CompanyTokenService(Context ctx) {
         mContext = ctx;
-        /*if (ctx instanceof CompanyTokenService.ICompanyTokenService)
+        if (ctx instanceof CompanyTokenService.ICompanyTokenService)
             iCompanyTokenService = (CompanyTokenService.ICompanyTokenService) ctx;
-        else
+        /*else
             throw new RuntimeException(ctx.toString()+ " must implement ICompanyTokenService");*/
     }
 
@@ -41,8 +41,14 @@ public class CompanyTokenService {
 
     public void requestForToken2(String companyKey, String TOKEN_URL) {
 
-        if (iCompanyTokenService == null)
-            throw new RuntimeException(mContext.toString()+ " must implement ICompanyTokenService or setCompanyTokenServiceListener");
+        if (iCompanyTokenService == null) {
+            if (mContext != null && mContext instanceof CompanyTokenService.ICompanyTokenService) {
+                iCompanyTokenService = (CompanyTokenService.ICompanyTokenService) mContext;
+            }
+            if (iCompanyTokenService == null) {
+                throw new RuntimeException(mContext.toString()+ " must implement ICompanyTokenService or setCompanyTokenServiceListener");
+            }
+        }
 
         final TokenResponseDTO tokenResponseDTO = new TokenResponseDTO();
 
@@ -101,8 +107,14 @@ public class CompanyTokenService {
     }
     public void requestForToken1(String companyKey, String TOKEN_URL) {
 
-        if (iCompanyTokenService == null)
-            throw new RuntimeException(mContext.toString()+ " must implement ICompanyTokenService or setCompanyTokenServiceListener");
+        if (iCompanyTokenService == null) {
+            if (mContext != null && mContext instanceof CompanyTokenService.ICompanyTokenService) {
+                iCompanyTokenService = (CompanyTokenService.ICompanyTokenService) mContext;
+            }
+            if (iCompanyTokenService == null) {
+                throw new RuntimeException(mContext.toString()+ " must implement ICompanyTokenService or setCompanyTokenServiceListener");
+            }
+        }
 
         final TokenResponseDTO tokenResponseDTO = new TokenResponseDTO();
 
@@ -132,8 +144,14 @@ public class CompanyTokenService {
 
     public void requestForToken(String companyKey,String TOKEN_URL)
     {
-        if (iCompanyTokenService == null)
-            throw new RuntimeException(mContext.toString()+ " must implement ICompanyTokenService or setCompanyTokenServiceListener");
+        if (iCompanyTokenService == null) {
+            if (mContext != null && mContext instanceof CompanyTokenService.ICompanyTokenService) {
+                iCompanyTokenService = (CompanyTokenService.ICompanyTokenService) mContext;
+            }
+            if (iCompanyTokenService == null) {
+                throw new RuntimeException(mContext.toString()+ " must implement ICompanyTokenService or setCompanyTokenServiceListener");
+            }
+        }
 
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("key",companyKey);

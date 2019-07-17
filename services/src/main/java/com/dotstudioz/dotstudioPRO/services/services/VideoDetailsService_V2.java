@@ -36,6 +36,7 @@ public class VideoDetailsService_V2 implements CommonAsyncHttpClient_V1.ICommonA
     ArrayList<VideoInfoDTO> videoInfoDTOArrayList = null;
     String channelLink = "";
     String channelID = "";
+    Context context;
     public VideoDetailsService_V2(Context ctx, ArrayList<VideoInfoDTO> videoInfoDTOArrayList,
                                   String channelLink, String channelID) {
         this.videoInfoDTOArrayList = videoInfoDTOArrayList;
@@ -44,11 +45,25 @@ public class VideoDetailsService_V2 implements CommonAsyncHttpClient_V1.ICommonA
 
         if (ctx instanceof VideoDetailsService_V2.IVideoDetailsService_V2)
             iVideoDetailsService_V2 = (VideoDetailsService_V2.IVideoDetailsService_V2) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IVideoDetailsService_V1");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IVideoDetailsService_V1");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setVideoDetailsService_V2Listener(IVideoDetailsService_V2 callback) {
+        this.iVideoDetailsService_V2 = callback;
     }
 
     public void fetchVideoDetails(String API_URL) {
+        if (iVideoDetailsService_V2 == null) {
+            if (context != null && context instanceof VideoDetailsService_V2.IVideoDetailsService_V2) {
+                iVideoDetailsService_V2 = (VideoDetailsService_V2.IVideoDetailsService_V2) context;
+            }
+            if (iVideoDetailsService_V2 == null) {
+                throw new RuntimeException(context.toString()+ " must implement IVideoDetailsService_V2 or setVideoDetailsService_V2Listener");
+            }
+        }
+
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", ApplicationConstants.xAccessToken));
         if(ApplicationConstants.CLIENT_TOKEN != null && ApplicationConstants.CLIENT_TOKEN.length() > 0)

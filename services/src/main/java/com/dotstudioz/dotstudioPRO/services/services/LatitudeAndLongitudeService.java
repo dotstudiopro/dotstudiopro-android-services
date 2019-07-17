@@ -30,9 +30,9 @@ public class LatitudeAndLongitudeService implements CommonAsyncHttpClient_V1.ICo
     Context context;
     public LatitudeAndLongitudeService(Context ctx) {
         context = ctx;
-        /*if (ctx instanceof LatitudeAndLongitudeInterface)
+        if (ctx instanceof LatitudeAndLongitudeInterface)
             latitudeAndLongitudeInterface = (LatitudeAndLongitudeInterface) ctx;
-        else
+        /*else
             throw new RuntimeException(ctx.toString()+ " must implement LatitudeAndLongitudeInterface");*/
     }
 
@@ -42,8 +42,14 @@ public class LatitudeAndLongitudeService implements CommonAsyncHttpClient_V1.ICo
     }
 
     public void getLatitudeAndLongitude1(String xAccessToken, String URL) {
-        if (latitudeAndLongitudeInterface == null)
-            throw new RuntimeException(context.toString()+ " must implement LatitudeAndLongitudeInterface or setLatitudeAndLongitudeServiceListener");
+        if (latitudeAndLongitudeInterface == null) {
+            if (context != null && context instanceof LatitudeAndLongitudeService.LatitudeAndLongitudeInterface) {
+                latitudeAndLongitudeInterface = (LatitudeAndLongitudeService.LatitudeAndLongitudeInterface) context;
+            }
+            if (latitudeAndLongitudeInterface == null) {
+                throw new RuntimeException(context.toString()+ " must implement LatitudeAndLongitudeInterface or setLatitudeAndLongitudeServiceListener");
+            }
+        }
 
         AsyncHttpClient client = new AsyncHttpClient();
         client.setMaxRetriesAndTimeout(2, 30000);
@@ -79,8 +85,14 @@ public class LatitudeAndLongitudeService implements CommonAsyncHttpClient_V1.ICo
         }
     }
     public void getLatitudeAndLongitude(String xAccessToken, String URL) {
-        if (latitudeAndLongitudeInterface == null)
-            throw new RuntimeException(context.toString()+ " must implement LatitudeAndLongitudeInterface or setLatitudeAndLongitudeServiceListener");
+        if (latitudeAndLongitudeInterface == null) {
+            if (context != null && context instanceof LatitudeAndLongitudeService.LatitudeAndLongitudeInterface) {
+                latitudeAndLongitudeInterface = (LatitudeAndLongitudeService.LatitudeAndLongitudeInterface) context;
+            }
+            if (latitudeAndLongitudeInterface == null) {
+                throw new RuntimeException(context.toString()+ " must implement LatitudeAndLongitudeInterface or setLatitudeAndLongitudeServiceListener");
+            }
+        }
 
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));

@@ -44,9 +44,9 @@ public class VideoDetailsService_V1 implements CommonAsyncHttpClient_V1.ICommonA
         this.channelLink = channelLink;
         context = ctx;
 
-        /*if (ctx instanceof VideoDetailsService_V1.IVideoDetailsService_V1)
+        if (ctx instanceof VideoDetailsService_V1.IVideoDetailsService_V1)
             iVideoDetailsService_V1 = (VideoDetailsService_V1.IVideoDetailsService_V1) ctx;
-        else
+        /*else
             throw new RuntimeException(ctx.toString()+ " must implement IVideoDetailsService_V1");*/
     }
 
@@ -56,8 +56,14 @@ public class VideoDetailsService_V1 implements CommonAsyncHttpClient_V1.ICommonA
     }
 
     public void fetchVideoDetails(String API_URL) {
-        if (iVideoDetailsService_V1 == null)
-            throw new RuntimeException(context.toString()+ " must implement IVideoDetailsService_V1 or setVideoDetailsService_V1Listener");
+        if (iVideoDetailsService_V1 == null) {
+            if (context != null && context instanceof VideoDetailsService_V1.IVideoDetailsService_V1) {
+                iVideoDetailsService_V1 = (VideoDetailsService_V1.IVideoDetailsService_V1) context;
+            }
+            if (iVideoDetailsService_V1 == null) {
+                throw new RuntimeException(context.toString()+ " must implement IVideoDetailsService_V1 or setVideoDetailsService_V1Listener");
+            }
+        }
 
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", ApplicationConstants.xAccessToken));
@@ -69,6 +75,15 @@ public class VideoDetailsService_V1 implements CommonAsyncHttpClient_V1.ICommonA
 
     }
     public void fetchVideoDetailsUsingSlug(String API_URL) {
+        if (iVideoDetailsService_V1 == null) {
+            if (context != null && context instanceof VideoDetailsService_V1.IVideoDetailsService_V1) {
+                iVideoDetailsService_V1 = (VideoDetailsService_V1.IVideoDetailsService_V1) context;
+            }
+            if (iVideoDetailsService_V1 == null) {
+                throw new RuntimeException(context.toString()+ " must implement IVideoDetailsService_V1 or setVideoDetailsService_V1Listener");
+            }
+        }
+
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", ApplicationConstants.xAccessToken));
         if(ApplicationConstants.CLIENT_TOKEN != null && ApplicationConstants.CLIENT_TOKEN.length() > 0)

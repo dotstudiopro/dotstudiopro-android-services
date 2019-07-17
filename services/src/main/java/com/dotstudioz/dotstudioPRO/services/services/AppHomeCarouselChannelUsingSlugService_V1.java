@@ -28,15 +28,30 @@ import cz.msebera.android.httpclient.Header;
 public class AppHomeCarouselChannelUsingSlugService_V1 implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
 
     public IFetchChannelUsingSlugService_V1 iFetchChannelUsingSlugService_V1;
+    Context context;
 
     public AppHomeCarouselChannelUsingSlugService_V1(Context ctx) {
         if (ctx instanceof IFetchChannelUsingSlugService_V1)
             iFetchChannelUsingSlugService_V1 = (IFetchChannelUsingSlugService_V1) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IFetchChannelUsingSlugService_V1");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IFetchChannelUsingSlugService_V1");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setFetchChannelUsingSlugService_V1Listener(IFetchChannelUsingSlugService_V1 callback) {
+        this.iFetchChannelUsingSlugService_V1 = callback;
     }
 
     public void fetchChannelData(String channelSlug, String xAccessToken) {
+        if (iFetchChannelUsingSlugService_V1 == null) {
+            if (context != null && context instanceof FetchChannelUsingSlugService_V1.IFetchChannelUsingSlugService_V1) {
+                iFetchChannelUsingSlugService_V1 = (AppHomeCarouselChannelUsingSlugService_V1.IFetchChannelUsingSlugService_V1) context;
+            }
+            if (iFetchChannelUsingSlugService_V1 == null) {
+                throw new RuntimeException(context.toString()+ " must implement IFetchChannelUsingSlugService_V1 or setFetchChannelUsingSlugService_V1Listener");
+            }
+        }
+
         AsyncHttpClient client = new AsyncHttpClient();
         client.setMaxRetriesAndTimeout(2, 30000);
         client.setTimeout(30000);
@@ -702,74 +717,6 @@ public class AppHomeCarouselChannelUsingSlugService_V1 implements CommonAsyncHtt
         }
     }
 
-
-
-
-
-
-
-    /*public void fetchOriginalChannelData(String channelSlug, String xAccessToken) {
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.setMaxRetriesAndTimeout(2, 30000);
-        client.setTimeout(30000);
-        client.addHeader("x-access-token", xAccessToken);
-
-        iFetchChannelUsingSlugService_V1.showProgress("Loading");
-        try {
-            client.get(ApplicationConstantURL.getInstance().CHANNEL + channelSlug, null, new JsonHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject responseBody) {
-
-                    boolean isSuccess = true;
-                    try {
-                        isSuccess = responseBody.getBoolean("success");
-                    } catch (JSONException e) {
-                        //throws error, because on success there is no boolean returned, so
-                        // we are assuming that it is a success
-                        isSuccess = true;
-                    }
-
-                    if (isSuccess) {
-                        fetchOriginalChannelResponse(responseBody);
-                    } else {
-                        if(AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
-                            AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInChannelPageString);
-                            if(AccessTokenHandler.getInstance().foundAnyError)
-                                iFetchChannelUsingSlugService_V1.accessTokenExpired();
-                        }
-                    }
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable error, JSONObject responseBody) {
-                    iFetchChannelUsingSlugService_V1.hidePDialog();
-                    if (responseBody != null) {
-                        boolean isSuccess = true;
-                        try {
-                            isSuccess = responseBody.getBoolean("success");
-                        } catch (JSONException e) {
-                            //throws error, because on success there is no boolean returned, so
-                            // we are assuming that it is a success
-                            isSuccess = true;
-                        }
-
-                        if (!isSuccess) {
-                            if(AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
-                                AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInChannelPageString);
-                                if(AccessTokenHandler.getInstance().foundAnyError)
-                                    iFetchChannelUsingSlugService_V1.accessTokenExpired();
-                            }
-                        }
-                    }
-                }
-            });
-        } catch (Exception e) {
-            iFetchChannelUsingSlugService_V1.hidePDialog();
-        }
-    }
-    private void fetchOriginalChannelResponse(JSONObject response) {
-        iFetchChannelUsingSlugService_V1.postProcessingChannelDataServiceResponse(response);
-    }*/
 
     public interface IFetchChannelUsingSlugService_V1 {
         void showProgress(String message);
