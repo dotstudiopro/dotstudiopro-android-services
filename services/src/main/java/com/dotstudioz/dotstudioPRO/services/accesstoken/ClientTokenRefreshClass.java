@@ -11,6 +11,7 @@ import com.auth0.android.callback.BaseCallback;
 import com.auth0.android.result.Delegation;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
+import com.dotstudioz.dotstudioPRO.services.services.VideoPausedPointService_V1;
 import com.dotstudioz.dotstudioPRO.services.services.retrofit.RestClientInterface;
 import com.dotstudioz.dotstudioPRO.services.services.retrofit.RestClientManager;
 import com.google.gson.Gson;
@@ -32,11 +33,14 @@ public class ClientTokenRefreshClass {
 
     public IClientTokenRefresh iClientTokenRefresh;
 
+    private Context context;
+
     public ClientTokenRefreshClass(Context ctx) {
+        context = ctx;
         if (ctx instanceof ClientTokenRefreshClass.IClientTokenRefresh)
             iClientTokenRefresh = (ClientTokenRefreshClass.IClientTokenRefresh) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IClientTokenRefresh");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IClientTokenRefresh");*/
     }
 
 
@@ -57,10 +61,23 @@ public class ClientTokenRefreshClass {
         {
             iClientTokenRefresh.clientTokenError(e.getMessage());
         }
-
-
     }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setClientTokenRefreshListener(ClientTokenRefreshClass.IClientTokenRefresh callback) {
+        this.iClientTokenRefresh = callback;
+    }
+
     public void refreshExistingClientToken(String xAccessToken, String xClientToken) {
+        if (iClientTokenRefresh == null) {
+            if (context != null && context instanceof ClientTokenRefreshClass.IClientTokenRefresh) {
+                iClientTokenRefresh = (ClientTokenRefreshClass.IClientTokenRefresh) context;
+            }
+            if (iClientTokenRefresh == null) {
+                throw new RuntimeException(context.toString()+ " must implement IClientTokenRefresh or setClientTokenRefreshListener");
+            }
+        }
+
 
         try {
             RestClientInterface restClientInterface = RestClientManager.getClient(ApplicationConstantURL.getInstance().API_DOMAIN_S, xAccessToken, xClientToken, null).create(RestClientInterface.class);

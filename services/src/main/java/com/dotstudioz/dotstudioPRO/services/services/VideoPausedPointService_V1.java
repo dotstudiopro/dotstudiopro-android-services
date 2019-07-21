@@ -29,6 +29,7 @@ public class VideoPausedPointService_V1 implements CommonAsyncHttpClient_V1.ICom
     public boolean isSavingTheData = false;
     public boolean isCalledInBrowsePage = false;
     public boolean isCalledInRecommendation = false;
+    private Context context;
 
     public VideoPausedPointService_V1.IVideoPausedPointService_V1 iVideoPausedPointService_V1;
     public interface IVideoPausedPointService_V1 {
@@ -44,21 +45,37 @@ public class VideoPausedPointService_V1 implements CommonAsyncHttpClient_V1.ICom
     public boolean isForSeries = false;
 
     public VideoPausedPointService_V1(Context ctx) {
+        context = ctx;
         if (ctx instanceof VideoPausedPointService_V1.IVideoPausedPointService_V1)
             iVideoPausedPointService_V1 = (VideoPausedPointService_V1.IVideoPausedPointService_V1) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IVideoPausedPointService_V1");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IVideoPausedPointService_V1");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setVideoPausedPointService_V1Listener(IVideoPausedPointService_V1 callback) {
+        this.iVideoPausedPointService_V1 = callback;
     }
 
     public VideoPausedPointService_V1(Context ctx, boolean calledInRecommendation) {
+        context = ctx;
         isCalledInRecommendation = calledInRecommendation;
         if (ctx instanceof VideoPausedPointService_V1.IVideoPausedPointService_V1)
             iVideoPausedPointService_V1 = (VideoPausedPointService_V1.IVideoPausedPointService_V1) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IVideoPausedPointService_V1");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IVideoPausedPointService_V1");*/
     }
 
     public void checkForVideoPlaybackStatus(String API_URL, boolean isForSeries, ArrayList<String> videoIDsArrayList, boolean calledInBrowse) {
+        if (iVideoPausedPointService_V1 == null) {
+            if (context != null && context instanceof VideoPausedPointService_V1.IVideoPausedPointService_V1) {
+                iVideoPausedPointService_V1 = (VideoPausedPointService_V1.IVideoPausedPointService_V1) context;
+            }
+            if (iVideoPausedPointService_V1 == null) {
+                throw new RuntimeException(context.toString()+ " must implement IVideoPausedPointService_V1 or setVideoPausedPointService_V1Listener");
+            }
+        }
+
         this.isForSeries = isForSeries;
         this.isCalledInBrowsePage = calledInBrowse;
 
