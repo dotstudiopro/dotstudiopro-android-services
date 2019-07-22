@@ -479,6 +479,32 @@ public class FetchSingleChannelService_V1 implements CommonAsyncHttpClient_V1.IC
                                 if(((JSONObject) playlistArray.get(j)).has("slug"))
                                     videoInfoDTO.setSlug(playlistArray.getJSONObject(j).getString("slug"));
 
+                                try {
+                                    String duraString = playlistArray.getJSONObject(j).getString("duration");
+                                    float floatVideoDuration = Float.parseFloat(duraString);
+                                    int videoDurationInt = (int) floatVideoDuration;
+                                    videoInfoDTO.setVideoDuration(videoDurationInt);
+                                } catch (Exception e) {
+                                    videoInfoDTO.setVideoDuration(0);
+                                }
+                                if (videoInfoDTO.getVideoPausedPoint() == 0) {
+                                    try {
+                                        int duraInt = playlistArray.getJSONObject(j).getInt("duration");
+                                        videoInfoDTO.setVideoDuration(duraInt);
+                                    } catch (Exception e) {
+                                        videoInfoDTO.setVideoDuration(0);
+                                    }
+                                }
+                                if (videoInfoDTO.getVideoPausedPoint() == 0) {
+                                    try {
+                                        float floatVideoDuration = (float) (playlistArray.getJSONObject(j).getDouble("duration"));
+                                        int videoDurationInt = (int) floatVideoDuration;
+                                        videoInfoDTO.setVideoDuration(videoDurationInt);
+                                    } catch (Exception e) {
+                                        videoInfoDTO.setVideoDuration(0);
+                                    }
+                                }
+
                                 missingVideoInfoDTOList.add(videoInfoDTO);
 
                             }
