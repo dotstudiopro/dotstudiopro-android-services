@@ -535,16 +535,23 @@ public class GetAllCategoriesServiceForHomepage_V1 implements CommonAsyncHttpCli
 
 
 
-                                if (spotLightCategoriesDTO.getCategorySlug().equals("slider-showcase"))
+                                /*if (spotLightCategoriesDTO.getCategorySlug().equals("slider-showcase"))
                                     spotLightCategoriesDTOListForSliderShowcase.add(spotLightCategoriesDTO);
                                 else
                                     spotLightCategoriesDTOList.add(spotLightCategoriesDTO);
 
-                                spotLightCategoriesDTOListALL.add(spotLightCategoriesDTO);
+                                spotLightCategoriesDTOListALL.add(spotLightCategoriesDTO);*/
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }
+
+                        if (spotLightCategoriesDTO.getCategorySlug().equals("slider-showcase"))
+                            spotLightCategoriesDTOListForSliderShowcase.add(spotLightCategoriesDTO);
+                        else
+                            spotLightCategoriesDTOList.add(spotLightCategoriesDTO);
+
+                        spotLightCategoriesDTOListALL.add(spotLightCategoriesDTO);
                     }
                 }
 
