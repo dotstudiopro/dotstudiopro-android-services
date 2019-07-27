@@ -266,6 +266,7 @@ public class GetAllCategoriesServiceForHomepage_V1 implements CommonAsyncHttpCli
                             } catch (JSONException e) {
                                 spotLightCategoriesDTO.setCategoryId("");
                             }
+                            spotLightCategoriesDTO.setCategoryWeight(ct);
                             try {
                                 spotLightCategoriesDTO.setCategoryName(obj.getJSONObject("category").getString("name"));
                             } catch (JSONException e) {
