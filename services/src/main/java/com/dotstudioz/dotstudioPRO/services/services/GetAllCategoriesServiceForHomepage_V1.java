@@ -257,7 +257,7 @@ public class GetAllCategoriesServiceForHomepage_V1 implements CommonAsyncHttpCli
                 JSONObject obj = response.getJSONObject(ct);
                 if (obj.has("channels")) {
                     JSONArray channelsArray = obj.getJSONArray("channels");
-                    if (channelsArray.length() > 1) {
+                    if (channelsArray.length() > 0) {
                         SpotLightCategoriesDTO spotLightCategoriesDTO = new SpotLightCategoriesDTO();
 
                         if (obj.has("category")) {
