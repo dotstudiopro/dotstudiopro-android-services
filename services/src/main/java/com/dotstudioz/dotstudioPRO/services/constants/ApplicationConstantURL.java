@@ -75,6 +75,7 @@ public  class ApplicationConstantURL {
     public  static String CHANNELS = ApplicationConstantURL.API_DOMAIN_S + "/channels/"+COUNTRY_CODE+"/";
     public  static String CHANNEL = ApplicationConstantURL.API_DOMAIN_S + "/channel/"+COUNTRY_CODE+"/";
     public  static String CHANNELS_DETAILS = ApplicationConstantURL.API_DOMAIN_S + "/channels/"+COUNTRY_CODE+"/";
+    public  static String HOMEPAGE = ApplicationConstantURL.API_DOMAIN_S + "/homepage/"+COUNTRY_CODE+"/";
 
 
     public  static String SEARCH_API_URL = ApplicationConstantURL.API_DOMAIN_S + "/search/";
@@ -182,6 +183,7 @@ public  class ApplicationConstantURL {
         ApplicationConstantURL.CHANNELS = ApplicationConstantURL.API_DOMAIN_S + "/channels/"+COUNTRY_CODE+"/";
         ApplicationConstantURL.CHANNEL = ApplicationConstantURL.API_DOMAIN_S + "/channel/"+COUNTRY_CODE+"/";
         ApplicationConstantURL.CHANNELS_DETAILS = ApplicationConstantURL.API_DOMAIN_S + "/channels/"+COUNTRY_CODE+"/";
+        ApplicationConstantURL.HOMEPAGE = ApplicationConstantURL.API_DOMAIN_S + "/homepage/"+COUNTRY_CODE+"/";
 
 
         ApplicationConstantURL.SEARCH_API_URL = ApplicationConstantURL.API_DOMAIN_S + "/search/";
@@ -254,6 +256,7 @@ public  class ApplicationConstantURL {
         this.CHANNEL                            = ApplicationConstantURL.API_DOMAIN_S + "/channel/"+countryCode+"/";
         this.CHANNELS                           = ApplicationConstantURL.API_DOMAIN_S + "/channels/"+countryCode+"/";
         this.CHANNELS_DETAILS                   = ApplicationConstantURL.API_DOMAIN_S + "/channels/"+countryCode+"/";
+        this.HOMEPAGE                           = ApplicationConstantURL.API_DOMAIN_S + "/homepage/"+countryCode+"/";
         this.VIDEOS_API                         = ApplicationConstantURL.API_DOMAIN_S + "/channels/"+countryCode+"/";
         this.RECOMMENDATION_CHANNEL_FIRE_TV_API = ApplicationConstantURL.API_DOMAIN_S + "/channel/"+countryCode+"/recommendationsamazonfire";
 
