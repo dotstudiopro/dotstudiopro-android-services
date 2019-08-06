@@ -49,9 +49,9 @@ public class SeriesVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.IC
         this.channelLink = channelLink;
         context = ctx;
 
-        /*if (ctx instanceof SeriesVideoDetailsService_V1.ISeriesVideoDetailsService_V1)
+        if (ctx instanceof SeriesVideoDetailsService_V1.ISeriesVideoDetailsService_V1)
             iSeriesVideoDetailsService_V1 = (SeriesVideoDetailsService_V1.ISeriesVideoDetailsService_V1) ctx;
-        else
+        /*else
             throw new RuntimeException(ctx.toString()+ " must implement ISeriesVideoDetailsService_V1");*/
     }
 
@@ -61,8 +61,14 @@ public class SeriesVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.IC
     }
 
     public void fetchSeriesVideoDetails(String API_URL) {
-        if (iSeriesVideoDetailsService_V1 == null)
-            throw new RuntimeException(context.toString()+ " must implement ISeriesVideoDetailsService_V1 or setSeriesVideoDetailsService_V1Listener");
+        if (iSeriesVideoDetailsService_V1 == null) {
+            if (context != null && context instanceof SeriesVideoDetailsService_V1.ISeriesVideoDetailsService_V1) {
+                iSeriesVideoDetailsService_V1 = (SeriesVideoDetailsService_V1.ISeriesVideoDetailsService_V1) context;
+            }
+            if (iSeriesVideoDetailsService_V1 == null) {
+                throw new RuntimeException(context.toString()+ " must implement ISeriesVideoDetailsService_V1 or setSeriesVideoDetailsService_V1Listener");
+            }
+        }
 
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", ApplicationConstants.xAccessToken));

@@ -24,14 +24,30 @@ public class GetUserDetailsService {
 
     public IGetUserDetailsService iGetUserDetailsService;
 
+    Context context;
     public GetUserDetailsService(Context ctx) {
+        context = ctx;
         if (ctx instanceof GetUserDetailsService.IGetUserDetailsService)
             iGetUserDetailsService = (GetUserDetailsService.IGetUserDetailsService) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IGetUserDetailsService");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IGetUserDetailsService");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setGetUserDetailsServiceListener(IGetUserDetailsService callback) {
+        this.iGetUserDetailsService = callback;
     }
 
     public void getUserDetails1(String xAccessToken, String xClientToken, String CLIENT_TOKEN_API) {
+        if (iGetUserDetailsService == null) {
+            if (context != null && context instanceof GetUserDetailsService.IGetUserDetailsService) {
+                iGetUserDetailsService = (GetUserDetailsService.IGetUserDetailsService) context;
+            }
+            if (iGetUserDetailsService == null) {
+                throw new RuntimeException(context.toString() + " must implement IGetUserDetailsService or setGetUserDetailsServiceListener");
+            }
+        }
+
         AsyncHttpClient client = new AsyncHttpClient();
         client.setMaxRetriesAndTimeout(2, 30000);
         client.setTimeout(30000);

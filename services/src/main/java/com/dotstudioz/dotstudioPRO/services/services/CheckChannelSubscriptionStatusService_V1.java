@@ -31,14 +31,30 @@ public class CheckChannelSubscriptionStatusService_V1 implements CommonAsyncHttp
         void clientTokenExpired();
     }
 
+    Context context;
     public CheckChannelSubscriptionStatusService_V1(Context ctx) {
+        context = ctx;
         if (ctx instanceof ICheckChannelSubscriptionStatusService)
             iCheckChannelSubscriptionStatusService = (ICheckChannelSubscriptionStatusService) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement ICheckChannelSubscriptionStatusService");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement ICheckChannelSubscriptionStatusService");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setCheckChannelSubscriptionStatusServiceListener(ICheckChannelSubscriptionStatusService callback) {
+        this.iCheckChannelSubscriptionStatusService = callback;
     }
 
     public void checkChannelSubscriptionStatusService(String xAccessToken, String xClientToken, String API_URL) {
+        if (iCheckChannelSubscriptionStatusService == null) {
+            if (context != null && context instanceof CheckChannelSubscriptionStatusService_V1.ICheckChannelSubscriptionStatusService) {
+                iCheckChannelSubscriptionStatusService = (CheckChannelSubscriptionStatusService_V1.ICheckChannelSubscriptionStatusService) context;
+            }
+            if (iCheckChannelSubscriptionStatusService == null) {
+                throw new RuntimeException(context.toString()+ " must implement ICheckChannelSubscriptionStatusService or setCheckChannelSubscriptionStatusServiceListener");
+            }
+        }
+
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));
         headerItemsArrayList.add(new ParameterItem("x-client-token", xAccessToken));

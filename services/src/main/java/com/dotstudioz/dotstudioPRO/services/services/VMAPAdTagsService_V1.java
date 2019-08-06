@@ -19,17 +19,33 @@ public class VMAPAdTagsService_V1 implements CommonAsyncHttpClient_V1.ICommonAsy
 
     VideoInfoDTO videoInfoDTO = null;
     String videoID;
+    private Context context;
     public VMAPAdTagsService_V1(Context ctx, String videoID) {
+        context = ctx;
         this.videoID = videoID;
 
         if (ctx instanceof VMAPAdTagsService_V1.IVMAPAdTagsService_V1)
             iVMAPAdTagsService_V1 = (VMAPAdTagsService_V1.IVMAPAdTagsService_V1) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IVMAPAdTagsService_V1");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IVMAPAdTagsService_V1");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setVMAPAdTagsService_V1Listener(IVMAPAdTagsService_V1 callback) {
+        this.iVMAPAdTagsService_V1 = callback;
     }
 
     public void fetchVMAPAdTags(String API_URL) {
         //API_URL = "https://dev.api.myspotlight.tv/vmap/57be8615d66da81809a33855/100/100";
+
+        if (iVMAPAdTagsService_V1 == null) {
+            if (context != null && context instanceof VMAPAdTagsService_V1.IVMAPAdTagsService_V1) {
+                iVMAPAdTagsService_V1 = (VMAPAdTagsService_V1.IVMAPAdTagsService_V1) context;
+            }
+            if (iVMAPAdTagsService_V1 == null) {
+                throw new RuntimeException(context.toString()+ " must implement IVMAPAdTagsService_V1 or setVMAPAdTagsService_V1Listener");
+            }
+        }
 
         System.out.println("fetchVMAPAdTags API_URL==>"+API_URL);
 

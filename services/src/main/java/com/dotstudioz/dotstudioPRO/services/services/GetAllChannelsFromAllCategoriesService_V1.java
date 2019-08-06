@@ -33,16 +33,32 @@ public class GetAllChannelsFromAllCategoriesService_V1 implements CommonAsyncHtt
         void clientTokenExpired();
     }
 
+    Context context;
     public GetAllChannelsFromAllCategoriesService_V1(Context ctx) {
+        context = ctx;
         if (ctx instanceof GetAllChannelsFromAllCategoriesService_V1.IGetAllChannelsFromAllCategoriesService_V1)
             iGetAllChannelsFromAllCategoriesService_V1 = (GetAllChannelsFromAllCategoriesService_V1.IGetAllChannelsFromAllCategoriesService_V1) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IGetAllChannelsFromAllCategoriesService_V1");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IGetAllChannelsFromAllCategoriesService_V1");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setGetAllChannelsFromAllCategoriesService_V1Listener(IGetAllChannelsFromAllCategoriesService_V1 callback) {
+        this.iGetAllChannelsFromAllCategoriesService_V1 = callback;
     }
 
     private Set<SpotLightChannelDTO> channelDTOList;
     private List<SpotLightCategoriesDTO> spotLightCategoriesDTOList;
     public void getAllChannelsFromAllCategoriesService(String xAccessToken, String API_URL, String categoriesSlug, Set<SpotLightChannelDTO> channelDTOList, List<SpotLightCategoriesDTO> spotLightCategoriesDTOList) {
+        if (iGetAllChannelsFromAllCategoriesService_V1 == null) {
+            if (context != null && context instanceof GetAllChannelsFromAllCategoriesService_V1.IGetAllChannelsFromAllCategoriesService_V1) {
+                iGetAllChannelsFromAllCategoriesService_V1 = (GetAllChannelsFromAllCategoriesService_V1.IGetAllChannelsFromAllCategoriesService_V1) context;
+            }
+            if (iGetAllChannelsFromAllCategoriesService_V1 == null) {
+                throw new RuntimeException(context.toString() + " must implement IGetAllChannelsFromAllCategoriesService_V1 or setGetAllChannelsFromAllCategoriesService_V1Listener");
+            }
+        }
+
         this.channelDTOList = channelDTOList;
         this.spotLightCategoriesDTOList = spotLightCategoriesDTOList;
 

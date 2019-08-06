@@ -25,11 +25,18 @@ public class DeviceCodeService {
 
     public IDeviceCodeService iDeviceCodeService;
 
+    Context context;
     public DeviceCodeService(Context ctx) {
+        context = ctx;
         if (ctx instanceof IDeviceCodeService)
             iDeviceCodeService = (IDeviceCodeService) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IClientTokenService");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IClientTokenService");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setDeviceCodeServiceListener(IDeviceCodeService callback) {
+        this.iDeviceCodeService = callback;
     }
 
     private void handleError(Response<Object> response) {
@@ -79,6 +86,15 @@ public class DeviceCodeService {
         }
     }
     public void getDeviceCode1(String xAccessToken,String CLIENT_TOKEN_API) {
+        if (iDeviceCodeService == null) {
+            if (context != null && context instanceof DeviceCodeService.IDeviceCodeService) {
+                iDeviceCodeService = (DeviceCodeService.IDeviceCodeService) context;
+            }
+            if (iDeviceCodeService == null) {
+                throw new RuntimeException(context.toString()+ " must implement IDeviceCodeService or setDeviceCodeServiceListener");
+            }
+        }
+
         AsyncHttpClient client = new AsyncHttpClient();
         client.setMaxRetriesAndTimeout(2, 30000);
         client.setTimeout(30000);
@@ -114,6 +130,15 @@ public class DeviceCodeService {
     }
 
     public void getDeviceCode(String xAccessToken,String url) {
+        if (iDeviceCodeService == null) {
+            if (context != null && context instanceof DeviceCodeService.IDeviceCodeService) {
+                iDeviceCodeService = (DeviceCodeService.IDeviceCodeService) context;
+            }
+            if (iDeviceCodeService == null) {
+                throw new RuntimeException(context.toString()+ " must implement IDeviceCodeService or setDeviceCodeServiceListener");
+            }
+        }
+
         RestClientInterface restClientInterface = RestClientManager.getClient(ApplicationConstantURL.getInstance().API_DOMAIN_S, xAccessToken,null,null).create(RestClientInterface.class);
         Call<Object> call1 = restClientInterface.requestGet(url);
         call1.enqueue(new Callback<Object>() {

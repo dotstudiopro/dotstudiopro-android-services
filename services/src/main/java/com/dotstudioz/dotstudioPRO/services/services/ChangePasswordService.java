@@ -22,15 +22,31 @@ import cz.msebera.android.httpclient.Header;
 public class ChangePasswordService {
 
     public IChangePasswordService iChangePasswordService;
+    Context context;
 
     public ChangePasswordService(Context ctx) {
+        context = ctx;
         if (ctx instanceof ChangePasswordService.IChangePasswordService)
             iChangePasswordService = (ChangePasswordService.IChangePasswordService) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IChangePasswordService");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IChangePasswordService");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setChangePasswordServiceListener(IChangePasswordService callback) {
+        this.iChangePasswordService = callback;
     }
 
     public void changePassword(String xAccessToken, String xClientToken, String CHANGE_PASSWORD_URL, String newPassword) {
+        if (iChangePasswordService == null) {
+            if (context != null && context instanceof ChangePasswordService.IChangePasswordService) {
+                iChangePasswordService = (ChangePasswordService.IChangePasswordService) context;
+            }
+            if (iChangePasswordService == null) {
+                throw new RuntimeException(context.toString()+ " must implement IChangePasswordService or setChangePasswordServiceListener");
+            }
+        }
+
         AsyncHttpClient client = new AsyncHttpClient();
         client.setMaxRetriesAndTimeout(2, 30000);
         client.setTimeout(30000);

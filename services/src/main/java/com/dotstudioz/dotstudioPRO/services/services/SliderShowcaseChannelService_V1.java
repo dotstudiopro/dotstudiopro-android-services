@@ -24,14 +24,30 @@ public class SliderShowcaseChannelService_V1 implements CommonAsyncHttpClient_V1
         void accessTokenExpired();
         void clientTokenExpired();
     }
+    Context context;
     public SliderShowcaseChannelService_V1(Context ctx) {
+        context = ctx;
         if (ctx instanceof SliderShowcaseChannelService_V1.ISliderShowcaseChannelService_V1)
             iSliderShowcaseChannelService_V1 = (SliderShowcaseChannelService_V1.ISliderShowcaseChannelService_V1) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement ISliderShowcaseChannelService_V1");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement ISliderShowcaseChannelService_V1");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setSliderShowcaseChannelService_V1Listener(ISliderShowcaseChannelService_V1 callback) {
+        this.iSliderShowcaseChannelService_V1 = callback;
     }
 
     public void getSliderShowcaseChannel(String categorySlug) {
+
+        if (iSliderShowcaseChannelService_V1 == null) {
+            if (context != null && context instanceof SliderShowcaseChannelService_V1.ISliderShowcaseChannelService_V1) {
+                iSliderShowcaseChannelService_V1 = (SliderShowcaseChannelService_V1.ISliderShowcaseChannelService_V1) context;
+            }
+            if (iSliderShowcaseChannelService_V1 == null) {
+                throw new RuntimeException(context.toString()+ " must implement ISliderShowcaseChannelService_V1 or setSliderShowcaseChannelService_V1Listener");
+            }
+        }
 
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", ApplicationConstants.xAccessToken));

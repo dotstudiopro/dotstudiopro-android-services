@@ -29,15 +29,31 @@ public class SearchService {
 
     public ISearchService iSearchService;
 
+    Context context;
     public SearchService(Context ctx) {
+        context = ctx;
         if (ctx instanceof SearchService.ISearchService)
             iSearchService = (SearchService.ISearchService) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement ISearchService");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement ISearchService");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setSearchServiceListener(ISearchService callback) {
+        this.iSearchService = callback;
     }
 
 
     public void search1(String xAccessToken, String xClientToken, String searchQueryString, String SEARCH_API_URL) {
+        if (iSearchService == null) {
+            if (context != null && context instanceof SearchService.ISearchService) {
+                iSearchService = (SearchService.ISearchService) context;
+            }
+            if (iSearchService == null) {
+                throw new RuntimeException(context.toString()+ " must implement ISearchService or setSearchServiceListener");
+            }
+        }
+
         AsyncHttpClient client = new AsyncHttpClient();
         client.setMaxRetriesAndTimeout(2, 30000);
         client.setTimeout(30000);

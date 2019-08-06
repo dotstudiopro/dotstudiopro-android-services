@@ -43,16 +43,30 @@ public class GetAllCategoriesService_V1 implements CommonAsyncHttpClient_V1.ICom
         context = ctx;
         if (ctx instanceof GetAllCategoriesService_V1.IGetAllCategoriesService_V1)
             iGetAllCategoriesService_V1 = (GetAllCategoriesService_V1.IGetAllCategoriesService_V1) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IGetAllCategoriesService_V1");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IGetAllCategoriesService_V1");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setGetAllCategoriesService_V1Listener(IGetAllCategoriesService_V1 callback) {
+        this.iGetAllCategoriesService_V1 = callback;
     }
 
     public void getAllCategoriesService(String xAccessToken, String API_URL) {
+        if (iGetAllCategoriesService_V1 == null) {
+            if (context != null && context instanceof GetAllCategoriesService_V1.IGetAllCategoriesService_V1) {
+                iGetAllCategoriesService_V1 = (GetAllCategoriesService_V1.IGetAllCategoriesService_V1) context;
+            }
+            if (iGetAllCategoriesService_V1 == null) {
+                throw new RuntimeException(context.toString()+ " must implement IGetAllCategoriesService_V1 or setGetAllCategoriesService_V1Listener");
+            }
+        }
+
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));
 
         if(PLATFORM == null || PLATFORM.length() == 0) {
-            throw new RuntimeException(context.toString()+ " must implement IGetAllCategoriesService_V1");
+            throw new RuntimeException(context.toString()+ " must assign PLATFORM");
         }
 
        CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, null,

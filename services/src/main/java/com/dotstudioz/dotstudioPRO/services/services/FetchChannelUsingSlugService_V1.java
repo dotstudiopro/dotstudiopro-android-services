@@ -33,14 +33,30 @@ public class FetchChannelUsingSlugService_V1 {
 
     public IFetchChannelUsingSlugService_V1 iFetchChannelUsingSlugService_V1;
 
+    Context context;
     public FetchChannelUsingSlugService_V1(Context ctx) {
+        context = ctx;
         if (ctx instanceof IFetchChannelUsingSlugService_V1)
             iFetchChannelUsingSlugService_V1 = (IFetchChannelUsingSlugService_V1) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IFetchChannelUsingSlugService_V1");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IFetchChannelUsingSlugService_V1");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setFetchChannelUsingSlugService_V1Listener(IFetchChannelUsingSlugService_V1 callback) {
+        this.iFetchChannelUsingSlugService_V1 = callback;
     }
 
     public void fetchChannelData1(String channelSlug, String xAccessToken) {
+        if (iFetchChannelUsingSlugService_V1 == null) {
+            if (context != null && context instanceof FetchChannelUsingSlugService_V1.IFetchChannelUsingSlugService_V1) {
+                iFetchChannelUsingSlugService_V1 = (FetchChannelUsingSlugService_V1.IFetchChannelUsingSlugService_V1) context;
+            }
+            if (iFetchChannelUsingSlugService_V1 == null) {
+                throw new RuntimeException(context.toString()+ " must implement IFetchChannelUsingSlugService_V1 or setFetchChannelUsingSlugService_V1Listener");
+            }
+        }
+
         AsyncHttpClient client = new AsyncHttpClient();
         client.setMaxRetriesAndTimeout(2, 30000);
         client.setTimeout(30000);
@@ -150,6 +166,15 @@ public class FetchChannelUsingSlugService_V1 {
         }
     }
     public void fetchChannelData(String channelSlug, String xAccessToken) {
+
+        if (iFetchChannelUsingSlugService_V1 == null) {
+            if (context != null && context instanceof FetchChannelUsingSlugService_V1.IFetchChannelUsingSlugService_V1) {
+                iFetchChannelUsingSlugService_V1 = (FetchChannelUsingSlugService_V1.IFetchChannelUsingSlugService_V1) context;
+            }
+            if (iFetchChannelUsingSlugService_V1 == null) {
+                throw new RuntimeException(context.toString()+ " must implement IFetchChannelUsingSlugService_V1 or setFetchChannelUsingSlugService_V1Listener");
+            }
+        }
 
         iFetchChannelUsingSlugService_V1.showProgress("Loading");
 

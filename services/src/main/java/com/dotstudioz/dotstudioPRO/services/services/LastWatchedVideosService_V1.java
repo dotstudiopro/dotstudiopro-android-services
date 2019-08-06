@@ -30,14 +30,30 @@ public class LastWatchedVideosService_V1 implements CommonAsyncHttpClient_V1.ICo
 
     public int noOfResults = 0;
 
+    Context context;
     public LastWatchedVideosService_V1(Context ctx) {
+        context = ctx;
         if (ctx instanceof LastWatchedVideosService_V1.ILastWatchedVideosService_V1)
             iLastWatchedVideosService_V1 = (LastWatchedVideosService_V1.ILastWatchedVideosService_V1) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement ILastWatchedVideosService_V1");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement ILastWatchedVideosService_V1");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setLastWatchedVideosService_V1Listener(ILastWatchedVideosService_V1 callback) {
+        this.iLastWatchedVideosService_V1 = callback;
     }
 
     public void getLastWatchedVideos(String API_URL, int noOfResults) {
+        if (iLastWatchedVideosService_V1 == null) {
+            if (context != null && context instanceof LastWatchedVideosService_V1.ILastWatchedVideosService_V1) {
+                iLastWatchedVideosService_V1 = (LastWatchedVideosService_V1.ILastWatchedVideosService_V1) context;
+            }
+            if (iLastWatchedVideosService_V1 == null) {
+                throw new RuntimeException(context.toString() + " must implement ILastWatchedVideosService_V1 or setLastWatchedVideosService_V1Listener");
+            }
+        }
+
         if(noOfResults > 0)
             this.noOfResults = noOfResults;
 

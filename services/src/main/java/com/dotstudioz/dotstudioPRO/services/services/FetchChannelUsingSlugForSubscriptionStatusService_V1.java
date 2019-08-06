@@ -26,14 +26,30 @@ public class FetchChannelUsingSlugForSubscriptionStatusService_V1 implements Com
 
     public IFetchChannelUsingSlugForSubscriptionStatusService_V1 iFetchChannelUsingSlugForSubscriptionStatusService_V1;
 
+    Context context;
     public FetchChannelUsingSlugForSubscriptionStatusService_V1(Context ctx) {
+        context = ctx;
         if (ctx instanceof IFetchChannelUsingSlugForSubscriptionStatusService_V1)
             iFetchChannelUsingSlugForSubscriptionStatusService_V1 = (IFetchChannelUsingSlugForSubscriptionStatusService_V1) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IFetchChannelUsingSlugForSubscriptionStatusService_V1");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IFetchChannelUsingSlugForSubscriptionStatusService_V1");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setFetchChannelUsingSlugForSubscriptionStatusService_V1Listener(IFetchChannelUsingSlugForSubscriptionStatusService_V1 callback) {
+        this.iFetchChannelUsingSlugForSubscriptionStatusService_V1 = callback;
     }
 
     public void fetchChannelData(String channelSlug) {
+        if (iFetchChannelUsingSlugForSubscriptionStatusService_V1 == null) {
+            if (context != null && context instanceof FetchChannelUsingSlugForSubscriptionStatusService_V1.IFetchChannelUsingSlugForSubscriptionStatusService_V1) {
+                iFetchChannelUsingSlugForSubscriptionStatusService_V1 = (FetchChannelUsingSlugForSubscriptionStatusService_V1.IFetchChannelUsingSlugForSubscriptionStatusService_V1) context;
+            }
+            if (iFetchChannelUsingSlugForSubscriptionStatusService_V1 == null) {
+                throw new RuntimeException(context.toString()+ " must implement IFetchChannelUsingSlugForSubscriptionStatusService_V1 or setFetchChannelUsingSlugForSubscriptionStatusService_V1Listener");
+            }
+        }
+
         AsyncHttpClient client = new AsyncHttpClient();
         client.setMaxRetriesAndTimeout(2, 30000);
         client.setTimeout(30000);

@@ -33,11 +33,13 @@ public class ChannelsMyListService_V1 implements CommonAsyncHttpClient_V1.ICommo
     public boolean deletingFlag = false;
     public boolean gettingFlag = false;
 
+    Context context;
     public ChannelsMyListService_V1(Context ctx) {
+        context = ctx;
         if (ctx instanceof ChannelsMyListService_V1.IChannelsMyListService)
             iChannelsMyListService = (ChannelsMyListService_V1.IChannelsMyListService) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IChannelsMyListService");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IChannelsMyListService");*/
     }
 
     public String ADDING_SERVICE_FLAG = "adding";
@@ -57,7 +59,21 @@ public class ChannelsMyListService_V1 implements CommonAsyncHttpClient_V1.ICommo
         }
     }
 
+    // Assign the listener implementing events interface that will receive the events
+    public void setChannelsMyListServiceListener(IChannelsMyListService callback) {
+        this.iChannelsMyListService = callback;
+    }
+
     public void addChannelToMyList(String channelID, String xAccessToken, String xClientToken, String API_URL) {
+        if (iChannelsMyListService == null) {
+            if (context != null && context instanceof ChannelsMyListService_V1.IChannelsMyListService) {
+                iChannelsMyListService = (ChannelsMyListService_V1.IChannelsMyListService) context;
+            }
+            if (iChannelsMyListService == null) {
+                throw new RuntimeException(context.toString()+ " must implement IChannelsMyListService or setChannelDetailsServiceListener");
+            }
+        }
+
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));
         headerItemsArrayList.add(new ParameterItem("x-client-token", xClientToken));
@@ -72,6 +88,15 @@ public class ChannelsMyListService_V1 implements CommonAsyncHttpClient_V1.ICommo
     }
 
     public void addChannelToMyList(String channelID, String parentChannelID, String xAccessToken, String xClientToken, String API_URL) {
+        if (iChannelsMyListService == null) {
+            if (context != null && context instanceof ChannelsMyListService_V1.IChannelsMyListService) {
+                iChannelsMyListService = (ChannelsMyListService_V1.IChannelsMyListService) context;
+            }
+            if (iChannelsMyListService == null) {
+                throw new RuntimeException(context.toString()+ " must implement IChannelsMyListService or setChannelDetailsServiceListener");
+            }
+        }
+
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));
         headerItemsArrayList.add(new ParameterItem("x-client-token", xClientToken));
@@ -87,6 +112,15 @@ public class ChannelsMyListService_V1 implements CommonAsyncHttpClient_V1.ICommo
     }
 
     public void deleteChannelFromMyList(String channelID, String xAccessToken, String xClientToken, String API_URL) {
+        if (iChannelsMyListService == null) {
+            if (context != null && context instanceof ChannelsMyListService_V1.IChannelsMyListService) {
+                iChannelsMyListService = (ChannelsMyListService_V1.IChannelsMyListService) context;
+            }
+            if (iChannelsMyListService == null) {
+                throw new RuntimeException(context.toString()+ " must implement IChannelsMyListService or setChannelDetailsServiceListener");
+            }
+        }
+
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));
         headerItemsArrayList.add(new ParameterItem("x-client-token", xClientToken));
@@ -100,6 +134,15 @@ public class ChannelsMyListService_V1 implements CommonAsyncHttpClient_V1.ICommo
     }
 
     public void getChannelFromMyList(String xAccessToken, String xClientToken, String API_URL) {
+        if (iChannelsMyListService == null) {
+            if (context != null && context instanceof ChannelsMyListService_V1.IChannelsMyListService) {
+                iChannelsMyListService = (ChannelsMyListService_V1.IChannelsMyListService) context;
+            }
+            if (iChannelsMyListService == null) {
+                throw new RuntimeException(context.toString()+ " must implement IChannelsMyListService or setChannelDetailsServiceListener");
+            }
+        }
+
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));
         headerItemsArrayList.add(new ParameterItem("x-client-token", xClientToken));

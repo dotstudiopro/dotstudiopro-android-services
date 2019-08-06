@@ -25,11 +25,18 @@ public class PostSubscriptionResultService {
 
     public IPostSubscriptionResultService iPostSubscriptionResultService;
 
+    Context context;
     public PostSubscriptionResultService(Context ctx) {
+        context = ctx;
         if (ctx instanceof IPostSubscriptionResultService)
             iPostSubscriptionResultService = (IPostSubscriptionResultService) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IPostSubscriptionResultService");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IPostSubscriptionResultService");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setPostSubscriptionResultServiceListener(IPostSubscriptionResultService callback) {
+        this.iPostSubscriptionResultService = callback;
     }
 
 
@@ -45,6 +52,15 @@ public class PostSubscriptionResultService {
         // "purchaseState": 0,
         // "purchaseToken": "npknnblfgbnapcibfiggoilc.AO-J1OzT5grHgk6dku7nSo9QUT4DL4Nbf2rrLyGUx4swSGl9tgNn6hon1OqpNM7M1VKojndbx9VU0Kknd1Vo1yqOYhPO5PWIK0SuU0xL-N0Y7aTHh3Kwir7owH1bsaCicfe9cUPeWyqu",
         // "autoRenewing": true
+
+        if (iPostSubscriptionResultService == null) {
+            if (context != null && context instanceof PostSubscriptionResultService.IPostSubscriptionResultService) {
+                iPostSubscriptionResultService = (PostSubscriptionResultService.IPostSubscriptionResultService) context;
+            }
+            if (iPostSubscriptionResultService == null) {
+                throw new RuntimeException(context.toString()+ " must implement IPostSubscriptionResultService or setPostSubscriptionResultServiceListener");
+            }
+        }
 
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("orderId", purchase.getOrderId());

@@ -21,14 +21,30 @@ public class LiveTickerDataService_V1 implements CommonAsyncHttpClient_V1.ICommo
         void fetchLiveTickerDataServiceError(String ERROR);
     }
 
+    Context context;
     public LiveTickerDataService_V1(Context ctx) {
+        context = ctx;
         if (ctx instanceof LiveTickerDataService_V1.ILiveTickerDataService_V1)
             iLiveTickerDataService_V1 = (LiveTickerDataService_V1.ILiveTickerDataService_V1) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement ILiveTickerDataService_V1");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement ILiveTickerDataService_V1");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setLiveTickerDataService_V1Listener(ILiveTickerDataService_V1 callback) {
+        this.iLiveTickerDataService_V1 = callback;
     }
 
     public void fetchLiveTickerData(String API_URL) {
+        if (iLiveTickerDataService_V1 == null) {
+            if (context != null && context instanceof LiveTickerDataService_V1.ILiveTickerDataService_V1) {
+                iLiveTickerDataService_V1 = (LiveTickerDataService_V1.ILiveTickerDataService_V1) context;
+            }
+            if (iLiveTickerDataService_V1 == null) {
+                throw new RuntimeException(context.toString()+ " must implement ILiveTickerDataService_V1 or setLiveTickerDataService_V1Listener");
+            }
+        }
+
         System.out.println("Calling fetchLiveTickerData==>"+API_URL);
         /*CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(null, null,
                 API_URL, "");*/

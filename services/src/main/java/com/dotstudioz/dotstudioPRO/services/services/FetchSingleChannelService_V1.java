@@ -27,9 +27,9 @@ public class FetchSingleChannelService_V1 implements CommonAsyncHttpClient_V1.IC
 
     public FetchSingleChannelService_V1(Context ctx) {
         context = ctx;
-        /*if (ctx instanceof FetchSingleChannelService_V1.IFetchSingleChannelService_V1)
+        if (ctx instanceof FetchSingleChannelService_V1.IFetchSingleChannelService_V1)
             iFetchSingleChannelService_V1 = (FetchSingleChannelService_V1.IFetchSingleChannelService_V1) ctx;
-        else
+        /*else
             throw new RuntimeException(ctx.toString()+ " must implement IFetchSingleChannelService_V1");*/
     }
 
@@ -40,8 +40,14 @@ public class FetchSingleChannelService_V1 implements CommonAsyncHttpClient_V1.IC
 
     Context context;
     public void fetchSingleChannelData(String channelSlug) {
-        if (iFetchSingleChannelService_V1 == null)
-            throw new RuntimeException(context.toString()+ " must implement IFetchSingleChannelService_V1 or setFetchSingleChannelService_V1Listener");
+        if (iFetchSingleChannelService_V1 == null) {
+            if (context != null && context instanceof FetchSingleChannelService_V1.IFetchSingleChannelService_V1) {
+                iFetchSingleChannelService_V1 = (FetchSingleChannelService_V1.IFetchSingleChannelService_V1) context;
+            }
+            if (iFetchSingleChannelService_V1 == null) {
+                throw new RuntimeException(context.toString()+ " must implement IFetchSingleChannelService_V1 or setFetchSingleChannelService_V1Listener");
+            }
+        }
 
         try {
             ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();

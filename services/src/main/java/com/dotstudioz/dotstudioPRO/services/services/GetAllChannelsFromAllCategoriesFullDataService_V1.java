@@ -27,15 +27,31 @@ public class GetAllChannelsFromAllCategoriesFullDataService_V1 implements Common
         void clientTokenExpired();
     }
 
+    Context context;
     public GetAllChannelsFromAllCategoriesFullDataService_V1(Context ctx) {
+        context = ctx;
         if (ctx instanceof GetAllChannelsFromAllCategoriesFullDataService_V1.IGetAllChannelsFromAllCategoriesFullDataService_V1)
             iGetAllChannelsFromAllCategoriesFullDataService_V1 = (GetAllChannelsFromAllCategoriesFullDataService_V1.IGetAllChannelsFromAllCategoriesFullDataService_V1) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IGetAllChannelsFromAllCategoriesFullDataService_V1");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IGetAllChannelsFromAllCategoriesFullDataService_V1");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setGetAllChannelsFromAllCategoriesFullDataService_V1Listener(IGetAllChannelsFromAllCategoriesFullDataService_V1 callback) {
+        this.iGetAllChannelsFromAllCategoriesFullDataService_V1 = callback;
     }
 
     private SpotLightCategoriesDTO spotLightCategoriesDTOParent;
     public void getAllChannelsFromAllCategoriesFullDataService(String xAccessToken, String API_URL, SpotLightCategoriesDTO spotLightCategoriesDTOParent) {
+        if (iGetAllChannelsFromAllCategoriesFullDataService_V1 == null) {
+            if (context != null && context instanceof GetAllChannelsFromAllCategoriesFullDataService_V1.IGetAllChannelsFromAllCategoriesFullDataService_V1) {
+                iGetAllChannelsFromAllCategoriesFullDataService_V1 = (GetAllChannelsFromAllCategoriesFullDataService_V1.IGetAllChannelsFromAllCategoriesFullDataService_V1) context;
+            }
+            if (iGetAllChannelsFromAllCategoriesFullDataService_V1 == null) {
+                throw new RuntimeException(context.toString() + " must implement IGetAllChannelsFromAllCategoriesFullDataService_V1 or setGetAllChannelsFromAllCategoriesFullDataService_V1Listener");
+            }
+        }
+
         this.spotLightCategoriesDTOParent = spotLightCategoriesDTOParent;
 
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();

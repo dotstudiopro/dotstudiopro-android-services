@@ -32,14 +32,30 @@ public class GetAllHomePageCategoriesService_V1 implements CommonAsyncHttpClient
         void clientTokenExpired();
     }
 
+    Context context;
     public GetAllHomePageCategoriesService_V1(Context ctx) {
+        context = ctx;
         if (ctx instanceof GetAllHomePageCategoriesService_V1.IGetAllHomePageCategoriesService_V1)
             iGetAllHomePageCategoriesService_V1 = (GetAllHomePageCategoriesService_V1.IGetAllHomePageCategoriesService_V1) ctx;
         else
             throw new RuntimeException(ctx.toString()+ " must implement IGetAllHomePageCategoriesService_V1");
     }
 
+    // Assign the listener implementing events interface that will receive the events
+    public void setGetAllHomePageCategoriesService_V1Listener(IGetAllHomePageCategoriesService_V1 callback) {
+        this.iGetAllHomePageCategoriesService_V1 = callback;
+    }
+
     public void getAllHomePageCategoriesService(String xAccessToken, String API_URL) {
+        if (iGetAllHomePageCategoriesService_V1 == null) {
+            if (context != null && context instanceof GetAllHomePageCategoriesService_V1.IGetAllHomePageCategoriesService_V1) {
+                iGetAllHomePageCategoriesService_V1 = (GetAllHomePageCategoriesService_V1.IGetAllHomePageCategoriesService_V1) context;
+            }
+            if (iGetAllHomePageCategoriesService_V1 == null) {
+                throw new RuntimeException(context.toString() + " must implement IGetAllHomePageCategoriesService_V1 or setGetAllHomePageCategoriesService_V1Listener");
+            }
+        }
+
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));
 

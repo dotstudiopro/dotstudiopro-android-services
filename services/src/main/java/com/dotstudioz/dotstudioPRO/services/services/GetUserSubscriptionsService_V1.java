@@ -30,14 +30,30 @@ public class GetUserSubscriptionsService_V1 implements CommonAsyncHttpClient_V1.
         void clientTokenExpired();
     }
 
+    Context context;
     public GetUserSubscriptionsService_V1(Context ctx) {
+        context = ctx;
         if (ctx instanceof IGetUserSubscriptionsService)
             iGetUserSubscriptionsService = (IGetUserSubscriptionsService) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IGetUserSubscriptionsService");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IGetUserSubscriptionsService");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setGetUserSubscriptionsServiceListener(IGetUserSubscriptionsService callback) {
+        this.iGetUserSubscriptionsService = callback;
     }
 
     public void getUserSubscriptionsService(String xAccessToken, String xClientToken, String API_URL) {
+        if (iGetUserSubscriptionsService == null) {
+            if (context != null && context instanceof GetUserSubscriptionsService_V1.IGetUserSubscriptionsService) {
+                iGetUserSubscriptionsService = (GetUserSubscriptionsService_V1.IGetUserSubscriptionsService) context;
+            }
+            if (iGetUserSubscriptionsService == null) {
+                throw new RuntimeException(context.toString() + " must implement IGetUserSubscriptionsService or setGetUserSubscriptionsServiceListener");
+            }
+        }
+
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));
         headerItemsArrayList.add(new ParameterItem("x-client-token", xAccessToken));

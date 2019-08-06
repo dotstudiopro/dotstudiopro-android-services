@@ -34,16 +34,32 @@ public class GetAllChannelsFromAllHomePageCategoriesService_V1 implements Common
         void clientTokenExpired();
     }
 
+    Context context;
     public GetAllChannelsFromAllHomePageCategoriesService_V1(Context ctx) {
+        context = ctx;
         if (ctx instanceof GetAllChannelsFromAllHomePageCategoriesService_V1.IGetAllChannelsFromAllHomePageCategoriesService_V1)
             iGetAllChannelsFromAllHomePageCategoriesService_V1 = (GetAllChannelsFromAllHomePageCategoriesService_V1.IGetAllChannelsFromAllHomePageCategoriesService_V1) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IGetAllChannelsFromAllHomePageCategoriesService_V1");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IGetAllChannelsFromAllHomePageCategoriesService_V1");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setGetAllChannelsFromAllHomePageCategoriesService_V1Listener(IGetAllChannelsFromAllHomePageCategoriesService_V1 callback) {
+        this.iGetAllChannelsFromAllHomePageCategoriesService_V1 = callback;
     }
 
     private Set<SpotLightChannelDTO> channelDTOList;
     private ArrayList<SpotLightCategoriesDTO> spotLightCategoriesDTOList;
     public void getAllChannelsFromAllHomePageCategoriesService(String xAccessToken, String API_URL, String categoriesSlug, Set<SpotLightChannelDTO> channelDTOList, ArrayList<SpotLightCategoriesDTO> spotLightCategoriesDTOList) {
+        if (iGetAllChannelsFromAllHomePageCategoriesService_V1 == null) {
+            if (context != null && context instanceof GetAllChannelsFromAllHomePageCategoriesService_V1.IGetAllChannelsFromAllHomePageCategoriesService_V1) {
+                iGetAllChannelsFromAllHomePageCategoriesService_V1 = (GetAllChannelsFromAllHomePageCategoriesService_V1.IGetAllChannelsFromAllHomePageCategoriesService_V1) context;
+            }
+            if (iGetAllChannelsFromAllHomePageCategoriesService_V1 == null) {
+                throw new RuntimeException(context.toString() + " must implement IGetAllChannelsFromAllHomePageCategoriesService_V1 or setGetAllChannelsFromAllHomePageCategoriesService_V1Listener");
+            }
+        }
+
         this.channelDTOList = channelDTOList;
         this.spotLightCategoriesDTOList = spotLightCategoriesDTOList;
 

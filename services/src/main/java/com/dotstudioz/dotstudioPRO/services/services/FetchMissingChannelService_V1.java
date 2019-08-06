@@ -32,9 +32,9 @@ public class FetchMissingChannelService_V1 implements CommonAsyncHttpClient_V1.I
 
     public FetchMissingChannelService_V1(Context ctx) {
         context = ctx;
-        /*if (ctx instanceof FetchMissingChannelService_V1.IFetchMissingChannelService_V1)
+        if (ctx instanceof FetchMissingChannelService_V1.IFetchMissingChannelService_V1)
             iFetchMissingChannelService_V1 = (FetchMissingChannelService_V1.IFetchMissingChannelService_V1) ctx;
-        else
+        /*else
             throw new RuntimeException(ctx.toString()+ " must implement IFetchMissingChannelService_V1");*/
     }
 
@@ -45,8 +45,14 @@ public class FetchMissingChannelService_V1 implements CommonAsyncHttpClient_V1.I
 
     Context context;
     public void fetchMissingChannelData(String channelSlug, ArrayList<SpotLightCategoriesDTO> spotLightCategoriesDTOArrayList) {
-        if (iFetchMissingChannelService_V1 == null)
-            throw new RuntimeException(context.toString()+ " must implement IFetchMissingChannelService_V1 or setFetchMissingChannelService_V1Listener");
+        if (iFetchMissingChannelService_V1 == null) {
+            if (context != null && context instanceof FetchMissingChannelService_V1.IFetchMissingChannelService_V1) {
+                iFetchMissingChannelService_V1 = (FetchMissingChannelService_V1.IFetchMissingChannelService_V1) context;
+            }
+            if (iFetchMissingChannelService_V1 == null) {
+                throw new RuntimeException(context.toString()+ " must implement IFetchMissingChannelService_V1 or setFetchMissingChannelService_V1Listener");
+            }
+        }
 
         spotLightCategoriesDTOList = spotLightCategoriesDTOArrayList;
         AsyncHttpClient client = new AsyncHttpClient();

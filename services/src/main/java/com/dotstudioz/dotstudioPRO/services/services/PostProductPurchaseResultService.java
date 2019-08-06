@@ -25,11 +25,18 @@ public class PostProductPurchaseResultService {
 
     public IPostProductPurchaseResultService iPostProductPurchaseResultService;
 
+    Context context;
     public PostProductPurchaseResultService(Context ctx) {
+        context = ctx;
         if (ctx instanceof IPostProductPurchaseResultService)
             iPostProductPurchaseResultService = (IPostProductPurchaseResultService) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IPostProductPurchaseResultService");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IPostProductPurchaseResultService");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setPostProductPurchaseResultServiceListener(IPostProductPurchaseResultService callback) {
+        this.iPostProductPurchaseResultService = callback;
     }
 
 
@@ -50,6 +57,15 @@ public class PostProductPurchaseResultService {
          *
          * result: IabResult: Successful consume of sku com.dotstudioz.dotstudiopro.revry.tier2
          */
+
+        if (iPostProductPurchaseResultService == null) {
+            if (context != null && context instanceof PostProductPurchaseResultService.IPostProductPurchaseResultService) {
+                iPostProductPurchaseResultService = (PostProductPurchaseResultService.IPostProductPurchaseResultService) context;
+            }
+            if (iPostProductPurchaseResultService == null) {
+                throw new RuntimeException(context.toString()+ " must implement IPostProductPurchaseResultService or setPostProductPurchaseResultServiceListener");
+            }
+        }
 
         JsonObject jsonObject = new JsonObject();
         /*jsonObject.addProperty("orderId", purchase.getOrderId());
@@ -124,6 +140,15 @@ public class PostProductPurchaseResultService {
          *
          * result: IabResult: Successful consume of sku com.dotstudioz.dotstudiopro.revry.tier2
          */
+
+        if (iPostProductPurchaseResultService == null) {
+            if (context != null && context instanceof PostProductPurchaseResultService.IPostProductPurchaseResultService) {
+                iPostProductPurchaseResultService = (PostProductPurchaseResultService.IPostProductPurchaseResultService) context;
+            }
+            if (iPostProductPurchaseResultService == null) {
+                throw new RuntimeException(context.toString()+ " must implement IPostProductPurchaseResultService or setPostProductPurchaseResultServiceListener");
+            }
+        }
 
         JsonObject jsonObject = new JsonObject();
         /*jsonObject.addProperty("orderId", purchase.getOrderId());

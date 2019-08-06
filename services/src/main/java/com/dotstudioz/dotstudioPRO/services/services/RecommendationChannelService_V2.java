@@ -22,14 +22,30 @@ import java.util.Map;
 public class RecommendationChannelService_V2 implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
     public IRecommendationService iRecommendationService;
 
+    Context context;
     public RecommendationChannelService_V2(Context ctx) {
+        context = ctx;
         if (ctx instanceof IRecommendationService)
             iRecommendationService = (IRecommendationService) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IRecommendationService");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IRecommendationService");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setRecommendationServiceListener(IRecommendationService callback) {
+        this.iRecommendationService = callback;
     }
 
     public void getRecommendation(String xAccessToken, String RECOMMENDATION_API, String id, int size, int from) {
+        if (iRecommendationService == null) {
+            if (context != null && context instanceof RecommendationChannelService_V1.IRecommendationService) {
+                iRecommendationService = (RecommendationChannelService_V2.IRecommendationService) context;
+            }
+            if (iRecommendationService == null) {
+                throw new RuntimeException(context.toString()+ " must implement IRecommendationService or setRecommendationServiceListener");
+            }
+        }
+
         System.out.println(id+"<==id=======RECOMMENDATION_API==>"+RECOMMENDATION_API);
 
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();

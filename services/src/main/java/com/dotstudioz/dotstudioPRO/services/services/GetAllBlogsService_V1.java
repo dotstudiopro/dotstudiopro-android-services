@@ -30,15 +30,31 @@ public class GetAllBlogsService_V1 implements CommonAsyncHttpClient_V1.ICommonAs
         void clientTokenExpired();
     }
 
+    Context context;
     public GetAllBlogsService_V1(Context ctx) {
+        context = ctx;
         if (ctx instanceof GetAllBlogsService_V1.IGetAllBlogService_V1)
             iGetAllBlogService_V1 = (GetAllBlogsService_V1.IGetAllBlogService_V1) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IGetAllBlogService_V1");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IGetAllBlogService_V1");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setGetAllBlogService_V1Listener(IGetAllBlogService_V1 callback) {
+        this.iGetAllBlogService_V1 = callback;
     }
 
     public String slug;
     public void getAllBlogService(String xAccessToken, String API_URL, String slug) {
+        if (iGetAllBlogService_V1 == null) {
+            if (context != null && context instanceof GetAllBlogsService_V1.IGetAllBlogService_V1) {
+                iGetAllBlogService_V1 = (GetAllBlogsService_V1.IGetAllBlogService_V1) context;
+            }
+            if (iGetAllBlogService_V1 == null) {
+                throw new RuntimeException(context.toString()+ " must implement IGetAllBlogService_V1 or setGetAllBlogService_V1Listener");
+            }
+        }
+
         this.slug = slug;
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));

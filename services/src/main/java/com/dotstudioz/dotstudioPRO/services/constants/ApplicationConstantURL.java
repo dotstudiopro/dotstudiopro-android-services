@@ -56,6 +56,13 @@ public  class ApplicationConstantURL {
     public static String APP_VERSION_ANDROID_TV_API = ApplicationConstantURL.API_DOMAIN_S + "/latestAppVersion/android_tv";
     public static String APP_VERSION_ANDROID_TV_API_s = ApplicationConstantURL.API_DOMAIN_S + "/latestAppVersion/android_tv";
 
+    public static String APP_VERSION_ANDROID_PACKAGE_API = ApplicationConstantURL.API_DOMAIN_S + "/latestAppVersion/package/android";
+    public static String APP_VERSION_ANDROID_PACKAGE_API_S = ApplicationConstantURL.API_DOMAIN_S + "/latestAppVersionpackage//android";
+    public static String APP_VERSION_FIRE_TV_PACKAGE_API = ApplicationConstantURL.API_DOMAIN_S + "/latestAppVersion/package/fire_tv";
+    public static String APP_VERSION_FIRE_TV_PACKAGE_API_S = ApplicationConstantURL.API_DOMAIN_S + "/latestAppVersion/package/fire_tv";
+    public static String APP_VERSION_ANDROID_TV_PACKAGE_API = ApplicationConstantURL.API_DOMAIN_S + "/latestAppVersion/package/android_tv";
+    public static String APP_VERSION_ANDROID_TV_PACKAGE_API_s = ApplicationConstantURL.API_DOMAIN_S + "/latestAppVersion/package/android_tv";
+
     public static String BLOG_LIST = BLOG_LIST_ABS+"/wp-json/dsp/v1/featured/blog/carousel";
 
     //public  static String AVATAR = SPOTLIGHT_DOMAIN + "/user/avatar/";
@@ -162,6 +169,13 @@ public  class ApplicationConstantURL {
         ApplicationConstantURL.APP_VERSION_FIRE_TV_API_S = ApplicationConstantURL.API_DOMAIN_S + "/latestAppVersion/fire_tv";
         ApplicationConstantURL.APP_VERSION_ANDROID_TV_API = ApplicationConstantURL.API_DOMAIN_S + "/latestAppVersion/android_tv";
         ApplicationConstantURL.APP_VERSION_ANDROID_TV_API_s = ApplicationConstantURL.API_DOMAIN_S + "/latestAppVersion/android_tv";
+
+        ApplicationConstantURL.APP_VERSION_ANDROID_PACKAGE_API = ApplicationConstantURL.API_DOMAIN_S + "/latestAppVersion/package/android";
+        ApplicationConstantURL.APP_VERSION_ANDROID_PACKAGE_API_S = ApplicationConstantURL.API_DOMAIN_S + "/latestAppVersionpackage//android";
+        ApplicationConstantURL.APP_VERSION_FIRE_TV_PACKAGE_API = ApplicationConstantURL.API_DOMAIN_S + "/latestAppVersion/package/fire_tv";
+        ApplicationConstantURL.APP_VERSION_FIRE_TV_PACKAGE_API_S = ApplicationConstantURL.API_DOMAIN_S + "/latestAppVersion/package/fire_tv";
+        ApplicationConstantURL.APP_VERSION_ANDROID_TV_PACKAGE_API = ApplicationConstantURL.API_DOMAIN_S + "/latestAppVersion/package/android_tv";
+        ApplicationConstantURL.APP_VERSION_ANDROID_TV_PACKAGE_API_s = ApplicationConstantURL.API_DOMAIN_S + "/latestAppVersion/package/android_tv";
 
         ApplicationConstantURL.BLOG_LIST = BLOG_LIST_ABS + "/wp-json/dsp/v1/featured/blog/carousel";
         ApplicationConstantURL.BLOG_LIST_BY_CATEGORY = BLOG_LIST_BY_CATEGORY + "/wp-json/abs/v1/posts/bycategory/";

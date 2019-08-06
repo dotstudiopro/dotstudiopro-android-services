@@ -29,14 +29,30 @@ public class GetAllSubscriptionsService_V1 implements CommonAsyncHttpClient_V1.I
         void clientTokenExpired();
     }
 
+    Context context;
     public GetAllSubscriptionsService_V1(Context ctx) {
+        context = ctx;
         if (ctx instanceof IGetAllSubscriptionsService)
             iGetAllSubscriptionsService = (IGetAllSubscriptionsService) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IGetAllSubscriptionsService");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IGetAllSubscriptionsService");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setGetAllSubscriptionsServiceListener(IGetAllSubscriptionsService callback) {
+        this.iGetAllSubscriptionsService = callback;
     }
 
     public void getAllSubscriptionsService(String xAccessToken, String API_URL) {
+        if (iGetAllSubscriptionsService == null) {
+            if (context != null && context instanceof GetAllSubscriptionsService_V1.IGetAllSubscriptionsService) {
+                iGetAllSubscriptionsService = (GetAllSubscriptionsService_V1.IGetAllSubscriptionsService) context;
+            }
+            if (iGetAllSubscriptionsService == null) {
+                throw new RuntimeException(context.toString() + " must implement IGetAllSubscriptionsService or setGetAllSubscriptionsServiceListener");
+            }
+        }
+
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));
 

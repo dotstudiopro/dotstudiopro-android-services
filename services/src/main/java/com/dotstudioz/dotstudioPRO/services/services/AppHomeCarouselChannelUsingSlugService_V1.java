@@ -31,6 +31,7 @@ public class AppHomeCarouselChannelUsingSlugService_V1 implements CommonAsyncHtt
     Context context;
 
     public AppHomeCarouselChannelUsingSlugService_V1(Context ctx) {
+        context = ctx;
         if (ctx instanceof IFetchChannelUsingSlugService_V1)
             iFetchChannelUsingSlugService_V1 = (IFetchChannelUsingSlugService_V1) ctx;
         /*else

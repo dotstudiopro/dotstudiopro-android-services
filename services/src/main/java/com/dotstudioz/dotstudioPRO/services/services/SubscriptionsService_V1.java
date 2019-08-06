@@ -35,14 +35,30 @@ public class SubscriptionsService_V1 implements CommonAsyncHttpClient_V1.ICommon
         void clientTokenExpired();
     }
 
+    Context context;
     public SubscriptionsService_V1(Context ctx) {
+        context = ctx;
         if (ctx instanceof ISubscriptionsService)
             iSubscriptionsService = (ISubscriptionsService) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement ISubscriptionsService");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement ISubscriptionsService");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setSubscriptionsServiceListener(ISubscriptionsService callback) {
+        this.iSubscriptionsService = callback;
     }
 
     public void createBrainTreeCustomerUsingNonce(String xAccessToken, String xClientToken, String nonceString, String API_URL) {
+        if (iSubscriptionsService == null) {
+            if (context != null && context instanceof SubscriptionsService_V1.ISubscriptionsService) {
+                iSubscriptionsService = (SubscriptionsService_V1.ISubscriptionsService) context;
+            }
+            if (iSubscriptionsService == null) {
+                throw new RuntimeException(context.toString()+ " must implement ISubscriptionsService or setSubscriptionsServiceListener");
+            }
+        }
+
         isBraintreeServiceCall = true;
         isChargifyServiceCall = false;
 

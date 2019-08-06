@@ -35,19 +35,35 @@ public class LiveVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.ICom
     ArrayList<VideoInfoDTO> videoInfoDTOArrayList = null;
     String channelLink = "";
     String channelID = "";
+    Context context;
     public LiveVideoDetailsService_V1(Context ctx, ArrayList<VideoInfoDTO> videoInfoDTOArrayList,
                                       String channelLink, String channelID) {
         this.videoInfoDTOArrayList = videoInfoDTOArrayList;
         this.channelID = channelID;
         this.channelLink = channelLink;
 
+        context = ctx;
         if (ctx instanceof LiveVideoDetailsService_V1.ILiveVideoDetailsService_V1)
             iLiveVideoDetailsService_V1 = (LiveVideoDetailsService_V1.ILiveVideoDetailsService_V1) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement ILiveVideoDetailsService_V1");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement ILiveVideoDetailsService_V1");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setLiveVideoDetailsService_V1Listener(ILiveVideoDetailsService_V1 callback) {
+        this.iLiveVideoDetailsService_V1 = callback;
     }
 
     public void fetchLiveVideoDetails(String API_URL) {
+        if (iLiveVideoDetailsService_V1 == null) {
+            if (context != null && context instanceof LiveVideoDetailsService_V1.ILiveVideoDetailsService_V1) {
+                iLiveVideoDetailsService_V1 = (LiveVideoDetailsService_V1.ILiveVideoDetailsService_V1) context;
+            }
+            if (iLiveVideoDetailsService_V1 == null) {
+                throw new RuntimeException(context.toString()+ " must implement ILiveVideoDetailsService_V1 or setLiveVideoDetailsService_V1Listener");
+            }
+        }
+
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", ApplicationConstants.xAccessToken));
         /*if(ApplicationConstants.CLIENT_TOKEN != null && ApplicationConstants.CLIENT_TOKEN.length() > 0)

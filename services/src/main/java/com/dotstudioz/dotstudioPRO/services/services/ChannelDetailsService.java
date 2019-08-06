@@ -29,15 +29,30 @@ import retrofit2.Callback;
 public class ChannelDetailsService {
 
     public IChannelDetailsService iChannelDetailsService;
+    Context context;
 
     public ChannelDetailsService(Context ctx) {
         if (ctx instanceof ChannelDetailsService.IChannelDetailsService)
             iChannelDetailsService = (ChannelDetailsService.IChannelDetailsService) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IChannelDetailsService");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IChannelDetailsService");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setChannelDetailsServiceListener(IChannelDetailsService callback) {
+        this.iChannelDetailsService = callback;
     }
 
     public void getChannelDetails1(String xAccessToken, String URL, String categorySlug, String channelSlug) {
+        if (iChannelDetailsService == null) {
+            if (context != null && context instanceof ChannelDetailsService.IChannelDetailsService) {
+                iChannelDetailsService = (ChannelDetailsService.IChannelDetailsService) context;
+            }
+            if (iChannelDetailsService == null) {
+                throw new RuntimeException(context.toString()+ " must implement IChannelDetailsService or setChannelDetailsServiceListener");
+            }
+        }
+
         AsyncHttpClient client = new AsyncHttpClient();
         client.setMaxRetriesAndTimeout(2, 30000);
         client.setTimeout(30000);
@@ -191,6 +206,15 @@ public class ChannelDetailsService {
 
         Map<String, String> hm = new HashMap<>();
         hm.put("token", xAccessToken);
+
+        if (iChannelDetailsService == null) {
+            if (context != null && context instanceof ChannelDetailsService.IChannelDetailsService) {
+                iChannelDetailsService = (ChannelDetailsService.IChannelDetailsService) context;
+            }
+            if (iChannelDetailsService == null) {
+                throw new RuntimeException(context.toString()+ " must implement IChannelDetailsService or setChannelDetailsServiceListener");
+            }
+        }
 
         RestClientInterface restClientInterface = RestClientManager.getClient(ApplicationConstantURL.getInstance().API_DOMAIN_S, xAccessToken,null,null).create(RestClientInterface.class);
         call1 = restClientInterface.requestGet(URL + categorySlug + "/" + channelSlug, hm);

@@ -24,15 +24,30 @@ public class DeviceCodeActivationService {
 
     public IDeviceCodeActivationService iDeviceCodeActivationService;
 
+    Context context;
     public DeviceCodeActivationService(Context ctx) {
         if (ctx instanceof IDeviceCodeActivationService)
             iDeviceCodeActivationService = (IDeviceCodeActivationService) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IDeviceCodeActivationService");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IDeviceCodeActivationService");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setDeviceCodeActivationServiceListener(IDeviceCodeActivationService callback) {
+        this.iDeviceCodeActivationService = callback;
     }
 
     public void getDeviceActivationWithCode(String xAccessToken,String code,String customerId, String TOKEN_URL) {
 
+
+        if (iDeviceCodeActivationService == null) {
+            if (context != null && context instanceof DeviceCodeActivationService.IDeviceCodeActivationService) {
+                iDeviceCodeActivationService = (DeviceCodeActivationService.IDeviceCodeActivationService) context;
+            }
+            if (iDeviceCodeActivationService == null) {
+                throw new RuntimeException(context.toString()+ " must implement IDeviceCodeActivationService or setDeviceCodeActivationServiceListener");
+            }
+        }
 
         AsyncHttpClient client = new AsyncHttpClient();
         client.setMaxRetriesAndTimeout(2, 30000);

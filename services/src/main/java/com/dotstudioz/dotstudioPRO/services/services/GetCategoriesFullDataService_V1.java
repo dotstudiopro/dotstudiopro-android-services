@@ -33,16 +33,32 @@ public class GetCategoriesFullDataService_V1 implements CommonAsyncHttpClient_V1
         void clientTokenExpired();
     }
 
+    Context context;
     public GetCategoriesFullDataService_V1(Context ctx) {
+        context = ctx;
         if (ctx instanceof GetCategoriesFullDataService_V1.IGetCategoriesFullDataService_V1)
             iGetCategoriesFullDataService_V1 = (GetCategoriesFullDataService_V1.IGetCategoriesFullDataService_V1) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IGetCategoriesFullDataService_V1");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IGetCategoriesFullDataService_V1");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setGetCategoriesFullDataService_V1Listener(IGetCategoriesFullDataService_V1 callback) {
+        this.iGetCategoriesFullDataService_V1 = callback;
     }
 
     public SpotLightCategoriesDTO spotLightCategoriesDTO;
     private List<SpotLightCategoriesDTO> spotLightCategoriesDTOList;
     public void getCategoriesFullDataService(String xAccessToken, String API_URL, SpotLightCategoriesDTO spotLightCategoriesDTO) {
+
+        if (iGetCategoriesFullDataService_V1 == null) {
+            if (context != null && context instanceof GetCategoriesFullDataService_V1.IGetCategoriesFullDataService_V1) {
+                iGetCategoriesFullDataService_V1 = (GetCategoriesFullDataService_V1.IGetCategoriesFullDataService_V1) context;
+            }
+            if (iGetCategoriesFullDataService_V1 == null) {
+                throw new RuntimeException(context.toString() + " must implement IGetCategoriesFullDataService_V1 or setGetCategoriesFullDataService_V1Listener");
+            }
+        }
 
         this.spotLightCategoriesDTO = spotLightCategoriesDTO;
 

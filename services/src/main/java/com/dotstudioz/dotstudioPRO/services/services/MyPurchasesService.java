@@ -38,14 +38,30 @@ public class MyPurchasesService {
 
     public IMyPurchasesService iMyPurchasesService;
 
+    Context context;
     public MyPurchasesService(Context ctx) {
+        context = ctx;
         if (ctx instanceof MyPurchasesService.IMyPurchasesService)
             iMyPurchasesService = (MyPurchasesService.IMyPurchasesService) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IMyPurchasesService");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IMyPurchasesService");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setMyPurchasesServiceListener(IMyPurchasesService callback) {
+        this.iMyPurchasesService = callback;
     }
 
     public void getMyPurchases1(String xAccessToken, String xClientToken, String MY_PURCHASES_URL, final List<SpotLightCategoriesDTO> spotLightCategoriesDTOList) {
+        if (iMyPurchasesService == null) {
+            if (context != null && context instanceof MyPurchasesService.IMyPurchasesService) {
+                iMyPurchasesService = (MyPurchasesService.IMyPurchasesService) context;
+            }
+            if (iMyPurchasesService == null) {
+                throw new RuntimeException(context.toString()+ " must implement IMyPurchasesService or setMyPurchasesServiceListener");
+            }
+        }
+
         AsyncHttpClient client = new AsyncHttpClient();
         client.setMaxRetriesAndTimeout(2, 30000);
         client.setTimeout(30000);

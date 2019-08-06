@@ -20,14 +20,30 @@ public class StaticWebPageDataService_V1 implements CommonAsyncHttpClient_V1.ICo
         void fetchStaticWebPageDataServiceError(String ERROR);
     }
 
+    Context context;
     public StaticWebPageDataService_V1(Context ctx) {
+        context = ctx;
         if (ctx instanceof StaticWebPageDataService_V1.IStaticWebPageDataService)
             iStaticWebPageDataService = (StaticWebPageDataService_V1.IStaticWebPageDataService) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IStaticWebPageDataService");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IStaticWebPageDataService");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setStaticWebPageDataServiceListener(IStaticWebPageDataService callback) {
+        this.iStaticWebPageDataService = callback;
     }
 
     public void fetchStaticWebPageData(String API_URL) {
+        if (iStaticWebPageDataService == null) {
+            if (context != null && context instanceof StaticWebPageDataService_V1.IStaticWebPageDataService) {
+                iStaticWebPageDataService = (StaticWebPageDataService_V1.IStaticWebPageDataService) context;
+            }
+            if (iStaticWebPageDataService == null) {
+                throw new RuntimeException(context.toString()+ " must implement IStaticWebPageDataService or setStaticWebPageDataServiceListener");
+            }
+        }
+
         System.out.println("Calling fetchStaticWebPageData==>"+API_URL);
         url = API_URL;
         CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(null, null,

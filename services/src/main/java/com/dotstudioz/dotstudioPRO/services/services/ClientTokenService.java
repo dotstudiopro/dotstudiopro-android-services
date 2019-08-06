@@ -17,15 +17,31 @@ import cz.msebera.android.httpclient.Header;
 public class ClientTokenService {
 
     public IClientTokenService iClientTokenService;
+    Context context;
 
     public ClientTokenService(Context ctx) {
+        context = ctx;
         if (ctx instanceof ClientTokenService.IClientTokenService)
             iClientTokenService = (ClientTokenService.IClientTokenService) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IClientTokenService");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IClientTokenService");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setClientTokenServiceListener(IClientTokenService callback) {
+        this.iClientTokenService = callback;
     }
 
     public void getClientToken(String xAccessToken, String xClientToken, String CLIENT_TOKEN_API, String userIdString, String userEmailId) {
+        if (iClientTokenService == null) {
+            if (context != null && context instanceof ClientTokenService.IClientTokenService) {
+                iClientTokenService = (ClientTokenService.IClientTokenService) context;
+            }
+            if (iClientTokenService == null) {
+                throw new RuntimeException(context.toString()+ " must implement IClientTokenService or setClientTokenServiceListener");
+            }
+        }
+
         AsyncHttpClient client = new AsyncHttpClient();
         client.setMaxRetriesAndTimeout(2, 30000);
         client.setTimeout(30000);

@@ -21,17 +21,33 @@ public class VideoPurchaseStatus_V1 implements CommonAsyncHttpClient_V1.ICommonA
     }
 
     String videoID;
+    private Context context;
     public VideoPurchaseStatus_V1(Context ctx, String videoID) {
+        context = ctx;
         this.videoID = videoID;
 
         if (ctx instanceof IVideoPurchaseStatus)
             iVideoPurchaseStatus = (IVideoPurchaseStatus) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IVideoPurchaseStatus");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IVideoPurchaseStatus");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setVideoPurchaseStatusListener(IVideoPurchaseStatus callback) {
+        this.iVideoPurchaseStatus = callback;
     }
 
     public void fetchVideoPurchaseStatus(String API_URL) {
         //API_URL = "https://dev.api.myspotlight.tv/vmap/57be8615d66da81809a33855/100/100";
+
+        if (iVideoPurchaseStatus == null) {
+            if (context != null && context instanceof VideoPurchaseStatus_V1.IVideoPurchaseStatus) {
+                iVideoPurchaseStatus = (VideoPurchaseStatus_V1.IVideoPurchaseStatus) context;
+            }
+            if (iVideoPurchaseStatus == null) {
+                throw new RuntimeException(context.toString()+ " must implement IVideoPurchaseStatus or setVideoPurchaseStatusListener");
+            }
+        }
 
         System.out.println("fetchVideoPurchaseStatus API_URL==>"+API_URL);
         System.out.println("fetchVideoPurchaseStatus ApplicationConstants.xAccessToken==>"+ ApplicationConstants.xAccessToken);

@@ -40,6 +40,7 @@ public class SliderShowcaseSeriesVideoDetailsService_V1 implements CommonAsyncHt
     String channelLink = "";
     String channelID = "";
     int indexOfThisVideo = 0;
+    Context context;
     public SliderShowcaseSeriesVideoDetailsService_V1(Context ctx, ArrayList<VideoInfoDTO> videoInfoDTOArrayListForSliderShowcase,
                                                       int numberOfVideosToFetchForSliderShowCase,
                                                       List<SpotLightCategoriesDTO> spotLightCategoriesDTOListForSliderShowcase,
@@ -50,13 +51,28 @@ public class SliderShowcaseSeriesVideoDetailsService_V1 implements CommonAsyncHt
         this.channelID = channelID;
         this.channelLink = channelLink;
 
+        context = ctx;
         if (ctx instanceof SliderShowcaseSeriesVideoDetailsService_V1.ISliderShowcaseSeriesVideoDetailsService_V1)
             iSliderShowcaseSeriesVideoDetailsService_V1 = (SliderShowcaseSeriesVideoDetailsService_V1.ISliderShowcaseSeriesVideoDetailsService_V1) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement ISliderShowcaseSeriesVideoDetailsService_V1");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement ISliderShowcaseSeriesVideoDetailsService_V1");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setSliderShowcaseSeriesVideoDetailsService_V1Listener(ISliderShowcaseSeriesVideoDetailsService_V1 callback) {
+        this.iSliderShowcaseSeriesVideoDetailsService_V1 = callback;
     }
 
     public void fetchSeriesVideoDetailsForSliderShowcase(String API_URL, int indexOfThisVideo) {
+        if (iSliderShowcaseSeriesVideoDetailsService_V1 == null) {
+            if (context != null && context instanceof SliderShowcaseSeriesVideoDetailsService_V1.ISliderShowcaseSeriesVideoDetailsService_V1) {
+                iSliderShowcaseSeriesVideoDetailsService_V1 = (SliderShowcaseSeriesVideoDetailsService_V1.ISliderShowcaseSeriesVideoDetailsService_V1) context;
+            }
+            if (iSliderShowcaseSeriesVideoDetailsService_V1 == null) {
+                throw new RuntimeException(context.toString()+ " must implement ISliderShowcaseSeriesVideoDetailsService_V1 or setSliderShowcaseSeriesVideoDetailsService_V1Listener");
+            }
+        }
+
         this.indexOfThisVideo = indexOfThisVideo;
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", ApplicationConstants.xAccessToken));

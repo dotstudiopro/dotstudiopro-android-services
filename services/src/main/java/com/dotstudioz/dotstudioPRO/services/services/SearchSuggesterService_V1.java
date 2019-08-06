@@ -22,15 +22,31 @@ public class SearchSuggesterService_V1 implements CommonAsyncHttpClient_V1.IComm
 
     public ISearchSuggesterService iSearchSuggesterService;
 
+    Context context;
     public SearchSuggesterService_V1(Context ctx) {
+        context = ctx;
         if (ctx instanceof SearchSuggesterService_V1.ISearchSuggesterService)
             iSearchSuggesterService = (SearchSuggesterService_V1.ISearchSuggesterService) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement ISearchSuggesterService");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement ISearchSuggesterService");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setSearchSuggesterServiceListener(ISearchSuggesterService callback) {
+        this.iSearchSuggesterService = callback;
     }
 
 
     public void search(String xAccessToken, String xClientToken, String searchQueryString, String SEARCH_API_URL) {
+
+        if (iSearchSuggesterService == null) {
+            if (context != null && context instanceof SearchSuggesterService_V1.ISearchSuggesterService) {
+                iSearchSuggesterService = (SearchSuggesterService_V1.ISearchSuggesterService) context;
+            }
+            if (iSearchSuggesterService == null) {
+                throw new RuntimeException(context.toString()+ " must implement ISearchSuggesterService or setSearchSuggesterServiceListener");
+            }
+        }
 
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", ApplicationConstants.xAccessToken));

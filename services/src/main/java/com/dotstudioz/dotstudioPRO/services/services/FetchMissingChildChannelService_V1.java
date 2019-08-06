@@ -36,9 +36,9 @@ public class FetchMissingChildChannelService_V1 implements CommonAsyncHttpClient
     Context context;
     public FetchMissingChildChannelService_V1(Context ctx) {
         context = ctx;
-        /*if (ctx instanceof FetchMissingChildChannelService_V1.IFetchMissingChildChannelService_V1)
+        if (ctx instanceof FetchMissingChildChannelService_V1.IFetchMissingChildChannelService_V1)
             iFetchMissingChildChannelService_V1 = (FetchMissingChildChannelService_V1.IFetchMissingChildChannelService_V1) ctx;
-        else
+        /*else
             throw new RuntimeException(ctx.toString()+ " must implement IFetchMissingChildChannelService_V1");*/
     }
 
@@ -56,8 +56,14 @@ public class FetchMissingChildChannelService_V1 implements CommonAsyncHttpClient
     }
 
     public void fetchMissingChildChannelData(String selectedParentCategorySlug, String selectedParentChannelSlug, String channelSlug, ArrayList<SpotLightCategoriesDTO> spotLightCategoriesDTOArrayList, boolean isSeasonClicked, int seasonToLoad) {
-        if (iFetchMissingChildChannelService_V1 == null)
-            throw new RuntimeException(context.toString()+ " must implement IFetchMissingChildChannelService_V1 or setFetchMissingChildChannelService_V1Listener");
+        if (iFetchMissingChildChannelService_V1 == null) {
+            if (context != null && context instanceof FetchMissingChildChannelService_V1.IFetchMissingChildChannelService_V1) {
+                iFetchMissingChildChannelService_V1 = (FetchMissingChildChannelService_V1.IFetchMissingChildChannelService_V1) context;
+            }
+            if (iFetchMissingChildChannelService_V1 == null) {
+                throw new RuntimeException(context.toString()+ " must implement IFetchMissingChildChannelService_V1 or setFetchMissingChildChannelService_V1Listener");
+            }
+        }
 
         this.selectedParentCategorySlug = selectedParentCategorySlug;
         this.selectedParentChannelSlug = selectedParentChannelSlug;

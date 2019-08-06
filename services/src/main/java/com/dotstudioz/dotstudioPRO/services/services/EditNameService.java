@@ -23,14 +23,29 @@ public class EditNameService {
 
     public EditNameService.IEditNameService iEditNameService;
 
+    Context context;
     public EditNameService(Context ctx) {
         if (ctx instanceof EditNameService.IEditNameService)
             iEditNameService = (EditNameService.IEditNameService) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement IEditNameService");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IEditNameService");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setEditNameServiceListener(IEditNameService callback) {
+        this.iEditNameService = callback;
     }
 
     public void saveName(String xAccessToken, String xClientToken, String USER_DETAILS_URL, String fName, String lName) {
+        if (iEditNameService == null) {
+            if (context != null && context instanceof EditNameService.IEditNameService) {
+                iEditNameService = (EditNameService.IEditNameService) context;
+            }
+            if (iEditNameService == null) {
+                throw new RuntimeException(context.toString()+ " must implement IEditNameService or setEditNameServiceListener");
+            }
+        }
+
         AsyncHttpClient client = new AsyncHttpClient();
         client.setMaxRetriesAndTimeout(2, 30000);
         client.setTimeout(30000);

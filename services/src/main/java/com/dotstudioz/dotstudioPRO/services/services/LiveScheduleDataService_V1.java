@@ -28,14 +28,30 @@ public class LiveScheduleDataService_V1 implements CommonAsyncHttpClient_V1.ICom
         void fetchLiveScheduleDataServiceError(String ERROR);
     }
 
+    Context context;
     public LiveScheduleDataService_V1(Context ctx) {
+        context = ctx;
         if (ctx instanceof LiveScheduleDataService_V1.ILiveScheduleDataService_V1)
             iLiveScheduleDataService_V1 = (LiveScheduleDataService_V1.ILiveScheduleDataService_V1) ctx;
-        else
-            throw new RuntimeException(ctx.toString()+ " must implement ILiveScheduleDataService_V1");
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement ILiveScheduleDataService_V1");*/
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setLiveScheduleDataService_V1Listener(ILiveScheduleDataService_V1 callback) {
+        this.iLiveScheduleDataService_V1 = callback;
     }
 
     public void fetchLiveScheduleData(String API_URL) {
+        if (iLiveScheduleDataService_V1 == null) {
+            if (context != null && context instanceof LiveScheduleDataService_V1.ILiveScheduleDataService_V1) {
+                iLiveScheduleDataService_V1 = (LiveScheduleDataService_V1.ILiveScheduleDataService_V1) context;
+            }
+            if (iLiveScheduleDataService_V1 == null) {
+                throw new RuntimeException(context.toString()+ " must implement ILiveScheduleDataService_V1 or setLiveScheduleDataService_V1Listener");
+            }
+        }
+
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", ApplicationConstants.xAccessToken));
 
