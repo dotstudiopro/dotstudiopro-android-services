@@ -442,7 +442,7 @@ public class GetAllCategoriesServiceForHomepage_V1 implements CommonAsyncHttpCli
                                         } catch (Exception e) {
                                             videoInfoDTO.setVideoDuration(0);
                                         }
-                                        if (videoInfoDTO.getVideoPausedPoint() == 0) {
+                                        if (videoInfoDTO.getVideoDuration() == 0) {
                                             try {
                                                 int duraInt = channel.getJSONObject("video").getInt("duration");
                                                 videoInfoDTO.setVideoDuration(duraInt);
@@ -450,7 +450,7 @@ public class GetAllCategoriesServiceForHomepage_V1 implements CommonAsyncHttpCli
                                                 videoInfoDTO.setVideoDuration(0);
                                             }
                                         }
-                                        if (videoInfoDTO.getVideoPausedPoint() == 0) {
+                                        if (videoInfoDTO.getVideoDuration() == 0) {
                                             try {
                                                 float floatVideoDuration = (float) (channel.getJSONObject("video").getDouble("duration"));
                                                 int videoDurationInt = (int) floatVideoDuration;
@@ -519,6 +519,32 @@ public class GetAllCategoriesServiceForHomepage_V1 implements CommonAsyncHttpCli
 
                                             if(((JSONObject) playlistArray.get(j)).has("slug"))
                                                 videoInfoDTO.setSlug(playlistArray.getJSONObject(j).getString("slug"));
+
+                                            try {
+                                                String duraString = ((JSONObject) playlistArray.get(j)).getString("duration");
+                                                float floatVideoDuration = Float.parseFloat(duraString);
+                                                int videoDurationInt = (int) floatVideoDuration;
+                                                videoInfoDTO.setVideoDuration(videoDurationInt);
+                                            } catch (Exception e) {
+                                                videoInfoDTO.setVideoDuration(0);
+                                            }
+                                            if (videoInfoDTO.getVideoDuration() == 0) {
+                                                try {
+                                                    int duraInt = ((JSONObject) playlistArray.get(j)).getInt("duration");
+                                                    videoInfoDTO.setVideoDuration(duraInt);
+                                                } catch (Exception e) {
+                                                    videoInfoDTO.setVideoDuration(0);
+                                                }
+                                            }
+                                            if (videoInfoDTO.getVideoDuration() == 0) {
+                                                try {
+                                                    float floatVideoDuration = (float) (((JSONObject) playlistArray.get(j)).getDouble("duration"));
+                                                    int videoDurationInt = (int) floatVideoDuration;
+                                                    videoInfoDTO.setVideoDuration(videoDurationInt);
+                                                } catch (Exception e) {
+                                                    videoInfoDTO.setVideoDuration(0);
+                                                }
+                                            }
 
                                             missingVideoInfoDTOList.add(videoInfoDTO);
                                         }

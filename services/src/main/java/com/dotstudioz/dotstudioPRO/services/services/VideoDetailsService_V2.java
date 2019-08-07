@@ -517,13 +517,13 @@ public class VideoDetailsService_V2 implements CommonAsyncHttpClient_V1.ICommonA
                         int videoDurationInt = (int) floatVideoDuration;
                         videoInfoDTO.setVideoDuration(videoDurationInt);
                     } catch(Exception e) { videoInfoDTO.setVideoDuration(0); }
-                    if(videoInfoDTO.getVideoPausedPoint() == 0) {
+                    if(videoInfoDTO.getVideoDuration() == 0) {
                         try {
                             int duraInt = obj.getInt("duration");
                             videoInfoDTO.setVideoDuration(duraInt);
                         } catch(Exception e) { videoInfoDTO.setVideoDuration(0); }
                     }
-                    if(videoInfoDTO.getVideoPausedPoint() == 0) {
+                    if(videoInfoDTO.getVideoDuration() == 0) {
                         try {
                             float floatVideoDuration = (float)(obj.getDouble("duration"));
                             int videoDurationInt = (int) floatVideoDuration;
@@ -601,6 +601,14 @@ public class VideoDetailsService_V2 implements CommonAsyncHttpClient_V1.ICommonA
                     videoInfoDTO.setRatingValue(ratingValue);
                 } catch (Exception e) {
                     ratingValue = 0;
+                }
+
+                try {
+                    String videoWallpaperURL = obj.getString("wallpaper");
+                    videoInfoDTO.setWallpaper(videoWallpaperURL);
+                } catch (Exception e) {
+                    videoInfoDTO.setWallpaper("");
+                    e.printStackTrace();
                 }
 
                 try {
