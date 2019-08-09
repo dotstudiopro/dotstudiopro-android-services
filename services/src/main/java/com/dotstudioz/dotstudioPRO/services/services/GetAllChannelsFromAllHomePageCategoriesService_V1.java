@@ -2,12 +2,11 @@ package com.dotstudioz.dotstudioPRO.services.services;
 
 import android.content.Context;
 
-import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
-import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.SpotLightCategoriesDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.SpotLightChannelDTO;
-
+import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 import com.dotstudioz.dotstudioPRO.services.util.CommonServiceUtils;
 
 import org.json.JSONArray;

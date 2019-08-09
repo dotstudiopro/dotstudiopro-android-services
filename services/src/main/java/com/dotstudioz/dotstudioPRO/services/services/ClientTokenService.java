@@ -2,19 +2,19 @@ package com.dotstudioz.dotstudioPRO.services.services;
 
 import android.content.Context;
 
+import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.JsonHttpResponseHandler;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import cz.msebera.android.httpclient.Header;
+import java.util.ArrayList;
 
 /**
  * Created by Admin on 17-01-2016.
  */
-public class ClientTokenService {
+public class ClientTokenService implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
 
     public IClientTokenService iClientTokenService;
     Context context;
@@ -42,42 +42,29 @@ public class ClientTokenService {
             }
         }
 
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.setMaxRetriesAndTimeout(2, 30000);
-        client.setTimeout(30000);
-        client.addHeader("x-access-token", xAccessToken);
-        client.addHeader("x-client-token", xClientToken);
+        ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
+        headerItemsArrayList.add(new ParameterItem("x-access-token", ApplicationConstants.xAccessToken));
+        if(ApplicationConstants.CLIENT_TOKEN != null && ApplicationConstants.CLIENT_TOKEN.length() > 0)
+            headerItemsArrayList.add(new ParameterItem("x-client-token", ApplicationConstants.CLIENT_TOKEN));
 
-
-        client.post(CLIENT_TOKEN_API, null, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject responseBody) {
-                iClientTokenService.clientTokenServiceResponse(responseBody);
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable error, JSONObject responseBody) {
-                iClientTokenService.clientTokenServiceError(error.getMessage());
-                boolean isSuccess = true;
-                try {
-                    isSuccess = responseBody.getBoolean("success");
-                } catch (JSONException e) {
-                    //throws error, because on success there is no boolean returned, so
-                    // we are assuming that it is a success
-                    isSuccess = false;
-                }
-
-                if (!isSuccess) {
-                    if(AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
-                        AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInRentNowPageString);
-                        if(AccessTokenHandler.getInstance().foundAnyError)
-                            iClientTokenService.accessTokenExpired();
-                        else if(AccessTokenHandler.getInstance().foundAnyErrorForClientToken)
-                            iClientTokenService.clientTokenExpired();
-                    }
-                }
-            }
-        });
+        CommonAsyncHttpClient_V1.getInstance(this).postAsyncHttpsClient(headerItemsArrayList, null,
+                ApplicationConstantURL.getInstance().TOKEN_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
+    }
+    @Override
+    public void onResultHandler(JSONObject responseBody) {
+        iClientTokenService.clientTokenServiceResponse(responseBody);
+    }
+    @Override
+    public void onErrorHandler(String ERROR) {
+        iClientTokenService.clientTokenServiceError(ERROR);
+    }
+    @Override
+    public void accessTokenExpired() {
+        iClientTokenService.accessTokenExpired();
+    }
+    @Override
+    public void clientTokenExpired() {
+        iClientTokenService.clientTokenExpired();
     }
 
     public interface IClientTokenService {

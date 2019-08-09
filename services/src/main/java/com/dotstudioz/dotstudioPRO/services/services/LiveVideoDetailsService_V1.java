@@ -2,13 +2,12 @@ package com.dotstudioz.dotstudioPRO.services.services;
 
 import android.content.Context;
 
-import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
-import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
-import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 import com.dotstudioz.dotstudioPRO.models.dto.AdDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.VideoInfoDTO;
-
+import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 import com.dotstudioz.dotstudioPRO.services.util.CommonServiceUtils;
 
 import org.json.JSONArray;
@@ -66,13 +65,9 @@ public class LiveVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.ICom
 
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", ApplicationConstants.xAccessToken));
-        /*if(ApplicationConstants.CLIENT_TOKEN != null && ApplicationConstants.CLIENT_TOKEN.length() > 0)
-            headerItemsArrayList.add(new ParameterItem("x-client-token", ApplicationConstants.CLIENT_TOKEN));*/
 
         CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, null,
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInSingleVideoPageString);
-        /*CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpClient(headerItemsArrayList, null,
-                API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInSingleVideoPageString);*/
     }
 
     boolean someVideoDataMissing = false;

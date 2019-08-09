@@ -1,6 +1,7 @@
 package com.dotstudioz.dotstudioPRO.services.services;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.dotstudioz.dotstudioPRO.models.dto.VideoInfoDTO;
 
@@ -47,7 +48,7 @@ public class VMAPAdTagsService_V1 implements CommonAsyncHttpClient_V1.ICommonAsy
             }
         }
 
-        System.out.println("fetchVMAPAdTags API_URL==>"+API_URL);
+        Log.d("VMAPAdTagsService", "fetchVMAPAdTags: fetchVMAPAdTags API_URL==>"+API_URL);
 
         CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(null, null,
                 API_URL, "");
@@ -65,7 +66,7 @@ public class VMAPAdTagsService_V1 implements CommonAsyncHttpClient_V1.ICommonAsy
                         try {
                             if (obj.getJSONObject("tags").has("adTagPre")) {
                                 videoInfoDTO.setPreRollAdFixIssueVMAP(obj.getJSONObject("tags").getString("adTagPre"));
-                                System.out.println("pre==>"+videoInfoDTO.getPreRollAdFixIssueVMAP());
+                                Log.d("VMAPAdTagsService", "fetchVMAPAdTags: pre==>"+videoInfoDTO.getPreRollAdFixIssueVMAP());
                             }
                         } catch(Exception e) {
                             e.printStackTrace();
@@ -73,7 +74,7 @@ public class VMAPAdTagsService_V1 implements CommonAsyncHttpClient_V1.ICommonAsy
                         try {
                             if (obj.getJSONObject("tags").has("adTagMid")) {
                                 videoInfoDTO.setMidRollAdFixIssueVMAP(obj.getJSONObject("tags").getString("adTagMid"));
-                                System.out.println("pre==>"+videoInfoDTO.getMidRollAdFixIssueVMAP());
+                                Log.d("VMAPAdTagsService", "fetchVMAPAdTags: pre==>"+videoInfoDTO.getMidRollAdFixIssueVMAP());
                             }
                         } catch(Exception e) {
                             e.printStackTrace();
@@ -81,7 +82,7 @@ public class VMAPAdTagsService_V1 implements CommonAsyncHttpClient_V1.ICommonAsy
                         try {
                             if (obj.getJSONObject("tags").has("adTagPost")) {
                                 videoInfoDTO.setPostRollAdFixIssueVMAP(obj.getJSONObject("tags").getString("adTagPost"));
-                                System.out.println("pre==>"+videoInfoDTO.getPostRollAdFixIssueVMAP());
+                                Log.d("VMAPAdTagsService", "fetchVMAPAdTags: pre==>"+videoInfoDTO.getPostRollAdFixIssueVMAP());
                             }
                         } catch(Exception e) {
                             e.printStackTrace();
@@ -109,7 +110,7 @@ public class VMAPAdTagsService_V1 implements CommonAsyncHttpClient_V1.ICommonAsy
                         try {
                             if (obj.getJSONObject("tags").has("adTagPre")) {
                                 videoInfoDTO.setPreRollAdFixIssueVMAP(obj.getJSONObject("tags").getString("adTagPre"));
-                                System.out.println("pre==>"+videoInfoDTO.getPreRollAdFixIssueVMAP());
+                                Log.d("VMAPAdTagsService", "fetchVMAPAdTags: pre==>"+videoInfoDTO.getPreRollAdFixIssueVMAP());
                             }
                         } catch(Exception e) {
                             e.printStackTrace();
@@ -117,7 +118,7 @@ public class VMAPAdTagsService_V1 implements CommonAsyncHttpClient_V1.ICommonAsy
                         try {
                             if (obj.getJSONObject("tags").has("adTagMid")) {
                                 videoInfoDTO.setMidRollAdFixIssueVMAP(obj.getJSONObject("tags").getString("adTagMid"));
-                                System.out.println("pre==>"+videoInfoDTO.getMidRollAdFixIssueVMAP());
+                                Log.d("VMAPAdTagsService", "fetchVMAPAdTags: pre==>"+videoInfoDTO.getMidRollAdFixIssueVMAP());
                             }
                         } catch(Exception e) {
                             e.printStackTrace();
@@ -125,7 +126,7 @@ public class VMAPAdTagsService_V1 implements CommonAsyncHttpClient_V1.ICommonAsy
                         try {
                             if (obj.getJSONObject("tags").has("adTagPost")) {
                                 videoInfoDTO.setPostRollAdFixIssueVMAP(obj.getJSONObject("tags").getString("adTagPost"));
-                                System.out.println("pre==>"+videoInfoDTO.getPostRollAdFixIssueVMAP());
+                                Log.d("VMAPAdTagsService", "fetchVMAPAdTags: pre==>"+videoInfoDTO.getPostRollAdFixIssueVMAP());
                             }
                         } catch(Exception e) {
                             e.printStackTrace();
@@ -149,7 +150,7 @@ public class VMAPAdTagsService_V1 implements CommonAsyncHttpClient_V1.ICommonAsy
     }
     @Override
     public void onErrorHandler(String ERROR) {
-        System.out.println("VMAP onErrorHandler==>"+ERROR);
+        Log.d("VMAPAdTagsService", "VMAP onErrorHandler==>"+ERROR);
         iVMAPAdTagsService_V1.getVMAPAdTagsServiceError(ERROR);
     }
     @Override

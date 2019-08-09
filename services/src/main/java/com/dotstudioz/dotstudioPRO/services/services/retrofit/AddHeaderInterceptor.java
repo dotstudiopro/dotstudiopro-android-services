@@ -1,5 +1,7 @@
 package com.dotstudioz.dotstudioPRO.services.services.retrofit;
 
+import android.util.Log;
+
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 
 import java.io.IOException;
@@ -55,7 +57,7 @@ public class AddHeaderInterceptor implements Interceptor {
         try {
             String userAgent = System.getProperty("http.agent");
             //client.setUserAgent(userAgent);
-            System.out.println("userAgentuserAgentuserAgent==>"+userAgent);
+            Log.d("AddHeaderInterceptor", "userAgentuserAgentuserAgent==>"+userAgent);
             builder.header(CoreProtocolPNames.USER_AGENT, userAgent);
             builder.header("user-agent", userAgent);
         } catch(Exception e) {

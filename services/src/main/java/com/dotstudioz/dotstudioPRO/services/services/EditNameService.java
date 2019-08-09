@@ -2,24 +2,18 @@ package com.dotstudioz.dotstudioPRO.services.services;
 
 import android.content.Context;
 
+import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import cz.msebera.android.httpclient.Header;
+import java.util.ArrayList;
 
 /**
  * Created by mohsin on 10-10-2016.
  */
 
-public class EditNameService {
+public class EditNameService implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
 
     public EditNameService.IEditNameService iEditNameService;
 
@@ -46,82 +40,51 @@ public class EditNameService {
             }
         }
 
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.setMaxRetriesAndTimeout(2, 30000);
-        client.setTimeout(30000);
-        client.addHeader("x-access-token", xAccessToken);
-        client.addHeader("x-client-token", xClientToken);
+        ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
+        headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));
+        headerItemsArrayList.add(new ParameterItem("x-client-token", xClientToken));
 
-        Map<String, String> jsonParams = new HashMap<String, String>();
-        jsonParams.put("token", xAccessToken);
-        jsonParams.put("x-client-token", xClientToken);
-        jsonParams.put("first_name", fName);
-        jsonParams.put("last_name", lName);
+        ArrayList<ParameterItem> requestParamsArrayList = new ArrayList<>();
+        requestParamsArrayList.add(new ParameterItem("token", xAccessToken));
+        requestParamsArrayList.add(new ParameterItem("client", xClientToken));
+        requestParamsArrayList.add(new ParameterItem("first_name", fName));
+        requestParamsArrayList.add(new ParameterItem("last_name", lName));
 
-        RequestParams rp = new RequestParams(jsonParams);
+        CommonAsyncHttpClient_V1.getInstance(this).postAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
+                USER_DETAILS_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
+    }
 
+    @Override
+    public void onResultHandler(JSONObject response) {
         try {
-            client.post(USER_DETAILS_URL, rp, new AsyncHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                    try {
-                        String s = new String(responseBody);
-                        //processTokenRefresh(s);
-
-                        JSONObject resultJsonObject = null;
-
-                        try {
-                            resultJsonObject = new JSONObject(s);
-
-                            if (resultJsonObject.getBoolean("success")) {
-                                iEditNameService.editNameServiceResponse(resultJsonObject);
-                            } else {
-                                iEditNameService.editNameServiceError("failure");
-                            }
-                        } catch (Exception e) {
-                            iEditNameService.editNameServiceError(e.getMessage());
-                        }
-                    } catch (Exception e) {
-                        //e.printStackTrace();
-                        iEditNameService.editNameServiceError(e.getMessage());
-                    }
+            try {
+                if (response.getBoolean("success")) {
+                    iEditNameService.editNameServiceResponse(response);
+                } else {
+                    iEditNameService.editNameServiceError("failure");
                 }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                    if (responseBody != null) {
-                        String s = new String(responseBody);
-                        JSONObject jsonObject = null;
-                        try {
-                            jsonObject = new JSONObject(s);
-                        } catch (JSONException e) {
-                        }
-
-                        boolean isSuccess = true;
-                        try {
-                            isSuccess = jsonObject.getBoolean("success");
-                        } catch (JSONException e) {
-                            //throws error, because on success there is no boolean returned, so
-                            // we are assuming that it is a success
-                            isSuccess = false;
-                        }
-
-                        if (!isSuccess) {
-                            if(AccessTokenHandler.getInstance().handleTokenExpiryConditions(jsonObject)) {
-                                AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInChangePasswordPageString);
-                                if(AccessTokenHandler.getInstance().foundAnyError)
-                                    iEditNameService.accessTokenExpired();
-                                else if(AccessTokenHandler.getInstance().foundAnyErrorForClientToken)
-                                    iEditNameService.clientTokenExpired();
-                            }
-                        }
-                    }
-                }
-            });
+            } catch (Exception e) {
+                iEditNameService.editNameServiceError(e.getMessage());
+            }
         } catch (Exception e) {
             //e.printStackTrace();
             iEditNameService.editNameServiceError(e.getMessage());
         }
+    }
+
+    @Override
+    public void onErrorHandler(String ERROR) {
+        iEditNameService.editNameServiceError(ERROR);
+    }
+
+    @Override
+    public void accessTokenExpired() {
+        iEditNameService.accessTokenExpired();
+    }
+
+    @Override
+    public void clientTokenExpired() {
+        iEditNameService.clientTokenExpired();
     }
 
 

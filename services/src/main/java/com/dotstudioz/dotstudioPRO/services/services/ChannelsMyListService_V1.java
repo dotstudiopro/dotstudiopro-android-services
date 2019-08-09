@@ -1,12 +1,12 @@
 package com.dotstudioz.dotstudioPRO.services.services;
 
 import android.content.Context;
+import android.util.Log;
 
-import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
 import com.dotstudioz.dotstudioPRO.models.dto.ChannelMyListDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.ChannelsMyListDTOForMyList;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
-
+import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -149,9 +149,9 @@ public class ChannelsMyListService_V1 implements CommonAsyncHttpClient_V1.ICommo
 
         setFlagFor(GETTING_SERVICE_FLAG);
 
-        System.out.println("getChannelFromMyList==>"+xAccessToken);
-        System.out.println("getChannelFromMyList==>"+xClientToken);
-        System.out.println("getChannelFromMyList==>"+API_URL);
+        Log.d("ChannelsMyListService", "getChannelFromMyList==>"+xAccessToken);
+        Log.d("ChannelsMyListService", "getChannelFromMyList==>"+xClientToken);
+        Log.d("ChannelsMyListService", "getChannelFromMyList==>"+API_URL);
 
         CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, null,
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
@@ -159,7 +159,7 @@ public class ChannelsMyListService_V1 implements CommonAsyncHttpClient_V1.ICommo
     @Override
     public void onResultHandler(JSONObject response) {
         try {
-            System.out.println("onResultHandler==>"+response);
+            Log.d("ChannelsMyListService", "onResultHandler==>"+response);
             if(addingFlag) {
                 iChannelsMyListService.addChannelToMyListResponse(response);
             } else if(deletingFlag) {

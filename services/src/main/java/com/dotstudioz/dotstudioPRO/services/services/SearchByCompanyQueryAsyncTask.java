@@ -3,8 +3,8 @@ package com.dotstudioz.dotstudioPRO.services.services;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
 import com.dotstudioz.dotstudioPRO.models.dto.SearchResultDTO;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
 import com.dotstudioz.dotstudioPRO.services.services.retrofit.RestClientInterface;
 import com.dotstudioz.dotstudioPRO.services.services.retrofit.RestClientManager;
 import com.dotstudioz.dotstudioPRO.services.util.CommonServiceUtils;

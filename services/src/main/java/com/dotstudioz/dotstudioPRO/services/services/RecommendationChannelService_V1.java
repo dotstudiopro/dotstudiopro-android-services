@@ -1,21 +1,18 @@
 package com.dotstudioz.dotstudioPRO.services.services;
 
 import android.content.Context;
+import android.util.Log;
 
-import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
-import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.Recommended4ItemPairDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.RecommendedItemDTO;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.RequestParams;
+import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by Admin on 17-01-2016.
@@ -48,7 +45,7 @@ public class RecommendationChannelService_V1 implements CommonAsyncHttpClient_V1
             }
         }
 
-        System.out.println(id+"<==id=======RECOMMENDATION_API==>"+RECOMMENDATION_API);
+        Log.d("RecommendChanSer", id+"<==id=======RECOMMENDATION_API==>"+RECOMMENDATION_API);
 
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", ApplicationConstants.xAccessToken));

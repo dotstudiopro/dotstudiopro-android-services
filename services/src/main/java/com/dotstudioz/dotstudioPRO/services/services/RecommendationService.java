@@ -2,32 +2,20 @@ package com.dotstudioz.dotstudioPRO.services.services;
 
 import android.content.Context;
 
-import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
-import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
+import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.RecommendedItemDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.RecommendedItemPairDTO;
-import com.dotstudioz.dotstudioPRO.services.services.retrofit.RestClientInterface;
-import com.dotstudioz.dotstudioPRO.services.services.retrofit.RestClientManager;
-import com.google.gson.Gson;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
+import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import cz.msebera.android.httpclient.Header;
-import retrofit2.Call;
-import retrofit2.Callback;
 
 /**
  * Created by Admin on 17-01-2016.
  */
-public class RecommendationService {
+public class RecommendationService implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
     public RecommendationService.IRecommendationService iRecommendationService;
 
     Context context;
@@ -55,73 +43,19 @@ public class RecommendationService {
             }
         }
 
+        ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
+        headerItemsArrayList.add(new ParameterItem("x-access-token", ApplicationConstants.xAccessToken));
 
-        RestClientInterface restClientInterface = RestClientManager.getClient(ApplicationConstantURL.getInstance().API_DOMAIN_S, xAccessToken, null, null).create(RestClientInterface.class);
-        Call<Object> call1 = restClientInterface.getRecommendation(RECOMMENDATION_API,id,size,from);
-        call1.enqueue(new Callback<Object>() {
-            @Override
-            public void onResponse(Call<Object> call, retrofit2.Response<Object> response) {
-                try {
-                    if (response != null && !response.isSuccessful() && response.errorBody() != null) {
-                        // iClientTokenService.clientTokenServiceError(t.getMessage());
-                        boolean isSuccess = true;
-                        JSONObject responseBody = new JSONObject("" + (new Gson().toJson(response.errorBody())));
-                        try {
+        ArrayList<ParameterItem> requestParamsArrayList = new ArrayList();
+        ParameterItem pi1 = new ParameterItem("q", id);
+        ParameterItem pi2 = new ParameterItem("size", ""+size);
+        ParameterItem pi3 = new ParameterItem("from", ""+from);
+        requestParamsArrayList.add(pi1);
+        requestParamsArrayList.add(pi2);
+        requestParamsArrayList.add(pi3);
 
-                            if(responseBody.has("success"))
-                                isSuccess = responseBody.getBoolean("success");
-                            else
-                                isSuccess = false;
-
-                        } catch (JSONException e) {
-                            //throws error, because on success there is no boolean returned, so
-                            // we are assuming that it is a success
-                            isSuccess = false;
-                        }
-
-                        if (!isSuccess) {
-                            if(AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
-                                AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInRentNowPageString);
-                                if(AccessTokenHandler.getInstance().foundAnyError)
-                                    iRecommendationService.accessTokenExpired();
-                                else if(AccessTokenHandler.getInstance().foundAnyErrorForClientToken)
-                                    iRecommendationService.clientTokenExpired();
-                                else {
-                                    try {
-                                        if (responseBody.has("message")) {
-                                            iRecommendationService.recommendationServiceError( responseBody.getString("message"));
-                                        }
-                                    } catch (Exception e)
-                                    {
-                                        iRecommendationService.recommendationServiceError(e.getMessage());
-                                    }
-                                }
-                            }
-                        }
-                        return;
-                    }
-                    if (response != null && response.isSuccessful() && response.body() != null) {
-                        JSONObject responseBody = new JSONObject("" + (new Gson().toJson(response.body())));
-                        processResponse(responseBody);
-
-                    } else {
-                        //TODO:Error Handling
-                        // Toast.makeText(LoginActivity.this, INVALID_RESPONSE_MESSAGE, Toast.LENGTH_SHORT).show();
-                    }
-                } catch (Exception e) {
-                    //   Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    iRecommendationService.recommendationServiceError(e.getMessage());
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<Object> call, Throwable t) {
-                call.cancel();
-                iRecommendationService.recommendationServiceError(t.getMessage());
-            }
-        });
-
+        CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
+                RECOMMENDATION_API, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
     }
     private ArrayList<RecommendedItemDTO> recommendedItemDTOList;
     private ArrayList<RecommendedItemPairDTO> recommendedItemPairDTOList;
@@ -181,6 +115,26 @@ public class RecommendationService {
         }
 
         iRecommendationService.recommendationServiceResponse(recommendedItemPairDTOList);
+    }
+
+    @Override
+    public void onResultHandler(JSONObject response) {
+        processResponse(response);
+    }
+
+    @Override
+    public void onErrorHandler(String ERROR) {
+        iRecommendationService.recommendationServiceError(ERROR);
+    }
+
+    @Override
+    public void accessTokenExpired() {
+        iRecommendationService.accessTokenExpired();
+    }
+
+    @Override
+    public void clientTokenExpired() {
+        iRecommendationService.clientTokenExpired();
     }
 
     public interface IRecommendationService {

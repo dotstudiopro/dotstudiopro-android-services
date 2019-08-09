@@ -1,9 +1,9 @@
 package com.dotstudioz.dotstudioPRO.services.services;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.dotstudioz.dotstudioPRO.models.dto.StaticWebPageDataDTO;
-
 
 import org.json.JSONObject;
 
@@ -44,7 +44,7 @@ public class StaticWebPageDataService_V1 implements CommonAsyncHttpClient_V1.ICo
             }
         }
 
-        System.out.println("Calling fetchStaticWebPageData==>"+API_URL);
+        Log.d("StaticWebPageData", "Calling fetchStaticWebPageData==>"+API_URL);
         url = API_URL;
         CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(null, null,
                 API_URL, "");

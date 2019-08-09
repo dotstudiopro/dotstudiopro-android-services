@@ -1,6 +1,7 @@
 package com.dotstudioz.dotstudioPRO.services.services;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.dotstudioz.dotstudioPRO.models.dto.LiveTickerDataDTO;
 
@@ -45,40 +46,12 @@ public class LiveTickerDataService_V1 implements CommonAsyncHttpClient_V1.ICommo
             }
         }
 
-        System.out.println("Calling fetchLiveTickerData==>"+API_URL);
+        Log.d("LiveTickerData", "Calling fetchLiveTickerData==>"+API_URL);
         /*CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(null, null,
                 API_URL, "");*/
 
         CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(null, null,
                 API_URL, "");
-
-        /*RestClientInterface restClientInterface = RestClientManager.getClient(API_URL, null, null, null).create(RestClientInterface.class);
-        Call<Object> call1 = restClientInterface.requestGet(API_URL);
-        call1.enqueue(new Callback<Object>() {
-            @Override
-            public void onResponse(Call<Object> call, retrofit2.Response<Object> response) {
-                try {
-                    if (response != null && !response.isSuccessful() && response.errorBody() != null) {
-                        return;
-                    }
-                    if (response != null && response.isSuccessful() && response.body() != null) {
-                        JSONObject responseBody = new JSONObject("" + (new Gson().toJson(response.body())));
-                        processJSONResponseObject(responseBody);
-
-                    }
-                } catch (Exception e) {
-                    //   Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    iLiveTickerDataService_V1.fetchLiveTickerDataServiceError(e.getMessage());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Object> call, Throwable t) {
-                call.cancel();
-                iLiveTickerDataService_V1.fetchLiveTickerDataServiceError(t.getMessage());
-
-            }
-        });*/
 
     }
 

@@ -7,8 +7,8 @@ android {
         multiDexEnabled true
         minSdkVersion 17
         targetSdkVersion 28
-        versionCode 51
-        versionName "1.0.51"
+        versionCode 52
+        versionName "1.0.52"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -60,7 +60,7 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
 
     // All Models of DotStudioPro Android
-    implementation ('com.github.dotstudiopro:dotstudiopro-android-model:1.0.14')
+    implementation ('com.github.dotstudiopro:dotstudiopro-android-model:1.0.16')
             {
                 exclude group: 'com.android.support'
             }

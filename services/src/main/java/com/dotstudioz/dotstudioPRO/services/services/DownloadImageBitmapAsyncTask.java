@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
 
-
 import com.dotstudioz.dotstudioPRO.models.dto.SeasonItem;
 
 import java.io.InputStream;

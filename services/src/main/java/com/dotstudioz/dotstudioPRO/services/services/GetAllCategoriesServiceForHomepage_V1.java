@@ -1,27 +1,19 @@
 package com.dotstudioz.dotstudioPRO.services.services;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.SpotLightCategoriesDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.SpotLightChannelDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.VideoInfoDTO;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
-import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
-import com.dotstudioz.dotstudioPRO.services.services.retrofit.RestClientInterface;
-import com.dotstudioz.dotstudioPRO.services.services.retrofit.RestClientManager;
 import com.dotstudioz.dotstudioPRO.services.util.CommonServiceUtils;
-import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-
-import retrofit2.Call;
-import retrofit2.Callback;
 
 /**
  * Created by Mohsin on 27-07-2019.
@@ -64,154 +56,8 @@ public class GetAllCategoriesServiceForHomepage_V1 implements CommonAsyncHttpCli
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));
 
-        RestClientInterface restClientInterface = RestClientManager.getClient(ApplicationConstantURL.getInstance().API_DOMAIN_S, headerItemsArrayList).create(RestClientInterface.class);
-        Call<Object> call1 = restClientInterface.requestGet(API_URL);
-        try {
-            call1.enqueue(new Callback<Object>() {
-                @Override
-                public void onResponse(Call<Object> call, retrofit2.Response<Object> response) {
-                    Log.d("CommonAsyncHttp", "getAsyncHttpsClient onResponse!!!");
-                    try {
-                        if (response != null && !response.isSuccessful() && response.errorBody() != null) {
-                            handleError(response, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
-                            return;
-                        }
-                        if (response != null && response.isSuccessful() && response.body() != null) {
-                            handleSuccess(response, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
-                        } else {
-                            //TODO:Error Handling
-                            // Toast.makeText(LoginActivity.this, INVALID_RESPONSE_MESSAGE, Toast.LENGTH_SHORT).show();
-                        }
-                    } catch (Exception e) {
-                        onErrorHandler(e.getMessage());
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<Object> call, Throwable t) {
-                    call.cancel();
-                    onErrorHandler(t.getMessage());
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void handleSuccess(retrofit2.Response<Object> response, final String API_CALLED_FOR) {
-        try {
-            if (response.body() instanceof JSONArray) {
-                JSONObject newJSONObject = new JSONObject();
-                try {
-                    newJSONObject.put("result", response.body());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                onResultHandler(newJSONObject);
-            } else if (response.body() instanceof ArrayList) {
-                JSONObject newJSONObject = new JSONObject();
-                try {
-                    newJSONObject.put("result", response.body());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                onResultHandler(newJSONObject);
-            } else {
-                JSONObject responseBody = new JSONObject("" + (new Gson().toJson(response.body())));
-
-                boolean isSuccess = true;
-                try {
-                    //if the data was fetched successfully then the"success" is true or else it will
-                    //be false with a reason, this is being done so as to handle the token failure
-                    //sample of failure result looks like
-                    /**
-                     * {
-                     * "success": false,
-                     * "reason": "Auth failed"
-                     * }
-                     **/
-                    isSuccess = responseBody.getBoolean("success");
-                } catch (JSONException e) {
-                    //there is a case, for example categories_api, there is no parameter named "success"
-                    //so in that case, it will come inside this exception
-
-                    //throws error, because on success there is no boolean returned, so
-                    //we are assuming that it is a success
-                    isSuccess = true;
-                }
-
-                if (isSuccess) {
-                    onResultHandler(responseBody);
-                } else {
-                    if (AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
-                        AccessTokenHandler.getInstance().setFlagWhileCalingForToken(API_CALLED_FOR);
-                        if (AccessTokenHandler.getInstance().foundAnyError)
-                            accessTokenExpired();
-                        else if (AccessTokenHandler.getInstance().foundAnyErrorForClientToken)
-                            clientTokenExpired();
-                    } else {
-                        onErrorHandler("ERROR");
-                    }
-                }
-            }
-        } catch (Exception e) {
-            onErrorHandler(e.getMessage());
-        }
-    }
-
-    private void handleError(retrofit2.Response<Object> response, final String API_CALLED_FOR) {
-        try {
-            System.out.println("handleError==>" + response);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            JSONObject responseBody = new JSONObject(response.errorBody().string());
-            // JSONObject responseBody = new JSONObject("" + (new Gson().toJson(response.errorBody().string())));
-
-            boolean isSuccess = true;
-            try {
-                isSuccess = responseBody.getBoolean("success");
-            } catch (JSONException e) {
-                //throws error, because on success there is no boolean returned, so
-                // we are assuming that it is a success
-                isSuccess = true;
-            }
-
-            if (!isSuccess) {
-                boolean alreadyHandledFlag = false;
-                try {
-                    if (responseBody != null && responseBody.has("error")) {
-                        if (responseBody.getString("error") != null &&
-                                responseBody.getString("error").toLowerCase().equals("no channels found for this customer.")) {
-                            onErrorHandler(responseBody.getString("error"));
-                            alreadyHandledFlag = true;
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                if (alreadyHandledFlag)
-                    return;
-                if (AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
-                    AccessTokenHandler.getInstance().setFlagWhileCalingForToken(API_CALLED_FOR);
-                    if (AccessTokenHandler.getInstance().foundAnyError)
-                        accessTokenExpired();
-                    else if (AccessTokenHandler.getInstance().foundAnyErrorForClientToken)
-                        clientTokenExpired();
-                } else {
-                    onErrorHandler("ERROR");
-                }
-            } else {
-                if (responseBody.has("error"))
-                    onErrorHandler(responseBody.getString("error"));
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            onErrorHandler("ERROR ==>" + response);
-        }
+        CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, null,
+                API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
     }
 
     @Override

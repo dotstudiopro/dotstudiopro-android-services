@@ -1,11 +1,11 @@
 package com.dotstudioz.dotstudioPRO.services.services;
 
 import android.content.Context;
+import android.util.Log;
 
-import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 import com.dotstudioz.dotstudioPRO.models.dto.LiveScheduleDataDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
-
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 import com.dotstudioz.dotstudioPRO.services.util.CommonCoreLibraryUtils;
 
 import org.json.JSONArray;
@@ -58,9 +58,6 @@ public class LiveScheduleDataService_V1 implements CommonAsyncHttpClient_V1.ICom
 
         CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, null,
                 API_URL, "");
-
-       /* CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpClient(headerItemsArrayList, null,
-                API_URL, "");*/
     }
 
     public void processJSONResponseObject(JSONObject response) {
@@ -75,7 +72,7 @@ public class LiveScheduleDataService_V1 implements CommonAsyncHttpClient_V1.ICom
                     try {
                         if (((JSONObject) response.getJSONObject("currently_playing")).getString("scheduled_start_time") != null &&
                                 ((JSONObject) response.getJSONObject("currently_playing")).getString("scheduled_start_time").length() > 0) {
-                            System.out.println("((JSONObject) response.getJSONObject('currently_playing')).getString('scheduled_start_time')==>"+((JSONObject) response.getJSONObject("currently_playing")).getString("scheduled_start_time"));
+                            Log.d("LiveScheduleData", "((JSONObject) response.getJSONObject('currently_playing')).getString('scheduled_start_time')==>"+((JSONObject) response.getJSONObject("currently_playing")).getString("scheduled_start_time"));
                             /*DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
                             df.setTimeZone(TimeZone.getDefault());*/
                             liveScheduleDataDTO.setScheduledStartTime(CommonCoreLibraryUtils.getUTCDateToLocalDate(((JSONObject) response.getJSONObject("currently_playing")).getString("scheduled_start_time")));
@@ -124,7 +121,7 @@ public class LiveScheduleDataService_V1 implements CommonAsyncHttpClient_V1.ICom
                             try {
                                 if (((JSONObject) result.get(i)).getString("scheduled_start_time") != null &&
                                         ((JSONObject) result.get(i)).getString("scheduled_start_time").length() > 0) {
-                                    System.out.println("((JSONObject) result.get(i)).getString('scheduled_start_time')==>"+((JSONObject) result.get(i)).getString("scheduled_start_time"));
+                                    Log.d("LiveScheduleData", "((JSONObject) result.get(i)).getString('scheduled_start_time')==>"+((JSONObject) result.get(i)).getString("scheduled_start_time"));
                                     /*DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
                                     df.setTimeZone(TimeZone.getDefault());*/
                                     liveScheduleDataDTO.setScheduledStartTime(CommonCoreLibraryUtils.getUTCDateToLocalDate(((JSONObject) result.get(i)).getString("scheduled_start_time")));
@@ -138,7 +135,7 @@ public class LiveScheduleDataService_V1 implements CommonAsyncHttpClient_V1.ICom
 
                             liveScheduleDataDTOArrayList.add(liveScheduleDataDTO);
 
-                            System.out.println("liveScheduleDataDTO.getScheduledStartTime()==>"+liveScheduleDataDTO.getScheduledStartTime());
+                            Log.d("LiveScheduleData", "liveScheduleDataDTO.getScheduledStartTime()==>"+liveScheduleDataDTO.getScheduledStartTime());
 
                         } catch (Exception e) {
                             e.printStackTrace();

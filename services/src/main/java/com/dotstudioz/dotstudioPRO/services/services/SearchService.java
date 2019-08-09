@@ -2,30 +2,19 @@ package com.dotstudioz.dotstudioPRO.services.services;
 
 import android.content.Context;
 
+import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
-import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
-import com.dotstudioz.dotstudioPRO.services.services.retrofit.RestClientInterface;
-import com.dotstudioz.dotstudioPRO.services.services.retrofit.RestClientManager;
-import com.google.gson.Gson;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import cz.msebera.android.httpclient.Header;
-import retrofit2.Call;
-import retrofit2.Callback;
+import java.util.ArrayList;
 
 /**
  * Created by mohsin on 08-10-2016.
  */
 
-public class SearchService {
+public class SearchService implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
 
     public ISearchService iSearchService;
 
@@ -43,8 +32,8 @@ public class SearchService {
         this.iSearchService = callback;
     }
 
+    public void search(String xAccessToken, String xClientToken, String searchQueryString, String SEARCH_API_URL) {
 
-    public void search1(String xAccessToken, String xClientToken, String searchQueryString, String SEARCH_API_URL) {
         if (iSearchService == null) {
             if (context != null && context instanceof SearchService.ISearchService) {
                 iSearchService = (SearchService.ISearchService) context;
@@ -54,136 +43,36 @@ public class SearchService {
             }
         }
 
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.setMaxRetriesAndTimeout(2, 30000);
-        client.setTimeout(30000);
-        client.addHeader("x-access-token", xAccessToken);
-        client.addHeader("x-client-token", xClientToken);
+        ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
+        headerItemsArrayList.add(new ParameterItem("x-access-token", ApplicationConstants.xAccessToken));
+        headerItemsArrayList.add(new ParameterItem("x-client-token", ApplicationConstants.CLIENT_TOKEN));
 
-        Map<String, String> jsonParams = new HashMap<String, String>();
-        jsonParams.put("token", xAccessToken);
-        jsonParams.put("x-client-token", xClientToken);
-        jsonParams.put("q", searchQueryString);
+        ArrayList<ParameterItem> requestParamsArrayList = new ArrayList();
+        ParameterItem pi1 = new ParameterItem("q", searchQueryString);
+        requestParamsArrayList.add(pi1);
 
-        RequestParams rp = new RequestParams(jsonParams);
-
-        try {
-            client.get(SEARCH_API_URL, rp, new AsyncHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                    try {
-                        String s = new String(responseBody);
-                        iSearchService.searchServiceResponse(s);
-                    } catch (Exception e) {
-                        iSearchService.searchError(e.getMessage());
-                        //e.printStackTrace();
-                    }
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                    if (responseBody != null) {
-                        String s = new String(responseBody);
-                        JSONObject jsonObject = null;
-                        try {
-                            jsonObject = new JSONObject(s);
-                        } catch (JSONException e) {
-                        }
-
-                        boolean isSuccess = true;
-                        try {
-                            isSuccess = jsonObject.getBoolean("success");
-                        } catch (JSONException e) {
-                            //throws error, because on success there is no boolean returned, so
-                            // we are assuming that it is a success
-                            isSuccess = false;
-                        }
-
-                        if (!isSuccess) {
-                            if(AccessTokenHandler.getInstance().handleTokenExpiryConditions(jsonObject)) {
-                                AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInSearchPageString);
-                                if(AccessTokenHandler.getInstance().foundAnyError)
-                                    iSearchService.accessTokenExpired();
-                                else if(AccessTokenHandler.getInstance().foundAnyErrorForClientToken)
-                                    iSearchService.clientTokenExpired();
-                            }
-                        }
-                    }
-                }
-            });
-        } catch (Exception e) {
-            //e.printStackTrace();
-        }
+        CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
+                SEARCH_API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
     }
 
-    public void search(String xAccessToken, String xClientToken, String searchQueryString, String SEARCH_API_URL) {
+    @Override
+    public void onResultHandler(JSONObject response) {
+        iSearchService.searchServiceResponse(response.toString());
+    }
 
-        RestClientInterface restClientInterface = RestClientManager.getClient(ApplicationConstantURL.getInstance().API_DOMAIN_S, xAccessToken, xClientToken, null).create(RestClientInterface.class);
-        Call<Object> call1 = restClientInterface.getSearch(SEARCH_API_URL,xAccessToken,xClientToken,searchQueryString);
-        call1.enqueue(new Callback<Object>() {
-            @Override
-            public void onResponse(Call<Object> call, retrofit2.Response<Object> response) {
-                try {
-                    if (response != null && !response.isSuccessful() && response.errorBody() != null) {
-                        // iClientTokenService.clientTokenServiceError(t.getMessage());
-                        boolean isSuccess = true;
-                        JSONObject responseBody = new JSONObject("" + (new Gson().toJson(response.errorBody())));
-                        try {
+    @Override
+    public void onErrorHandler(String ERROR) {
+        iSearchService.searchError(ERROR);
+    }
 
-                            if(responseBody.has("success"))
-                                isSuccess = responseBody.getBoolean("success");
-                            else
-                                isSuccess = false;
+    @Override
+    public void accessTokenExpired() {
+        iSearchService.accessTokenExpired();
+    }
 
-                        } catch (JSONException e) {
-                            //throws error, because on success there is no boolean returned, so
-                            // we are assuming that it is a success
-                            isSuccess = false;
-                        }
-
-                        if (!isSuccess) {
-                            if(AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
-                                AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInRentNowPageString);
-                                if(AccessTokenHandler.getInstance().foundAnyError)
-                                    iSearchService.accessTokenExpired();
-                                else if(AccessTokenHandler.getInstance().foundAnyErrorForClientToken)
-                                    iSearchService.clientTokenExpired();
-                                else {
-                                    try {
-                                        if (responseBody.has("message")) {
-                                            iSearchService.searchError( responseBody.getString("message"));
-                                        }
-                                    } catch (Exception e)
-                                    {
-                                        iSearchService.searchError(e.getMessage());
-                                    }
-                                }
-                            }
-                        }
-                        return;
-                    }
-                    if (response != null && response.isSuccessful() && response.body() != null) {
-                        JSONObject responseBody = new JSONObject("" + (new Gson().toJson(response.body())));
-                        iSearchService.searchServiceResponse(responseBody.toString());
-
-                    } else {
-                        //TODO:Error Handling
-                        // Toast.makeText(LoginActivity.this, INVALID_RESPONSE_MESSAGE, Toast.LENGTH_SHORT).show();
-                    }
-                } catch (Exception e) {
-                    //   Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    iSearchService.searchError(e.getMessage());
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<Object> call, Throwable t) {
-                call.cancel();
-                iSearchService.searchError(t.getMessage());
-            }
-        });
-
+    @Override
+    public void clientTokenExpired() {
+        iSearchService.clientTokenExpired();
     }
 
     public interface ISearchService {

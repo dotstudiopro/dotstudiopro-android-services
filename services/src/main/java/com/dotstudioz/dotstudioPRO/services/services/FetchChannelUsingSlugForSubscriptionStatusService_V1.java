@@ -10,7 +10,6 @@ import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 import com.dotstudioz.dotstudioPRO.services.util.CommonServiceUtils;
-import com.loopj.android.http.AsyncHttpClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,11 +48,6 @@ public class FetchChannelUsingSlugForSubscriptionStatusService_V1 implements Com
                 throw new RuntimeException(context.toString()+ " must implement IFetchChannelUsingSlugForSubscriptionStatusService_V1 or setFetchChannelUsingSlugForSubscriptionStatusService_V1Listener");
             }
         }
-
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.setMaxRetriesAndTimeout(2, 30000);
-        client.setTimeout(30000);
-        client.addHeader("x-access-token", ApplicationConstants.xAccessToken);
 
         iFetchChannelUsingSlugForSubscriptionStatusService_V1.showProgress("Loading");
         try {

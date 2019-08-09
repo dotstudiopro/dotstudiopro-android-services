@@ -1,11 +1,12 @@
 package com.dotstudioz.dotstudioPRO.services.services;
 
 import android.content.Context;
+import android.util.Log;
 
-import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
 import com.dotstudioz.dotstudioPRO.models.dto.DurationDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.SubscriptionDTO;
+import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -63,7 +64,7 @@ public class GetAllSubscriptionsService_V1 implements CommonAsyncHttpClient_V1.I
     public void onResultHandler(JSONObject response) {
         try {
 
-            System.out.println("response==>"+response);
+            Log.d("GetAllSubscrip", "response==>"+response);
             if (response.has("data"))
                 resultProcessingForCategories(response.getJSONArray("data"));
             else

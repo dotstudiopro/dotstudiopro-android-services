@@ -2,24 +2,21 @@ package com.dotstudioz.dotstudioPRO.services.services;
 
 import android.content.Context;
 
-import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
-import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
-import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.SpotLightCategoriesDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.SpotLightChannelDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.VideoInfoDTO;
+import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 import com.dotstudioz.dotstudioPRO.services.util.CommonServiceUtils;
 import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-
-import cz.msebera.android.httpclient.Header;
 
 /**
  * Created by mohsin on 02-03-2017.
@@ -67,54 +64,6 @@ public class AppHomeCarouselChannelUsingSlugService_V1 implements CommonAsyncHtt
 
             CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, null,
                     ApplicationConstantURL.getInstance().CHANNEL + channelSlug, AccessTokenHandler.getInstance().fetchTokenCalledInChannelPageString);
-
-            client.get(ApplicationConstantURL.getInstance().CHANNEL + channelSlug, null, new JsonHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject responseBody) {
-
-                    boolean isSuccess = true;
-                    try {
-                        isSuccess = responseBody.getBoolean("success");
-                    } catch (JSONException e) {
-                        //throws error, because on success there is no boolean returned, so
-                        // we are assuming that it is a success
-                        isSuccess = true;
-                    }
-
-                    if (isSuccess) {
-                        fetchChannelData(responseBody);
-                    } else {
-                        if(AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
-                            AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInChannelPageString);
-                            if(AccessTokenHandler.getInstance().foundAnyError)
-                                iFetchChannelUsingSlugService_V1.accessTokenExpired();
-                        }
-                    }
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable error, JSONObject responseBody) {
-                    iFetchChannelUsingSlugService_V1.hidePDialog();
-                    if (responseBody != null) {
-                        boolean isSuccess = true;
-                        try {
-                            isSuccess = responseBody.getBoolean("success");
-                        } catch (JSONException e) {
-                            //throws error, because on success there is no boolean returned, so
-                            // we are assuming that it is a success
-                            isSuccess = true;
-                        }
-
-                        if (!isSuccess) {
-                            if(AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
-                                AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInChannelPageString);
-                                if(AccessTokenHandler.getInstance().foundAnyError)
-                                    iFetchChannelUsingSlugService_V1.accessTokenExpired();
-                            }
-                        }
-                    }
-                }
-            });
         } catch (Exception e) {
             iFetchChannelUsingSlugService_V1.hidePDialog();
         }

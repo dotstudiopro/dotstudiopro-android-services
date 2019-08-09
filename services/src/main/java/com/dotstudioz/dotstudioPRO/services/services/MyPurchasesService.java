@@ -2,17 +2,12 @@ package com.dotstudioz.dotstudioPRO.services.services;
 
 import android.content.Context;
 
+import com.dotstudioz.dotstudioPRO.models.dto.MyPurchaseItemDTO;
+import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
+import com.dotstudioz.dotstudioPRO.models.dto.SpotLightCategoriesDTO;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
-import com.dotstudioz.dotstudioPRO.models.dto.MyPurchaseItemDTO;
-import com.dotstudioz.dotstudioPRO.models.dto.SpotLightCategoriesDTO;
-import com.dotstudioz.dotstudioPRO.services.services.retrofit.RestClientInterface;
-import com.dotstudioz.dotstudioPRO.services.services.retrofit.RestClientManager;
 import com.dotstudioz.dotstudioPRO.services.util.CommonServiceUtils;
-import com.google.gson.Gson;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,19 +17,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import cz.msebera.android.httpclient.Header;
-import retrofit2.Call;
-import retrofit2.Callback;
 
 /**
  * Created by mohsin on 08-10-2016.
  */
 
-public class MyPurchasesService {
+public class MyPurchasesService implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
 
     public IMyPurchasesService iMyPurchasesService;
 
@@ -52,86 +41,24 @@ public class MyPurchasesService {
         this.iMyPurchasesService = callback;
     }
 
-    public void getMyPurchases1(String xAccessToken, String xClientToken, String MY_PURCHASES_URL, final List<SpotLightCategoriesDTO> spotLightCategoriesDTOList) {
-        if (iMyPurchasesService == null) {
-            if (context != null && context instanceof MyPurchasesService.IMyPurchasesService) {
-                iMyPurchasesService = (MyPurchasesService.IMyPurchasesService) context;
-            }
-            if (iMyPurchasesService == null) {
-                throw new RuntimeException(context.toString()+ " must implement IMyPurchasesService or setMyPurchasesServiceListener");
-            }
-        }
-
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.setMaxRetriesAndTimeout(2, 30000);
-        client.setTimeout(30000);
-        client.addHeader("x-access-token", xAccessToken);
-        client.addHeader("x-client-token", xClientToken);
-
-        Map<String, String> jsonParams = new HashMap<String, String>();
-        //jsonParams.put("x-access-token", ApplicationConstants.xAccessToken);
-        //jsonParams.put("token", ApplicationConstants.xAccessToken);
-        //jsonParams.put("x-client-token", ApplicationConstants.CLIENT_TOKEN);
-
-        RequestParams rp = new RequestParams(jsonParams);
-
-        try {
-            client.get(MY_PURCHASES_URL, null, new JsonHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONArray responseBody) {
-                    myPurchasesServiceResponse(responseBody, spotLightCategoriesDTOList);
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable error, JSONObject responseBody) {
-                    if (responseBody != null) {
-
-                        boolean isSuccess = true;
-                        try {
-                            isSuccess = responseBody.getBoolean("success");
-                        } catch (JSONException e) {
-                            //throws error, because on success there is no boolean returned, so
-                            // we are assuming that it is a success
-                            isSuccess = false;
-                        }
-
-                        if (!isSuccess) {
-                            if(AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
-                                AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInMyPurchasePageString);
-                                if(AccessTokenHandler.getInstance().foundAnyError)
-                                    iMyPurchasesService.accessTokenExpired();
-                                else if(AccessTokenHandler.getInstance().foundAnyErrorForClientToken)
-                                    iMyPurchasesService.clientTokenExpired();
-                            }
-                        }
-                    }
-                }
-            });
-        } catch (Exception e) {
-            iMyPurchasesService.myPurchasesServiceError(e.getMessage());
-        }
-    }
+    List<SpotLightCategoriesDTO> spotLightCategoriesDTOListGeneric;
     public void getMyPurchases(String xAccessToken, String xClientToken, String MY_PURCHASES_URL, final List<SpotLightCategoriesDTO> spotLightCategoriesDTOList) {
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.setMaxRetriesAndTimeout(2, 30000);
-        client.setTimeout(30000);
-        client.addHeader("x-access-token", xAccessToken);
-        client.addHeader("x-client-token", xClientToken);
-
-        Map<String, String> jsonParams = new HashMap<String, String>();
-        //jsonParams.put("x-access-token", ApplicationConstants.xAccessToken);
-        //jsonParams.put("token", ApplicationConstants.xAccessToken);
-        //jsonParams.put("x-client-token", ApplicationConstants.CLIENT_TOKEN);
-
-        RequestParams rp = new RequestParams(jsonParams);
-
+        spotLightCategoriesDTOListGeneric = spotLightCategoriesDTOList;
         try {
             try {
                 //adding a front slash, because retro api call fails if it is not there at the end
                 if(!MY_PURCHASES_URL.substring(MY_PURCHASES_URL.length()-1, MY_PURCHASES_URL.length()).equalsIgnoreCase("/")) {
                     MY_PURCHASES_URL = MY_PURCHASES_URL + "/";
                 }
-                RestClientInterface restClientInterface = RestClientManager.getClient(MY_PURCHASES_URL, ApplicationConstants.xAccessToken, ApplicationConstants.CLIENT_TOKEN, null).create(RestClientInterface.class);
+
+                ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
+                headerItemsArrayList.add(new ParameterItem("x-access-token", ApplicationConstants.xAccessToken));
+                headerItemsArrayList.add(new ParameterItem("x-client-token", ApplicationConstants.CLIENT_TOKEN));
+
+                CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, null,
+                        MY_PURCHASES_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
+
+                /*RestClientInterface restClientInterface = RestClientManager.getClient(MY_PURCHASES_URL, ApplicationConstants.xAccessToken, ApplicationConstants.CLIENT_TOKEN, null).create(RestClientInterface.class);
                 Call<Object> call1 = restClientInterface.requestGet(MY_PURCHASES_URL);
                 call1.enqueue(new Callback<Object>() {
                     @Override
@@ -187,41 +114,10 @@ public class MyPurchasesService {
                         call.cancel();
                         iMyPurchasesService.myPurchasesServiceError(t.getMessage());
                     }
-                });
+                });*/
             } catch (Exception e) {
                 iMyPurchasesService.myPurchasesServiceError(e.getMessage());
             }
-            /*client.get(MY_PURCHASES_URL, null, new JsonHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONArray responseBody) {
-                    myPurchasesServiceResponse(responseBody, spotLightCategoriesDTOList);
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable error, JSONObject responseBody) {
-                    if (responseBody != null) {
-
-                        boolean isSuccess = true;
-                        try {
-                            isSuccess = responseBody.getBoolean("success");
-                        } catch (JSONException e) {
-                            //throws error, because on success there is no boolean returned, so
-                            // we are assuming that it is a success
-                            isSuccess = false;
-                        }
-
-                        if (!isSuccess) {
-                            if(AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
-                                AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInMyPurchasePageString);
-                                if(AccessTokenHandler.getInstance().foundAnyError)
-                                    iMyPurchasesService.accessTokenExpired();
-                                else if(AccessTokenHandler.getInstance().foundAnyErrorForClientToken)
-                                    iMyPurchasesService.clientTokenExpired();
-                            }
-                        }
-                    }
-                }
-            });*/
         } catch (Exception e) {
             iMyPurchasesService.myPurchasesServiceError(e.getMessage());
         }
@@ -296,6 +192,31 @@ public class MyPurchasesService {
         } catch (Exception e) {
             //e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onResultHandler(JSONObject response) {
+        try {
+            JSONArray responseBody = response.getJSONArray("result");
+            myPurchasesServiceResponse(responseBody, spotLightCategoriesDTOListGeneric);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onErrorHandler(String ERROR) {
+        iMyPurchasesService.myPurchasesServiceError(ERROR);
+    }
+
+    @Override
+    public void accessTokenExpired() {
+        iMyPurchasesService.accessTokenExpired();
+    }
+
+    @Override
+    public void clientTokenExpired() {
+        iMyPurchasesService.clientTokenExpired();
     }
 
 

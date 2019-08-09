@@ -1,23 +1,25 @@
 package com.dotstudioz.dotstudioPRO.services.accesstoken;
 
 import android.content.Context;
-import android.widget.Toast;
-
+import android.util.Log;
 
 import com.auth0.android.Auth0;
 import com.auth0.android.authentication.AuthenticationAPIClient;
 import com.auth0.android.authentication.AuthenticationException;
 import com.auth0.android.callback.BaseCallback;
 import com.auth0.android.result.Delegation;
+import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
-import com.dotstudioz.dotstudioPRO.services.services.VideoPausedPointService_V1;
+import com.dotstudioz.dotstudioPRO.services.services.CommonAsyncHttpClient_V1;
 import com.dotstudioz.dotstudioPRO.services.services.retrofit.RestClientInterface;
 import com.dotstudioz.dotstudioPRO.services.services.retrofit.RestClientManager;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,7 +29,7 @@ import retrofit2.Response;
  * Created by mohsin on 07-10-2016.
  */
 
-public class ClientTokenRefreshClass {
+public class ClientTokenRefreshClass implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
 
     public String ACTUAL_RESPONSE = "";
 
@@ -78,52 +80,13 @@ public class ClientTokenRefreshClass {
             }
         }
 
+        ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
+        headerItemsArrayList.add(new ParameterItem("x-access-token", ApplicationConstants.xAccessToken));
+        if(ApplicationConstants.CLIENT_TOKEN != null && ApplicationConstants.CLIENT_TOKEN.length() > 0)
+            headerItemsArrayList.add(new ParameterItem("x-client-token", ApplicationConstants.CLIENT_TOKEN));
 
-        try {
-            RestClientInterface restClientInterface = RestClientManager.getClient(ApplicationConstantURL.getInstance().API_DOMAIN_S, xAccessToken, xClientToken, null).create(RestClientInterface.class);
-            Call<Object> call1 = restClientInterface.requestPost(ApplicationConstantURL.getInstance().CLIENT_REFRESH_TOKEN, new JsonObject());
-            call1.enqueue(new Callback<Object>() {
-                @Override
-                public void onResponse(Call<Object> call, retrofit2.Response<Object> response) {
-                    try {
-                        if (response != null && !response.isSuccessful() && response.errorBody() != null) {
-                            handleError(response);
-                            return;
-                        }
-                        if (response != null && response.isSuccessful() && response.body() != null) {
-                            JSONObject responseBody = new JSONObject("" + (new Gson().toJson(response.body())));
-                            System.out.println("CLIENT_REFRESH_TOKEN ONSUCCESS:-"+responseBody.toString());
-                            try {
-                                String s = new String(responseBody.toString());
-                                JSONObject jsonObject = new JSONObject(s);
-                                if(jsonObject.has("client_token")) {
-                                    ACTUAL_RESPONSE = jsonObject.getString("client_token");
-                                }
-                                iClientTokenRefresh.clientTokenResponse(ACTUAL_RESPONSE);
-                            } catch(Exception e) {
-                                //e.printStackTrace();
-                            }
-
-                        } else {
-                            iClientTokenRefresh.clientTokenError("CLIENT_REFRESH_TOKEN FAILED");
-                        }
-                    } catch (Exception e) {
-                        iClientTokenRefresh.clientTokenError(e.getMessage());
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<Object> call, Throwable t) {
-                    call.cancel();
-                    iClientTokenRefresh.clientTokenError(t.getMessage());
-                }
-            });
-
-        } catch (Exception e) {
-            iClientTokenRefresh.clientTokenError(e.getMessage());
-        }
-
-
+        CommonAsyncHttpClient_V1.getInstance(this).postAsyncHttpsClient(headerItemsArrayList, null,
+                ApplicationConstantURL.getInstance().CLIENT_REFRESH_TOKEN, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
 
     }
 
@@ -156,6 +119,35 @@ public class ClientTokenRefreshClass {
         } catch (Exception e) {
             iClientTokenRefresh.clientTokenError(e.getMessage());
         }
+    }
+
+    @Override
+    public void onResultHandler(JSONObject response) {
+        try {
+            Log.d("ClientTokenRefresh", "CLIENT_REFRESH_TOKEN ONSUCCESS:-"+response.toString());
+            if(response.has("client_token")) {
+                ACTUAL_RESPONSE = response.getString("client_token");
+            }
+            iClientTokenRefresh.clientTokenResponse(ACTUAL_RESPONSE);
+        } catch(Exception e) {
+            e.printStackTrace();
+            iClientTokenRefresh.clientTokenError(e.getMessage());
+        }
+    }
+
+    @Override
+    public void onErrorHandler(String ERROR) {
+        iClientTokenRefresh.clientTokenError(ERROR);
+    }
+
+    @Override
+    public void accessTokenExpired() {
+
+    }
+
+    @Override
+    public void clientTokenExpired() {
+        iClientTokenRefresh.clientTokenError("");
     }
 
     public interface IClientTokenRefresh {

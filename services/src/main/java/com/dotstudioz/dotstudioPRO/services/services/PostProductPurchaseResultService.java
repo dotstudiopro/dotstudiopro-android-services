@@ -2,24 +2,22 @@ package com.dotstudioz.dotstudioPRO.services.services;
 
 import android.content.Context;
 
+import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.Purchase;
+import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
-import com.dotstudioz.dotstudioPRO.services.services.retrofit.RestClientInterface;
-import com.dotstudioz.dotstudioPRO.services.services.retrofit.RestClientManager;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
 import org.json.JSONObject;
 
-import retrofit2.Call;
-import retrofit2.Callback;
+import java.util.ArrayList;
+
 import retrofit2.Response;
 
 /**
  * Created by mohsin on 07-10-2016.
  */
 
-public class PostProductPurchaseResultService {
+public class PostProductPurchaseResultService implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
 
     public String ACTUAL_RESPONSE = "";
 
@@ -67,64 +65,16 @@ public class PostProductPurchaseResultService {
             }
         }
 
-        JsonObject jsonObject = new JsonObject();
-        /*jsonObject.addProperty("orderId", purchase.getOrderId());
-        jsonObject.addProperty("packageName", purchase.getPackageName());
-        jsonObject.addProperty("productId", purchase.getSku());
-        jsonObject.addProperty("purchaseTime", purchase.getPurchaseTime());
-        jsonObject.addProperty("purchaseState", purchase.getPurchaseState());
-        jsonObject.addProperty("purchaseToken", purchase.getToken());*/
-        jsonObject.addProperty("receipt", purchase.getOriginalJson()+", "+purchase.getSignature());
-        jsonObject.addProperty("video_id", videoId);
+        ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
+        headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));
+        headerItemsArrayList.add(new ParameterItem("x-client-token", xClientToken));
 
-        try {
-            RestClientInterface restClientInterface = RestClientManager.getClient(ApplicationConstantURL.getInstance().API_DOMAIN_S, xAccessToken, xClientToken, null).create(RestClientInterface.class);
-            Call<Object> call1 = restClientInterface.requestPost(ApplicationConstantURL.getInstance().RENT_API_ANDROID, jsonObject);
-            call1.enqueue(new Callback<Object>() {
-                @Override
-                public void onResponse(Call<Object> call, Response<Object> response) {
-                    try {
-                        System.out.println("postProductPurchaseResultServiceResponse onResponse==>" + response);
-                    } catch(Exception e) {
-                        e.printStackTrace();
-                        System.out.println("postProductPurchaseResultServiceResponse onResponse==>null");
-                    }
-                    try {
-                        if (response != null && !response.isSuccessful() && response.errorBody() != null) {
-                            handleError(response);
-                            return;
-                        }
-                        if (response != null && response.isSuccessful() && response.body() != null) {
-                            JSONObject responseBody = new JSONObject("" + (new Gson().toJson(response.body())));
-                            System.out.println("ONSUCCESS:-"+responseBody.toString());
-                            iPostProductPurchaseResultService.postProductPurchaseResultServiceResponse(responseBody);
-                        } else {
-                            iPostProductPurchaseResultService.postProductPurchaseResultServiceError("FAILED");
-                        }
-                    } catch (Exception e) {
-                        iPostProductPurchaseResultService.postProductPurchaseResultServiceError(e.getMessage());
-                    }
-                }
+        ArrayList<ParameterItem> requestParamsArrayList = new ArrayList<>();
+        requestParamsArrayList.add(new ParameterItem("receipt", purchase.getOriginalJson()+", "+purchase.getSignature()));
+        requestParamsArrayList.add(new ParameterItem("video_id", videoId));
 
-                @Override
-                public void onFailure(Call<Object> call, Throwable t) {
-                    call.cancel();
-                    try {
-                        System.out.println("PostSubscriptionResultService onFailure==>" + t.getMessage());
-                    } catch(Exception e) {
-                        e.printStackTrace();
-                        System.out.println("PostSubscriptionResultService onFailure==>null");
-                    }
-                    iPostProductPurchaseResultService.postProductPurchaseResultServiceError(t.getMessage());
-                }
-            });
-
-        } catch (Exception e) {
-            iPostProductPurchaseResultService.postProductPurchaseResultServiceError(e.getMessage());
-        }
-
-
-
+        CommonAsyncHttpClient_V1.getInstance(this).postAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
+                ApplicationConstantURL.getInstance().RENT_API_ANDROID, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
     }
     public void postProductPurchaseResultServiceForFireTV(String URL, String xAccessToken, String xClientToken, String receipt, String videoId) {
 
@@ -150,63 +100,35 @@ public class PostProductPurchaseResultService {
             }
         }
 
-        JsonObject jsonObject = new JsonObject();
-        /*jsonObject.addProperty("orderId", purchase.getOrderId());
-        jsonObject.addProperty("packageName", purchase.getPackageName());
-        jsonObject.addProperty("productId", purchase.getSku());
-        jsonObject.addProperty("purchaseTime", purchase.getPurchaseTime());
-        jsonObject.addProperty("purchaseState", purchase.getPurchaseState());
-        jsonObject.addProperty("purchaseToken", purchase.getToken());*/
-        jsonObject.addProperty("receipt", receipt);
-        jsonObject.addProperty("video_id", videoId);
+        ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
+        headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));
+        headerItemsArrayList.add(new ParameterItem("x-client-token", xClientToken));
 
-        try {
-            RestClientInterface restClientInterface = RestClientManager.getClient(ApplicationConstantURL.getInstance().API_DOMAIN_S, xAccessToken, xClientToken, null).create(RestClientInterface.class);
-            Call<Object> call1 = restClientInterface.requestPost(URL, jsonObject);
-            call1.enqueue(new Callback<Object>() {
-                @Override
-                public void onResponse(Call<Object> call, Response<Object> response) {
-                    try {
-                        System.out.println("postProductPurchaseResultServiceResponse onResponse==>" + response);
-                    } catch(Exception e) {
-                        e.printStackTrace();
-                        System.out.println("postProductPurchaseResultServiceResponse onResponse==>null");
-                    }
-                    try {
-                        if (response != null && !response.isSuccessful() && response.errorBody() != null) {
-                            handleError(response);
-                            return;
-                        }
-                        if (response != null && response.isSuccessful() && response.body() != null) {
-                            JSONObject responseBody = new JSONObject("" + (new Gson().toJson(response.body())));
-                            System.out.println("ONSUCCESS:-"+responseBody.toString());
-                            iPostProductPurchaseResultService.postProductPurchaseResultServiceResponse(responseBody);
-                        } else {
-                            iPostProductPurchaseResultService.postProductPurchaseResultServiceError("FAILED");
-                        }
-                    } catch (Exception e) {
-                        iPostProductPurchaseResultService.postProductPurchaseResultServiceError(e.getMessage());
-                    }
-                }
+        ArrayList<ParameterItem> requestParamsArrayList = new ArrayList<>();
+        requestParamsArrayList.add(new ParameterItem("receipt", receipt));
+        requestParamsArrayList.add(new ParameterItem("video_id", videoId));
 
-                @Override
-                public void onFailure(Call<Object> call, Throwable t) {
-                    call.cancel();
-                    try {
-                        System.out.println("PostSubscriptionResultService onFailure==>" + t.getMessage());
-                    } catch(Exception e) {
-                        e.printStackTrace();
-                        System.out.println("PostSubscriptionResultService onFailure==>null");
-                    }
-                    iPostProductPurchaseResultService.postProductPurchaseResultServiceError(t.getMessage());
-                }
-            });
+        CommonAsyncHttpClient_V1.getInstance(this).postAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
+                URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
+    }
 
-        } catch (Exception e) {
-            iPostProductPurchaseResultService.postProductPurchaseResultServiceError(e.getMessage());
-        }
+    @Override
+    public void onResultHandler(JSONObject response) {
+        iPostProductPurchaseResultService.postProductPurchaseResultServiceResponse(response);
+    }
 
+    @Override
+    public void onErrorHandler(String ERROR) {
+        iPostProductPurchaseResultService.postProductPurchaseResultServiceError(ERROR);
+    }
 
+    @Override
+    public void accessTokenExpired() {
+
+    }
+
+    @Override
+    public void clientTokenExpired() {
 
     }
 

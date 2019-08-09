@@ -3,9 +3,8 @@ package com.dotstudioz.dotstudioPRO.services.services;
 import android.content.Context;
 import android.util.Log;
 
-import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
-
+import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -99,7 +98,7 @@ public class SubscriptionsService_V1 implements CommonAsyncHttpClient_V1.ICommon
         if(isBraintreeServiceCall) {
             try {
 
-                System.out.println("response==>" + response);
+                Log.d("SubscriptionServiceV1", "response==>" + response);
                 if (response.has("data"))
                     iSubscriptionsService.createBrainTreeCustomerUsingNonceServiceResponse(response.getJSONObject("data"));
                 else
@@ -111,7 +110,7 @@ public class SubscriptionsService_V1 implements CommonAsyncHttpClient_V1.ICommon
         } else if(isChargifyServiceCall) {
             try {
 
-                System.out.println("response==>" + response);
+                Log.d("SubscriptionServiceV1", "response==>" + response);
                 if (response.has("data"))
                     iSubscriptionsService.createChargifyCustomerUsingSubscriptionIDServiceResponse(response.getJSONObject("data"));
                 else

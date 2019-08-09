@@ -3,15 +3,14 @@ package com.dotstudioz.dotstudioPRO.services.services;
 import android.content.Context;
 import android.util.Log;
 
-import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
-import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
-import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.SpotLightCategoriesDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.SpotLightChannelDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.VideoInfoDTO;
+import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 import com.dotstudioz.dotstudioPRO.services.util.CommonServiceUtils;
-import com.loopj.android.http.AsyncHttpClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,11 +54,6 @@ public class FetchMissingChannelService_V1 implements CommonAsyncHttpClient_V1.I
         }
 
         spotLightCategoriesDTOList = spotLightCategoriesDTOArrayList;
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.setMaxRetriesAndTimeout(2, 30000);
-        client.setTimeout(30000);
-        client.addHeader("x-access-token", ApplicationConstants.xAccessToken);
-
         iFetchMissingChannelService_V1.showProgress("Loading");
         try {
             Log.d("fetchMissingChannelData", "ApplicationConstantURL.getInstance().CHANNEL + channelSlug==>"+ApplicationConstantURL.getInstance().CHANNEL + channelSlug);

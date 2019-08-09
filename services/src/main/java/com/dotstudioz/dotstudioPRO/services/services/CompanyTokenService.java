@@ -2,27 +2,19 @@ package com.dotstudioz.dotstudioPRO.services.services;
 
 import android.content.Context;
 
+import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
+import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
-import com.dotstudioz.dotstudioPRO.models.dto.TokenResponseDTO;
-import com.dotstudioz.dotstudioPRO.services.services.retrofit.RestClientInterface;
-import com.dotstudioz.dotstudioPRO.services.services.retrofit.RestClientManager;
-import com.google.gson.JsonObject;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.json.JSONObject;
 
-import cz.msebera.android.httpclient.Header;
-import retrofit2.Call;
-import retrofit2.Callback;
+import java.util.ArrayList;
 
 
 /**
  * Created by Admin on 23-02-2016.
  */
-public class CompanyTokenService {
+public class CompanyTokenService implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
     Context mContext;
     public CompanyTokenService.ICompanyTokenService iCompanyTokenService;
 
@@ -39,7 +31,7 @@ public class CompanyTokenService {
         this.iCompanyTokenService = callback;
     }
 
-    public void requestForToken2(String companyKey, String TOKEN_URL) {
+    /*public void requestForToken2(String companyKey, String TOKEN_URL) {
 
         if (iCompanyTokenService == null) {
             if (mContext != null && mContext instanceof CompanyTokenService.ICompanyTokenService) {
@@ -57,7 +49,7 @@ public class CompanyTokenService {
         client.setMaxRetriesAndTimeout(2, 30000);
         client.setTimeout(30000);
       //  client.setSSLSocketFactory(getSocketFactory());
-       /* MyTestSSLSocketFactory tsf = null;
+       *//* MyTestSSLSocketFactory tsf = null;
         client.setSSLSocketFactory(
                 new SSLSocketFactory(getSslContext(),
                         SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER));
@@ -72,9 +64,9 @@ public class CompanyTokenService {
         }
         catch (Exception e) {
         }
-*/
+*//*
 
-/*
+*//*
         try {
             KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
             trustStore.load(null, null);
@@ -83,7 +75,7 @@ public class CompanyTokenService {
             client.setSSLSocketFactory(sf);
 
         }
-        catch (Exception e) {}*/
+        catch (Exception e) {}*//*
 
         Map<String, String> jsonParams = new HashMap<String, String>();
         jsonParams.put("key", companyKey);
@@ -140,7 +132,7 @@ public class CompanyTokenService {
         } catch (Exception e) {
             //e.printStackTrace();
         }
-    }
+    }*/
 
     public void requestForToken(String companyKey,String TOKEN_URL)
     {
@@ -153,41 +145,35 @@ public class CompanyTokenService {
             }
         }
 
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("key",companyKey);
-        RestClientInterface restClientInterface = RestClientManager.getClient(ApplicationConstantURL.getInstance().API_DOMAIN_S, null, null, null).create(RestClientInterface.class);
-        Call<Object> call1 = restClientInterface.requestForToken(jsonObject);
-        call1.enqueue(new Callback<Object>() {
-            @Override
-            public void onResponse(Call<Object> call, retrofit2.Response<Object> response) {
-                try {
-                    if (response != null && !response.isSuccessful() && response.errorBody() != null) {
-                        iCompanyTokenService.companyTokenServiceError(response.errorBody().toString().getBytes());
-                        return;
-                    }
-                    if (response != null && response.isSuccessful() && response.body() != null) {
-                        iCompanyTokenService.companyTokenServiceResponse(response.body().toString().getBytes());
+        ArrayList<ParameterItem> requestParamsArrayList = new ArrayList<>();
+        requestParamsArrayList.add(new ParameterItem("key", companyKey));
 
-                    } else {
-                        //TODO:Error Handling
-                        // Toast.makeText(LoginActivity.this, INVALID_RESPONSE_MESSAGE, Toast.LENGTH_SHORT).show();
-                    }
-                } catch (Exception e) {
-                    iCompanyTokenService.companyTokenServiceError(e.getMessage().toString().getBytes());
-                }
+        CommonAsyncHttpClient_V1.getInstance(this).postAsyncHttpsClient(null, requestParamsArrayList,
+                ApplicationConstantURL.getInstance().TOKEN_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
+    }
 
-            }
+    @Override
+    public void onResultHandler(JSONObject response) {
+        iCompanyTokenService.companyTokenServiceResponse(response);
+    }
 
-            @Override
-            public void onFailure(Call<Object> call, Throwable t) {
-                call.cancel();
-                iCompanyTokenService.companyTokenServiceError(t.getMessage().toString().getBytes());
-            }
-        });
+    @Override
+    public void onErrorHandler(String ERROR) {
+        iCompanyTokenService.companyTokenServiceError(ERROR);
+    }
+
+    @Override
+    public void accessTokenExpired() {
+
+    }
+
+    @Override
+    public void clientTokenExpired() {
+
     }
 
     public interface ICompanyTokenService {
-        void companyTokenServiceResponse(byte[] responseBody);
-        void companyTokenServiceError(byte[] responseBody);
+        void companyTokenServiceResponse(JSONObject responseBody);
+        void companyTokenServiceError(String responseBody);
     }
 }

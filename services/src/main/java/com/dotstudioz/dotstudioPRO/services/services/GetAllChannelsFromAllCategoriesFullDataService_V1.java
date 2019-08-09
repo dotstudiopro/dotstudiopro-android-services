@@ -2,10 +2,10 @@ package com.dotstudioz.dotstudioPRO.services.services;
 
 import android.content.Context;
 
-import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.SpotLightCategoriesDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.VideoInfoDTO;
+import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;

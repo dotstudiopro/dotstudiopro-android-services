@@ -1,49 +1,37 @@
 package com.dotstudioz.dotstudioPRO.services.util;
 
-        import android.app.Activity;
-        import android.content.ComponentName;
-        import android.content.Context;
-        import android.content.Intent;
-        import android.content.res.Configuration;
-        import android.graphics.Bitmap;
-        import android.graphics.BitmapFactory;
-        import android.graphics.Color;
-        import android.graphics.PorterDuff;
-        import android.graphics.Rect;
-        import android.graphics.Typeface;
-        import android.media.AudioManager;
-        import android.net.Uri;
-        import android.os.AsyncTask;
+import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.Rect;
+import android.media.AudioManager;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.support.v4.media.session.MediaButtonReceiver;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.TouchDelegate;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.HorizontalScrollView;
+import android.widget.LinearLayout;
+import android.widget.MediaController;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.SeekBar;
 
-        import android.support.design.widget.NavigationView;
-        import android.support.v4.media.session.MediaButtonReceiver;
-        import android.text.SpannableString;
-        import android.util.DisplayMetrics;
-        import android.util.Log;
+import com.dotstudioz.dotstudioPRO.models.dto.VideoInfoDTO;
 
-        import android.view.Menu;
-        import android.view.MenuItem;
-        import android.view.MotionEvent;
-
-        import android.view.SubMenu;
-        import android.view.TouchDelegate;
-        import android.view.View;
-        import android.view.ViewGroup;
-        import android.widget.HorizontalScrollView;
-
-        import android.widget.LinearLayout;
-        import android.widget.MediaController;
-        import android.widget.RelativeLayout;
-        import android.widget.ScrollView;
-        import android.widget.SeekBar;
-
-
-        import com.dotstudioz.dotstudioPRO.models.dto.VideoInfoDTO;
-
-
-        import java.io.InputStream;
-        import java.net.URL;
-        import java.util.Set;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Set;
 
 
 /**

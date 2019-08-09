@@ -2,10 +2,9 @@ package com.dotstudioz.dotstudioPRO.services.services;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.Toast;
+
+import org.json.JSONObject;
 
 /*import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -16,15 +15,6 @@ import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;*/
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 
 /**
  * Created by mohsin on 09-10-2016.

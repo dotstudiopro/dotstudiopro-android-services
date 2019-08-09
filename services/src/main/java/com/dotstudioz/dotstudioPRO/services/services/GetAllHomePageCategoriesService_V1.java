@@ -1,10 +1,11 @@
 package com.dotstudioz.dotstudioPRO.services.services;
 
 import android.content.Context;
+import android.util.Log;
 
-import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.SpotLightCategoriesDTO;
+import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -229,7 +230,7 @@ public class GetAllHomePageCategoriesService_V1 implements CommonAsyncHttpClient
         }
         try {
             spotLightCategoriesDTO.setCategoryName(obj.getString("name"));
-            System.out.println("spotLightCategoriesDTO.getCategoryName()==>" + spotLightCategoriesDTO.getCategoryName());
+            Log.d("GetAllHomePageCat", "spotLightCategoriesDTO.getCategoryName()==>" + spotLightCategoriesDTO.getCategoryName());
         } catch (JSONException e) {
             spotLightCategoriesDTO.setCategoryName("");
         }
@@ -375,7 +376,7 @@ public class GetAllHomePageCategoriesService_V1 implements CommonAsyncHttpClient
         }
         try {
             spotLightCategoriesDTO.setCategoryName(obj.getString("name"));
-            System.out.println("spotLightCategoriesDTO.getCategoryName()==>" + spotLightCategoriesDTO.getCategoryName());
+            Log.d("GetAllHomePageCat", "spotLightCategoriesDTO.getCategoryName()==>" + spotLightCategoriesDTO.getCategoryName());
         } catch (JSONException e) {
             spotLightCategoriesDTO.setCategoryName("");
         }

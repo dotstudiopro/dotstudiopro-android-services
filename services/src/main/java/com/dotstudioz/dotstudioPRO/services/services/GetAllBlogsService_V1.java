@@ -2,11 +2,10 @@ package com.dotstudioz.dotstudioPRO.services.services;
 
 import android.content.Context;
 
-import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.SpotLightBlogDTO;
+import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
 import com.google.gson.internal.LinkedTreeMap;
-
 
 import org.json.JSONArray;
 import org.json.JSONException;

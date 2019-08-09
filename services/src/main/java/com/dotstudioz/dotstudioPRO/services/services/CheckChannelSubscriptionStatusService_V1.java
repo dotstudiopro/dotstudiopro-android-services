@@ -3,13 +3,11 @@ package com.dotstudioz.dotstudioPRO.services.services;
 import android.content.Context;
 import android.util.Log;
 
-import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.SubscriptionDTO;
+import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
 import com.google.gson.Gson;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;

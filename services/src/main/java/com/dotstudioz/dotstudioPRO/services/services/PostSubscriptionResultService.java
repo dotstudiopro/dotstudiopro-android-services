@@ -2,24 +2,22 @@ package com.dotstudioz.dotstudioPRO.services.services;
 
 import android.content.Context;
 
+import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.Purchase;
+import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
-import com.dotstudioz.dotstudioPRO.services.services.retrofit.RestClientInterface;
-import com.dotstudioz.dotstudioPRO.services.services.retrofit.RestClientManager;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
 import org.json.JSONObject;
 
-import retrofit2.Call;
-import retrofit2.Callback;
+import java.util.ArrayList;
+
 import retrofit2.Response;
 
 /**
  * Created by mohsin on 07-10-2016.
  */
 
-public class PostSubscriptionResultService {
+public class PostSubscriptionResultService implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
 
     public String ACTUAL_RESPONSE = "";
 
@@ -62,63 +60,41 @@ public class PostSubscriptionResultService {
             }
         }
 
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("orderId", purchase.getOrderId());
-        jsonObject.addProperty("packageName", purchase.getPackageName());
-        jsonObject.addProperty("productId", purchase.getSku());
-        jsonObject.addProperty("purchaseTime", purchase.getPurchaseTime());
-        jsonObject.addProperty("purchaseState", purchase.getPurchaseState());
-        jsonObject.addProperty("purchaseToken", purchase.getToken());
-        jsonObject.addProperty("autoRenewing", purchase.isAutoRenewing());
-        jsonObject.addProperty("signature", purchase.getSignature());
+        ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
+        headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));
+        headerItemsArrayList.add(new ParameterItem("x-client-token", xClientToken));
 
-        try {
-            RestClientInterface restClientInterface = RestClientManager.getClient(ApplicationConstantURL.getInstance().API_DOMAIN_S, xAccessToken, xClientToken, null).create(RestClientInterface.class);
-            Call<Object> call1 = restClientInterface.requestPost(ApplicationConstantURL.getInstance().SUBSCRIPTION_API, jsonObject);
-            call1.enqueue(new Callback<Object>() {
-                @Override
-                public void onResponse(Call<Object> call, Response<Object> response) {
-                    try {
-                        System.out.println("PostSubscriptionResultService onResponse==>" + response);
-                    } catch(Exception e) {
-                        e.printStackTrace();
-                        System.out.println("PostSubscriptionResultService onResponse==>null");
-                    }
-                    try {
-                        if (response != null && !response.isSuccessful() && response.errorBody() != null) {
-                            handleError(response);
-                            return;
-                        }
-                        if (response != null && response.isSuccessful() && response.body() != null) {
-                            JSONObject responseBody = new JSONObject("" + (new Gson().toJson(response.body())));
-                            System.out.println("ONSUCCESS:-"+responseBody.toString());
-                            iPostSubscriptionResultService.postSubscriptionResultServiceResponse(responseBody);
-                        } else {
-                            iPostSubscriptionResultService.postSubscriptionResultServiceError("FAILED");
-                        }
-                    } catch (Exception e) {
-                        iPostSubscriptionResultService.postSubscriptionResultServiceError(e.getMessage());
-                    }
-                }
+        ArrayList<ParameterItem> requestParamsArrayList = new ArrayList<>();
+        requestParamsArrayList.add(new ParameterItem("orderId", purchase.getOrderId()));
+        requestParamsArrayList.add(new ParameterItem("packageName", purchase.getPackageName()));
+        requestParamsArrayList.add(new ParameterItem("productId", purchase.getSku()));
+        requestParamsArrayList.add(new ParameterItem("purchaseTime", purchase.getPurchaseTime()));
+        requestParamsArrayList.add(new ParameterItem("purchaseState", purchase.getPurchaseState()));
+        requestParamsArrayList.add(new ParameterItem("purchaseToken", purchase.getToken()));
+        requestParamsArrayList.add(new ParameterItem("autoRenewing", purchase.isAutoRenewing()));
+        requestParamsArrayList.add(new ParameterItem("signature", purchase.getSignature()));
 
-                @Override
-                public void onFailure(Call<Object> call, Throwable t) {
-                    call.cancel();
-                    try {
-                        System.out.println("PostSubscriptionResultService onFailure==>" + t.getMessage());
-                    } catch(Exception e) {
-                        e.printStackTrace();
-                        System.out.println("PostSubscriptionResultService onFailure==>null");
-                    }
-                    iPostSubscriptionResultService.postSubscriptionResultServiceError(t.getMessage());
-                }
-            });
+        CommonAsyncHttpClient_V1.getInstance(this).postAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
+                ApplicationConstantURL.getInstance().SUBSCRIPTION_API, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
+    }
 
-        } catch (Exception e) {
-            iPostSubscriptionResultService.postSubscriptionResultServiceError(e.getMessage());
-        }
+    @Override
+    public void onResultHandler(JSONObject response) {
+        iPostSubscriptionResultService.postSubscriptionResultServiceResponse(response);
+    }
 
+    @Override
+    public void onErrorHandler(String ERROR) {
+        iPostSubscriptionResultService.postSubscriptionResultServiceError(ERROR);
+    }
 
+    @Override
+    public void accessTokenExpired() {
+
+    }
+
+    @Override
+    public void clientTokenExpired() {
 
     }
 

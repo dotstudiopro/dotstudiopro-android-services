@@ -1,6 +1,7 @@
 package com.dotstudioz.dotstudioPRO.services.services;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
@@ -49,10 +50,10 @@ public class VideoPurchaseStatus_V1 implements CommonAsyncHttpClient_V1.ICommonA
             }
         }
 
-        System.out.println("fetchVideoPurchaseStatus API_URL==>"+API_URL);
-        System.out.println("fetchVideoPurchaseStatus ApplicationConstants.xAccessToken==>"+ ApplicationConstants.xAccessToken);
-        System.out.println("fetchVideoPurchaseStatus ApplicationConstants.CLIENT_TOKEN==>"+ApplicationConstants.CLIENT_TOKEN);
-        System.out.println("fetchVideoPurchaseStatus video==>"+videoID);
+        Log.d("VideoPurchaseStatus", "fetchVideoPurchaseStatus API_URL==>"+API_URL);
+        Log.d("VideoPurchaseStatus", "fetchVideoPurchaseStatus ApplicationConstants.xAccessToken==>"+ ApplicationConstants.xAccessToken);
+        Log.d("VideoPurchaseStatus", "fetchVideoPurchaseStatus ApplicationConstants.CLIENT_TOKEN==>"+ApplicationConstants.CLIENT_TOKEN);
+        Log.d("VideoPurchaseStatus", "fetchVideoPurchaseStatus video==>"+videoID);
 
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", ApplicationConstants.xAccessToken));
@@ -110,7 +111,7 @@ public class VideoPurchaseStatus_V1 implements CommonAsyncHttpClient_V1.ICommonA
     public void processJSONResponseObject(JSONObject response) {
         JSONObject obj = response;
 
-        System.out.println("fetchVideoPurchaseStatus processJSONResponseObject==>"+response);
+        Log.d("VideoPurchaseStatus", "fetchVideoPurchaseStatus processJSONResponseObject==>"+response);
 
         /*try {
             obj = new JSONObject();
@@ -190,7 +191,7 @@ public class VideoPurchaseStatus_V1 implements CommonAsyncHttpClient_V1.ICommonA
     }
     @Override
     public void onErrorHandler(String ERROR) {
-        System.out.println("VideoPurchaseStatus onErrorHandler==>"+ERROR);
+        Log.d("VideoPurchaseStatus", "VideoPurchaseStatus onErrorHandler==>"+ERROR);
         iVideoPurchaseStatus.getVideoPurchaseStatusServiceError(ERROR);
     }
     @Override

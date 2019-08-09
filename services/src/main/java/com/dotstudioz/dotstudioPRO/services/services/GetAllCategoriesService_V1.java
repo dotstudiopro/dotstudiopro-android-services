@@ -1,12 +1,12 @@
 package com.dotstudioz.dotstudioPRO.services.services;
 
 import android.content.Context;
+import android.util.Log;
 
-import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
-import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 import com.dotstudioz.dotstudioPRO.models.dto.CustomFieldDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.SpotLightCategoriesDTO;
+import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -71,9 +71,6 @@ public class GetAllCategoriesService_V1 implements CommonAsyncHttpClient_V1.ICom
 
        CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, null,
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
-
-        /*CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpClient(headerItemsArrayList, null,
-                API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);*/
     }
     @Override
     public void onResultHandler(JSONObject response) {
@@ -179,7 +176,7 @@ public class GetAllCategoriesService_V1 implements CommonAsyncHttpClient_V1.ICom
                 }
                 try {
                     spotLightCategoriesDTO.setCategoryName(obj.getString("name"));
-                    System.out.println("spotLightCategoriesDTO.getCategoryName()==>" + spotLightCategoriesDTO.getCategoryName());
+                    Log.d("GetAllCategories", "spotLightCategoriesDTO.getCategoryName()==>" + spotLightCategoriesDTO.getCategoryName());
                 } catch (JSONException e) {
                     spotLightCategoriesDTO.setCategoryName("");
                 }

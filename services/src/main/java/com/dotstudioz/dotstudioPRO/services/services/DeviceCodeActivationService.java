@@ -2,25 +2,19 @@ package com.dotstudioz.dotstudioPRO.services.services;
 
 import android.content.Context;
 
+import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import cz.msebera.android.httpclient.Header;
+import java.util.ArrayList;
 
 /**
  * Created by Kishore
  *
  */
 //TODO: This can be removed after the device activation feature implemented by portal.
-public class DeviceCodeActivationService {
+public class DeviceCodeActivationService implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
 
     public IDeviceCodeActivationService iDeviceCodeActivationService;
 
@@ -49,48 +43,35 @@ public class DeviceCodeActivationService {
             }
         }
 
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.setMaxRetriesAndTimeout(2, 30000);
-        client.setTimeout(30000);
-        client.addHeader("x-access-token", xAccessToken);
-        //client.addHeader("x-access-token", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiI1NjkwMTM0ZTk3ZjgxNTQ3MzFhZWVkMmQiLCJleHBpcmVzIjoxNDU2NzE2ODY3NzE1LCJjb250ZXh0Ijp7Im5hbWUiOiJzdWJkb21haW4iLCJzdWJkb21haW4iOiJzdWJkb21haW4ifX0.hFOTWpwiwEx7qq1dKujVi1JuI9VjcbCyTo0GMjQtqhE");
+        ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
+        headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));
 
-        Map<String, String> jsonParams = new HashMap<String, String>();
-        jsonParams.put("customer_id", customerId);
-        jsonParams.put("code", code);
-        RequestParams rp = new RequestParams(jsonParams);
+        ArrayList<ParameterItem> requestParamsArrayList = new ArrayList<>();
+        requestParamsArrayList.add(new ParameterItem("customer_id", customerId));
+        requestParamsArrayList.add(new ParameterItem("code", code));
 
-        try {
-            client.post(TOKEN_URL, rp, new JsonHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject responseBody) {
-                    iDeviceCodeActivationService.deviceCodeActivationServiceResponse(responseBody);
-                }
+        CommonAsyncHttpClient_V1.getInstance(this).postAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
+                TOKEN_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
+    }
 
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable error, JSONObject responseBody) {
-                    iDeviceCodeActivationService.deviceCodeActivationServiceError(error.getMessage());
-                    boolean isSuccess = true;
-                    try {
-                        isSuccess = responseBody.getBoolean("success");
-                    } catch (JSONException e) {
-                        //throws error, because on success there is no boolean returned, so
-                        // we are assuming that it is a success
-                        isSuccess = false;
-                    }
+    @Override
+    public void onResultHandler(JSONObject response) {
+        iDeviceCodeActivationService.deviceCodeActivationServiceResponse(response);
+    }
 
-                    if (!isSuccess) {
-                        if(AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
-                            AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInRentNowPageString);
-                            if(AccessTokenHandler.getInstance().foundAnyError)
-                                iDeviceCodeActivationService.accessTokenExpired();
-                        }
-                    }
-                }
-            });
-        } catch (Exception e) {
-            //e.printStackTrace();
-        }
+    @Override
+    public void onErrorHandler(String ERROR) {
+        iDeviceCodeActivationService.deviceCodeActivationServiceError(ERROR);
+    }
+
+    @Override
+    public void accessTokenExpired() {
+        iDeviceCodeActivationService.accessTokenExpired();
+    }
+
+    @Override
+    public void clientTokenExpired() {
+
     }
 
     public interface IDeviceCodeActivationService {
