@@ -61,8 +61,7 @@ public class ValidateAppVersionAPI implements CommonAsyncHttpClient_V1.ICommonAs
             }
         }
 
-        getAsyncHttpsClient(null, null,
-                API_URL + packageName, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
+        getAsyncHttpsClient(API_URL + packageName, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
 
     }
 
@@ -71,7 +70,7 @@ public class ValidateAppVersionAPI implements CommonAsyncHttpClient_V1.ICommonAs
         this.iValidateAppVersionAPI = callback;
     }
 
-    public void getAsyncHttpsClient(ArrayList<ParameterItem> headersArrayList, ArrayList<ParameterItem> requestParamsArrayList, String API_URL, final String API_CALLED_FOR) {
+    public void getAsyncHttpsClient(String API_URL, final String API_CALLED_FOR) {
         if (iValidateAppVersionAPI == null) {
             if (context != null && context instanceof ValidateAppVersionAPI.IValidateAppVersionAPI) {
                 iValidateAppVersionAPI = (ValidateAppVersionAPI.IValidateAppVersionAPI) context;
@@ -82,10 +81,7 @@ public class ValidateAppVersionAPI implements CommonAsyncHttpClient_V1.ICommonAs
         }
 
         try {
-            ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
-            headerItemsArrayList.add(new ParameterItem("x-access-token", ApplicationConstants.xAccessToken));
-
-            CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, null,
+            CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(null, null,
                     API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInSingleVideoPageString);
         } catch (Exception e) {
 
