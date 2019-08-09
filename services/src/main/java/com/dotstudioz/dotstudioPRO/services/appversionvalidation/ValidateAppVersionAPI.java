@@ -42,16 +42,16 @@ public class ValidateAppVersionAPI implements CommonAsyncHttpClient_V1.ICommonAs
         void accessTokenExpired();
     }
 
-    private static ValidateAppVersionAPI mInstance = new ValidateAppVersionAPI();
-    private ValidateAppVersionAPI(){ }
-    public static synchronized ValidateAppVersionAPI getInstance() {
-        return mInstance;
+    public ValidateAppVersionAPI(Context ctx){
+        context = ctx;
+        if (ctx instanceof ValidateAppVersionAPI.IValidateAppVersionAPI)
+            iValidateAppVersionAPI = (ValidateAppVersionAPI.IValidateAppVersionAPI) ctx;
+        /*else
+            throw new RuntimeException(ctx.toString()+ " must implement IVideoPausedPointService_V1");*/
     }
 
     Context context;
-    public void getAppVersion(Context ctx, String API_URL, String packageName) {
-        this.context = ctx;
-
+    public void getAppVersion(String API_URL, String packageName) {
         if (iValidateAppVersionAPI == null) {
             if (context != null && context instanceof ValidateAppVersionAPI.IValidateAppVersionAPI) {
                 iValidateAppVersionAPI = (ValidateAppVersionAPI.IValidateAppVersionAPI) context;
