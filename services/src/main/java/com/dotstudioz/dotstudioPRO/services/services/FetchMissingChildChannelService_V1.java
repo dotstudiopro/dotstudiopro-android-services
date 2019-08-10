@@ -161,7 +161,7 @@ public class FetchMissingChildChannelService_V1 implements CommonAsyncHttpClient
             e.printStackTrace();
         }
 
-        if(channelsArray.length() == 0) {
+        if(channelsArray != null && channelsArray.length() == 0) {
             iFetchMissingChildChannelService_V1.processMissingChildChannelDataServiceError("Data not available at the moment!");
             iFetchMissingChildChannelService_V1.hidePDialog();
             return;

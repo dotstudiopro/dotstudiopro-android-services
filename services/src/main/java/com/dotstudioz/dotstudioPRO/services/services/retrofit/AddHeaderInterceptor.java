@@ -51,7 +51,11 @@ public class AddHeaderInterceptor implements Interceptor {
             //Check for the length of the headersArrayList, if it has any data in it,
             //the start populating the header parameters
             for (int i = 0; i < mHeadersArrayList.size(); i++) {
-                builder.addHeader(mHeadersArrayList.get(i).getParameterName(), mHeadersArrayList.get(i).getParameterValue());
+                try {
+                    builder.addHeader(mHeadersArrayList.get(i).getParameterName(), mHeadersArrayList.get(i).getParameterValue());
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
         try {
