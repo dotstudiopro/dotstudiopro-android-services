@@ -190,6 +190,18 @@ public class GetAllCategoriesServiceForHomepage_V1 implements CommonAsyncHttpCli
                                 }
 
                                 try {
+                                    if(channel.has("is_product") && channel.get("is_product") instanceof String) {
+                                        if(channel.getString("is_product").equalsIgnoreCase("true")) {
+                                            spotLightChannelDTO.setProduct(true);
+                                        }
+                                    } else {
+                                        spotLightChannelDTO.setProduct(channel.getBoolean("is_product"));
+                                    }
+                                } catch (JSONException e) {
+                                    //spotLightChannelDTO.setLink(channel.getString("channel_url"));
+                                }
+
+                                try {
                                     spotLightChannelDTO.setLink(channel.getString("link"));
                                 } catch (JSONException e) {
                                     //spotLightChannelDTO.setLink(channel.getString("channel_url"));
