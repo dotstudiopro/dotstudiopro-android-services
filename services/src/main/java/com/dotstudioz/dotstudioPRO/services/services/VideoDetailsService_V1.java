@@ -390,13 +390,13 @@ public class VideoDetailsService_V1 implements CommonAsyncHttpClient_V1.ICommonA
                                 videoInfoDTO.setPreRollAdFixIssueVMAP(obj.getJSONObject("ad_tag").getString("pre"));
                             }
                         }
-                        if(videoInfoDTO.getPreRollAdFixIssueVMAP() != null && videoInfoDTO.getPreRollAdFixIssueVMAP().length() > 0)
+                        /*if(videoInfoDTO.getPreRollAdFixIssueVMAP() != null && videoInfoDTO.getPreRollAdFixIssueVMAP().length() > 0)
                             videoInfoDTO.setPreRollToBePlayed(true);
                         else
-                            videoInfoDTO.setPreRollToBePlayed(false);
+                            videoInfoDTO.setPreRollToBePlayed(false);*/
                     } catch(Exception e) {
                         e.printStackTrace();
-                        videoInfoDTO.setPreRollToBePlayed(false);
+                        //videoInfoDTO.setPreRollToBePlayed(false);
                     }
                     try {
                         if(videoInfoDTO.isPreRollToBePlayed() && obj.has("ads")) {
@@ -421,13 +421,13 @@ public class VideoDetailsService_V1 implements CommonAsyncHttpClient_V1.ICommonA
                                 videoInfoDTO.setPostRollAdFixIssueVMAP(obj.getJSONObject("ad_tag").getString("post"));
                             }
                         }
-                        if(videoInfoDTO.getPostRollAdFixIssueVMAP() != null && videoInfoDTO.getPostRollAdFixIssueVMAP().length() > 0)
+                        /*if(videoInfoDTO.getPostRollAdFixIssueVMAP() != null && videoInfoDTO.getPostRollAdFixIssueVMAP().length() > 0)
                             videoInfoDTO.setPostRollToBePlayed(true);
                         else
-                            videoInfoDTO.setPostRollToBePlayed(false);
+                            videoInfoDTO.setPostRollToBePlayed(false);*/
                     } catch(Exception e) {
                         e.printStackTrace();
-                        videoInfoDTO.setPostRollToBePlayed(false);
+                        //videoInfoDTO.setPostRollToBePlayed(false);
                     }
                     try {
                         if(videoInfoDTO.isPostRollToBePlayed() && obj.has("ads")) {
@@ -526,11 +526,11 @@ public class VideoDetailsService_V1 implements CommonAsyncHttpClient_V1.ICommonA
                     }
 
                     try {
-                        if (obj.getJSONObject("ads").getString("post").equals("yes")) {
+                        /*if (obj.getJSONObject("ads").getString("post").equals("yes")) {
                             videoInfoDTO.setIsPostRollToBePlayed(true);
                         } else {
                             videoInfoDTO.setIsPostRollToBePlayed(false);
-                        }
+                        }*/
                     } catch(Exception e) {
                         e.printStackTrace();
                     }

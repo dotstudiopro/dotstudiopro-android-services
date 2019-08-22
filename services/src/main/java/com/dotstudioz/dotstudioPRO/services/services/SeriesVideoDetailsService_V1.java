@@ -391,13 +391,13 @@ public class SeriesVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.IC
                                 videoInfoDTO.setPreRollAdFixIssueVMAP(obj.getJSONObject("ad_tag").getString("pre"));
                             }
                         }
-                        if(videoInfoDTO.getPreRollAdFixIssueVMAP() != null && videoInfoDTO.getPreRollAdFixIssueVMAP().length() > 0)
+                        /*if(videoInfoDTO.getPreRollAdFixIssueVMAP() != null && videoInfoDTO.getPreRollAdFixIssueVMAP().length() > 0)
                             videoInfoDTO.setPreRollToBePlayed(true);
                         else
-                            videoInfoDTO.setPreRollToBePlayed(false);
+                            videoInfoDTO.setPreRollToBePlayed(false);*/
                     } catch(Exception e) {
                         e.printStackTrace();
-                        videoInfoDTO.setPreRollToBePlayed(false);
+                        //videoInfoDTO.setPreRollToBePlayed(false);
                     }
                     try {
 
@@ -427,13 +427,13 @@ public class SeriesVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.IC
                                 videoInfoDTO.setPostRollAdFixIssueVMAP(obj.getJSONObject("ad_tag").getString("post"));
                             }
                         }
-                        if(videoInfoDTO.getPostRollAdFixIssueVMAP() != null && videoInfoDTO.getPostRollAdFixIssueVMAP().length() > 0)
+                        /*if(videoInfoDTO.getPostRollAdFixIssueVMAP() != null && videoInfoDTO.getPostRollAdFixIssueVMAP().length() > 0)
                             videoInfoDTO.setPostRollToBePlayed(true);
                         else
-                            videoInfoDTO.setPostRollToBePlayed(false);
+                            videoInfoDTO.setPostRollToBePlayed(false);*/
                     } catch(Exception e) {
                         e.printStackTrace();
-                        videoInfoDTO.setPostRollToBePlayed(false);
+                        //videoInfoDTO.setPostRollToBePlayed(false);
                     }
                     try {
                         if(videoInfoDTO.isPostRollToBePlayed() && obj.has("ads")) {
