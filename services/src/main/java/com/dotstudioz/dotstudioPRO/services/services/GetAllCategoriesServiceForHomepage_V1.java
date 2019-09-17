@@ -254,7 +254,10 @@ public class GetAllCategoriesServiceForHomepage_V1 implements CommonAsyncHttpCli
                                 if(isVideo) {
                                     try {
                                         VideoInfoDTO videoInfoDTO = new VideoInfoDTO();
-                                        videoInfoDTO.setVideoID(channel.getJSONObject("video").getString("_id"));
+                                        try {
+                                            videoInfoDTO.setVideoID(channel.getJSONObject("video").getString("_id"));
+                                        } catch (Exception e) {
+                                        }
                                         try {
                                             videoInfoDTO.setVideoTitle(channel.getJSONObject("video").getString("title"));
                                         } catch (Exception e) {
@@ -318,7 +321,8 @@ public class GetAllCategoriesServiceForHomepage_V1 implements CommonAsyncHttpCli
                                             }
                                         }
 
-                                        spotLightChannelDTO.getVideoInfoDTOList().add(videoInfoDTO);
+                                        if(videoInfoDTO.getVideoID() != null && videoInfoDTO.getVideoID().length() > 0)
+                                            spotLightChannelDTO.getVideoInfoDTOList().add(videoInfoDTO);
                                         spotLightCategoriesDTO.getSpotLightChannelDTOList().add(spotLightChannelDTO);
                                     } catch (Exception e) {
                                         e.printStackTrace();
