@@ -170,6 +170,14 @@ public class CommonAsyncHttpClient_V1 {
                             iCommonAsyncHttpClient_V1.accessTokenExpired();
                         else if (AccessTokenHandler.getInstance().foundAnyErrorForClientToken)
                             iCommonAsyncHttpClient_V1.clientTokenExpired();
+                        else {
+                            try {
+                                iCommonAsyncHttpClient_V1.onErrorHandler((responseBody.getString("message") != null) ? responseBody.getString("message") : "ERROR");
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                iCommonAsyncHttpClient_V1.onErrorHandler("ERROR");
+                            }
+                        }
                     } else {
                         iCommonAsyncHttpClient_V1.onErrorHandler("ERROR");
                     }
@@ -221,6 +229,14 @@ public class CommonAsyncHttpClient_V1 {
                         iCommonAsyncHttpClient_V1.accessTokenExpired();
                     else if (AccessTokenHandler.getInstance().foundAnyErrorForClientToken)
                         iCommonAsyncHttpClient_V1.clientTokenExpired();
+                    else {
+                        try {
+                            iCommonAsyncHttpClient_V1.onErrorHandler((responseBody.getString("message") != null) ? responseBody.getString("message") : "ERROR");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            iCommonAsyncHttpClient_V1.onErrorHandler("ERROR");
+                        }
+                    }
                 } else {
                     iCommonAsyncHttpClient_V1.onErrorHandler("ERROR");
                 }
@@ -377,6 +393,14 @@ public class CommonAsyncHttpClient_V1 {
                             iCommonAsyncHttpClient_V1.accessTokenExpired();
                         else if (AccessTokenHandler.getInstance().foundAnyErrorForClientToken)
                             iCommonAsyncHttpClient_V1.clientTokenExpired();
+                        else {
+                            try {
+                                iCommonAsyncHttpClient_V1.onErrorHandler((responseBody.getString("message") != null) ? responseBody.getString("message") : "ERROR");
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                iCommonAsyncHttpClient_V1.onErrorHandler("ERROR");
+                            }
+                        }
                     } else {
                         iCommonAsyncHttpClient_V1.onErrorHandler("ERROR");
                     }
