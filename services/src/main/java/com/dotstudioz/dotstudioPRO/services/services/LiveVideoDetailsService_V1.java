@@ -3,6 +3,7 @@ package com.dotstudioz.dotstudioPRO.services.services;
 import android.content.Context;
 
 import com.dotstudioz.dotstudioPRO.models.dto.AdDTO;
+import com.dotstudioz.dotstudioPRO.models.dto.CustomFieldDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.VideoInfoDTO;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
@@ -545,6 +546,21 @@ public class LiveVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.ICom
                 }
 
                 try {
+                    if(obj.has("custom_fields")) {
+                        for (int i = 0; i < obj.getJSONArray("custom_fields").length(); i++) {
+                            CustomFieldDTO customFieldDTO = new CustomFieldDTO();
+                            if(((JSONObject)obj.getJSONArray("custom_fields").get(i)).has("field_title"))
+                                customFieldDTO.setCustomFieldName(((JSONObject)obj.getJSONArray("custom_fields").get(i)).getString("field_title"));
+                            if(((JSONObject)obj.getJSONArray("custom_fields").get(i)).has("field_value"))
+                                customFieldDTO.setCustomFieldValue(((JSONObject)obj.getJSONArray("custom_fields").get(i)).getString("field_value"));
+                            videoInfoDTO.getCustomFieldsArrayList().add(customFieldDTO);
+                        }
+                    }
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+
+                try {
                     videoInfoDTO.setVideoYear(obj.getString("year"));
                 } catch(JSONException e) { videoInfoDTO.setVideoYear("-"); }
                 try {
@@ -616,6 +632,22 @@ public class LiveVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.ICom
                         videoInfoDTO.setClosedCaptionEnabled(false);
                     }
                 } catch(JSONException e) { videoInfoDTO.setClosedCaptionEnabled(false); }
+
+                try {
+                    JSONObject vidInfoDTOJSONObject = (JSONObject) obj;
+                    if(vidInfoDTOJSONObject.has("custom_fields")) {
+                        for (int k = 0; k < vidInfoDTOJSONObject.getJSONArray("custom_fields").length(); k++) {
+                            CustomFieldDTO customFieldDTO = new CustomFieldDTO();
+                            if(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).has("field_title"))
+                                customFieldDTO.setCustomFieldName(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).getString("field_title"));
+                            if(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).has("field_value"))
+                                customFieldDTO.setCustomFieldValue(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).getString("field_value"));
+                            videoInfoDTO.getCustomFieldsArrayList().add(customFieldDTO);
+                        }
+                    }
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
 
 
             } catch (JSONException e) {

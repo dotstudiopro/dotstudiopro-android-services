@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.dotstudioz.dotstudioPRO.models.dto.AdDTO;
+import com.dotstudioz.dotstudioPRO.models.dto.CustomFieldDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.SpotLightCategoriesDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.VideoInfoDTO;
@@ -724,6 +725,21 @@ public class SeriesVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.IC
 
                 videoInfoDTO.setChannelID(channelID);
                 videoInfoDTO.setChannelLink(channelLink);
+
+                try {
+                    if(obj.has("custom_fields")) {
+                        for (int i = 0; i < obj.getJSONArray("custom_fields").length(); i++) {
+                            CustomFieldDTO customFieldDTO = new CustomFieldDTO();
+                            if(((JSONObject)obj.getJSONArray("custom_fields").get(i)).has("field_title"))
+                                customFieldDTO.setCustomFieldName(((JSONObject)obj.getJSONArray("custom_fields").get(i)).getString("field_title"));
+                            if(((JSONObject)obj.getJSONArray("custom_fields").get(i)).has("field_value"))
+                                customFieldDTO.setCustomFieldValue(((JSONObject)obj.getJSONArray("custom_fields").get(i)).getString("field_value"));
+                            videoInfoDTO.getCustomFieldsArrayList().add(customFieldDTO);
+                        }
+                    }
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
 
                 try {
                     videoInfoDTO.setVideoYear(obj.getString("year"));

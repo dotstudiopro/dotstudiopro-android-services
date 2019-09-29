@@ -2,6 +2,7 @@ package com.dotstudioz.dotstudioPRO.services.services;
 
 import android.content.Context;
 
+import com.dotstudioz.dotstudioPRO.models.dto.CustomFieldDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.SpotLightCategoriesDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.SpotLightChannelDTO;
@@ -447,6 +448,21 @@ public class FetchChannelUsingSlugService_V1 implements CommonAsyncHttpClient_V1
                                                         }
                                                     }
 
+                                                    try {
+                                                        if(channel.getJSONObject("video").has("custom_fields")) {
+                                                            for (int j = 0; j < channel.getJSONObject("video").getJSONArray("custom_fields").length(); j++) {
+                                                                CustomFieldDTO customFieldDTO = new CustomFieldDTO();
+                                                                if(((JSONObject)channel.getJSONObject("video").getJSONArray("custom_fields").get(j)).has("field_title"))
+                                                                    customFieldDTO.setCustomFieldName(((JSONObject)channel.getJSONObject("video").getJSONArray("custom_fields").get(j)).getString("field_title"));
+                                                                if(((JSONObject)channel.getJSONObject("video").getJSONArray("custom_fields").get(j)).has("field_value"))
+                                                                    customFieldDTO.setCustomFieldValue(((JSONObject)channel.getJSONObject("video").getJSONArray("custom_fields").get(j)).getString("field_value"));
+                                                                videoInfoDTO.getCustomFieldsArrayList().add(customFieldDTO);
+                                                            }
+                                                        }
+                                                    } catch(Exception e) {
+                                                        e.printStackTrace();
+                                                    }
+
                                                     spotLightChannelDTO.getVideoInfoDTOList().add(videoInfoDTO);
                                                 } catch (Exception e) {
                                                     e.printStackTrace();
@@ -541,6 +557,21 @@ public class FetchChannelUsingSlugService_V1 implements CommonAsyncHttpClient_V1
                                                     }
                                                 }
 
+                                                try {
+                                                    if(channel.getJSONObject("video").has("custom_fields")) {
+                                                        for (int j = 0; j < channel.getJSONObject("video").getJSONArray("custom_fields").length(); j++) {
+                                                            CustomFieldDTO customFieldDTO = new CustomFieldDTO();
+                                                            if(((JSONObject)channel.getJSONObject("video").getJSONArray("custom_fields").get(j)).has("field_title"))
+                                                                customFieldDTO.setCustomFieldName(((JSONObject)channel.getJSONObject("video").getJSONArray("custom_fields").get(j)).getString("field_title"));
+                                                            if(((JSONObject)channel.getJSONObject("video").getJSONArray("custom_fields").get(j)).has("field_value"))
+                                                                customFieldDTO.setCustomFieldValue(((JSONObject)channel.getJSONObject("video").getJSONArray("custom_fields").get(j)).getString("field_value"));
+                                                            videoInfoDTO.getCustomFieldsArrayList().add(customFieldDTO);
+                                                        }
+                                                    }
+                                                } catch(Exception e) {
+                                                    e.printStackTrace();
+                                                }
+
                                                 spotLightChannelDTO.getVideoInfoDTOList().add(videoInfoDTO);
                                             } catch (Exception e) {
                                                 e.printStackTrace();
@@ -608,6 +639,22 @@ public class FetchChannelUsingSlugService_V1 implements CommonAsyncHttpClient_V1
 
                                 if(((JSONObject) playlistArray.get(j)).has("slug"))
                                     videoInfoDTO.setSlug(playlistArray.getJSONObject(j).getString("slug"));
+
+                                try {
+                                    JSONObject vidInfoDTOJSONObject = (JSONObject) playlistArray.get(j);
+                                    if(vidInfoDTOJSONObject.has("custom_fields")) {
+                                        for (int k = 0; k < vidInfoDTOJSONObject.getJSONArray("custom_fields").length(); k++) {
+                                            CustomFieldDTO customFieldDTO = new CustomFieldDTO();
+                                            if(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).has("field_title"))
+                                                customFieldDTO.setCustomFieldName(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).getString("field_title"));
+                                            if(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).has("field_value"))
+                                                customFieldDTO.setCustomFieldValue(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).getString("field_value"));
+                                            videoInfoDTO.getCustomFieldsArrayList().add(customFieldDTO);
+                                        }
+                                    }
+                                } catch(Exception e) {
+                                    e.printStackTrace();
+                                }
 
                                 missingVideoInfoDTOList.add(videoInfoDTO);
                                 spotLightChannelDTO.getVideoInfoDTOList().add(videoInfoDTO);
@@ -682,6 +729,21 @@ public class FetchChannelUsingSlugService_V1 implements CommonAsyncHttpClient_V1
                                             videoInfoDTO.setVideoID(playlistArray.getJSONObject(j).getString("_id"));
                                             videoInfoDTO.setThumb(playlistArray.getJSONObject(j).getString("thumb"));
                                             videoInfoDTO.setVideoTitle(playlistArray.getJSONObject(j).getString("title"));
+                                            try {
+                                                JSONObject vidInfoDTOJSONObject = (JSONObject) playlistArray.get(j);
+                                                if(vidInfoDTOJSONObject.has("custom_fields")) {
+                                                    for (int k = 0; k < vidInfoDTOJSONObject.getJSONArray("custom_fields").length(); k++) {
+                                                        CustomFieldDTO customFieldDTO = new CustomFieldDTO();
+                                                        if(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).has("field_title"))
+                                                            customFieldDTO.setCustomFieldName(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).getString("field_title"));
+                                                        if(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).has("field_value"))
+                                                            customFieldDTO.setCustomFieldValue(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).getString("field_value"));
+                                                        videoInfoDTO.getCustomFieldsArrayList().add(customFieldDTO);
+                                                    }
+                                                }
+                                            } catch(Exception e) {
+                                                e.printStackTrace();
+                                            }
                                             childSpotLightChannelDTO.getVideoInfoDTOList().add(videoInfoDTO);
                                         }
                                     }
@@ -717,6 +779,21 @@ public class FetchChannelUsingSlugService_V1 implements CommonAsyncHttpClient_V1
                                 try {
                                     videoInfoDTO.setSlug(childChannel.getString("slug"));
                                 } catch (Exception e) {
+                                }
+                                try {
+                                    JSONObject vidInfoDTOJSONObject = (JSONObject) childChannel;
+                                    if(vidInfoDTOJSONObject.has("custom_fields")) {
+                                        for (int k = 0; k < vidInfoDTOJSONObject.getJSONArray("custom_fields").length(); k++) {
+                                            CustomFieldDTO customFieldDTO = new CustomFieldDTO();
+                                            if(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).has("field_title"))
+                                                customFieldDTO.setCustomFieldName(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).getString("field_title"));
+                                            if(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).has("field_value"))
+                                                customFieldDTO.setCustomFieldValue(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).getString("field_value"));
+                                            videoInfoDTO.getCustomFieldsArrayList().add(customFieldDTO);
+                                        }
+                                    }
+                                } catch(Exception e) {
+                                    e.printStackTrace();
                                 }
                                 //VideoInfoDTO resultVideoInfoDTO = callBackFromUpdateVideoPausedPointServiceForBrowsePage(videoInfoDTO);
                                // AppController.getInstance().spotLightCategoriesDTOList.get(i).getSpotLightChannelDTOList().get(j).getSeasonsList().get(k).getVideoInfoDTOList().add(videoInfoDTO);

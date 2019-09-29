@@ -3,6 +3,7 @@ package com.dotstudioz.dotstudioPRO.services.services;
 import android.content.Context;
 
 import com.dotstudioz.dotstudioPRO.models.dto.AdDTO;
+import com.dotstudioz.dotstudioPRO.models.dto.CustomFieldDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.VideoInfoDTO;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
@@ -675,6 +676,21 @@ public class VideoDetailsService_V2 implements CommonAsyncHttpClient_V1.ICommonA
                 try {
                     videoInfoDTO.setChannelLink(channelLink);
                 } catch(Exception e){
+                    e.printStackTrace();
+                }
+
+                try {
+                    if(obj.has("custom_fields")) {
+                        for (int i = 0; i < obj.getJSONArray("custom_fields").length(); i++) {
+                            CustomFieldDTO customFieldDTO = new CustomFieldDTO();
+                            if(((JSONObject)obj.getJSONArray("custom_fields").get(i)).has("field_title"))
+                                customFieldDTO.setCustomFieldName(((JSONObject)obj.getJSONArray("custom_fields").get(i)).getString("field_title"));
+                            if(((JSONObject)obj.getJSONArray("custom_fields").get(i)).has("field_value"))
+                                customFieldDTO.setCustomFieldValue(((JSONObject)obj.getJSONArray("custom_fields").get(i)).getString("field_value"));
+                            videoInfoDTO.getCustomFieldsArrayList().add(customFieldDTO);
+                        }
+                    }
+                } catch(Exception e) {
                     e.printStackTrace();
                 }
 

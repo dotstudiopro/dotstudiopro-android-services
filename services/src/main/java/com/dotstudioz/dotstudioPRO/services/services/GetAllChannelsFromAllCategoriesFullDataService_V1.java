@@ -2,6 +2,7 @@ package com.dotstudioz.dotstudioPRO.services.services;
 
 import android.content.Context;
 
+import com.dotstudioz.dotstudioPRO.models.dto.CustomFieldDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.SpotLightCategoriesDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.VideoInfoDTO;
@@ -189,6 +190,22 @@ public class GetAllChannelsFromAllCategoriesFullDataService_V1 implements Common
                         videoInfoDTO.setWritterDirector("");
                         if(writterDirector.length() > 23)
                             videoInfoDTO.setWritterDirector(writterDirector);
+
+                        try {
+                            JSONObject vidInfoDTOJSONObject = ((JSONObject)obj.getJSONArray("playlist").get(j));
+                            if(vidInfoDTOJSONObject.has("custom_fields")) {
+                                for (int k = 0; k < vidInfoDTOJSONObject.getJSONArray("custom_fields").length(); k++) {
+                                    CustomFieldDTO customFieldDTO = new CustomFieldDTO();
+                                    if(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).has("field_title"))
+                                        customFieldDTO.setCustomFieldName(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).getString("field_title"));
+                                    if(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).has("field_value"))
+                                        customFieldDTO.setCustomFieldValue(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).getString("field_value"));
+                                    videoInfoDTO.getCustomFieldsArrayList().add(customFieldDTO);
+                                }
+                            }
+                        } catch(Exception e) {
+                            e.printStackTrace();
+                        }
 
                         spotLightCategoriesDTO.getVideoInfoDTOList().add(videoInfoDTO);
                     }

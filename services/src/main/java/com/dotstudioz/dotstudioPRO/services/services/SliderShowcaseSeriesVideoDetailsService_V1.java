@@ -507,6 +507,22 @@ public class SliderShowcaseSeriesVideoDetailsService_V1 implements CommonAsyncHt
                 }
             } catch(JSONException e) { videoInfoDTO.setClosedCaptionEnabled(false); }
 
+            try {
+                JSONObject vidInfoDTOJSONObject = (JSONObject) obj;
+                if(vidInfoDTOJSONObject.has("custom_fields")) {
+                    for (int k = 0; k < vidInfoDTOJSONObject.getJSONArray("custom_fields").length(); k++) {
+                        CustomFieldDTO customFieldDTO = new CustomFieldDTO();
+                        if(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).has("field_title"))
+                            customFieldDTO.setCustomFieldName(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).getString("field_title"));
+                        if(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).has("field_value"))
+                            customFieldDTO.setCustomFieldValue(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).getString("field_value"));
+                        videoInfoDTO.getCustomFieldsArrayList().add(customFieldDTO);
+                    }
+                }
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

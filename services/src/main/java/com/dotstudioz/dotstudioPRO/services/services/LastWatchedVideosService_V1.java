@@ -3,6 +3,7 @@ package com.dotstudioz.dotstudioPRO.services.services;
 import android.content.Context;
 import android.util.Log;
 
+import com.dotstudioz.dotstudioPRO.models.dto.CustomFieldDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.LastWatchedVideosPairDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.VideoInfoDTO;
@@ -119,6 +120,21 @@ public class LastWatchedVideosService_V1 implements CommonAsyncHttpClient_V1.ICo
                             } else {
                                 videoInfoDTO.setThumb("");
                             }
+                            try {
+                                JSONObject vidInfoDTOJSONObject = jsonObject;
+                                if(vidInfoDTOJSONObject.has("custom_fields")) {
+                                    for (int k = 0; k < vidInfoDTOJSONObject.getJSONArray("custom_fields").length(); k++) {
+                                        CustomFieldDTO customFieldDTO = new CustomFieldDTO();
+                                        if(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).has("field_title"))
+                                            customFieldDTO.setCustomFieldName(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).getString("field_title"));
+                                        if(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).has("field_value"))
+                                            customFieldDTO.setCustomFieldValue(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).getString("field_value"));
+                                        videoInfoDTO.getCustomFieldsArrayList().add(customFieldDTO);
+                                    }
+                                }
+                            } catch(Exception e) {
+                                e.printStackTrace();
+                            }
                             if(videoInfoDTO.getVideoPausedPoint() > 0 && videoInfoDTO.getVideoDuration() > 0)
                                 lastWatchedVideosPairDTO.getContinueWatchingDTOList().add(videoInfoDTO);
                         }
@@ -160,6 +176,21 @@ public class LastWatchedVideosService_V1 implements CommonAsyncHttpClient_V1.ICo
                                 videoInfoDTO.setThumb(jsonObject.getString("thumb"));
                             } else {
                                 videoInfoDTO.setThumb("");
+                            }
+                            try {
+                                JSONObject vidInfoDTOJSONObject = jsonObject;
+                                if(vidInfoDTOJSONObject.has("custom_fields")) {
+                                    for (int k = 0; k < vidInfoDTOJSONObject.getJSONArray("custom_fields").length(); k++) {
+                                        CustomFieldDTO customFieldDTO = new CustomFieldDTO();
+                                        if(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).has("field_title"))
+                                            customFieldDTO.setCustomFieldName(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).getString("field_title"));
+                                        if(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).has("field_value"))
+                                            customFieldDTO.setCustomFieldValue(((JSONObject)vidInfoDTOJSONObject.getJSONArray("custom_fields").get(k)).getString("field_value"));
+                                        videoInfoDTO.getCustomFieldsArrayList().add(customFieldDTO);
+                                    }
+                                }
+                            } catch(Exception e) {
+                                e.printStackTrace();
                             }
                             if(videoInfoDTO.getVideoPausedPoint() > 0 && videoInfoDTO.getVideoDuration() > 0)
                                 lastWatchedVideosPairDTO.getWatchAgainDTOList().add(videoInfoDTO);

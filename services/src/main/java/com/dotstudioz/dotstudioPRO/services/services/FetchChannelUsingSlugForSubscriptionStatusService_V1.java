@@ -3,6 +3,7 @@ package com.dotstudioz.dotstudioPRO.services.services;
 import android.content.Context;
 import android.util.Log;
 
+import com.dotstudioz.dotstudioPRO.models.dto.CustomFieldDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.SpotLightChannelDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.VideoInfoDTO;
@@ -355,6 +356,21 @@ public class FetchChannelUsingSlugForSubscriptionStatusService_V1 implements Com
                                                         } catch (Exception e) {
                                                             videoInfoDTO.setVideoDuration(0);
                                                         }
+                                                    }
+
+                                                    try {
+                                                        if(channel.getJSONObject("video").has("custom_fields")) {
+                                                            for (int j = 0; j < channel.getJSONObject("video").getJSONArray("custom_fields").length(); j++) {
+                                                                CustomFieldDTO customFieldDTO = new CustomFieldDTO();
+                                                                if(((JSONObject)channel.getJSONObject("video").getJSONArray("custom_fields").get(j)).has("field_title"))
+                                                                    customFieldDTO.setCustomFieldName(((JSONObject)channel.getJSONObject("video").getJSONArray("custom_fields").get(j)).getString("field_title"));
+                                                                if(((JSONObject)channel.getJSONObject("video").getJSONArray("custom_fields").get(j)).has("field_value"))
+                                                                    customFieldDTO.setCustomFieldValue(((JSONObject)channel.getJSONObject("video").getJSONArray("custom_fields").get(j)).getString("field_value"));
+                                                                videoInfoDTO.getCustomFieldsArrayList().add(customFieldDTO);
+                                                            }
+                                                        }
+                                                    } catch(Exception e) {
+                                                        e.printStackTrace();
                                                     }
 
                                                     spotLightChannelDTO.getVideoInfoDTOList().add(videoInfoDTO);
