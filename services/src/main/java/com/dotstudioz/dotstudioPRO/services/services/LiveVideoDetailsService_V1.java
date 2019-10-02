@@ -167,9 +167,10 @@ public class LiveVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.ICom
                         }
                     }
 
-                    if(sourceValue.equals("Live")) {
+                    if (sourceValue.equals("Live")) {
                         videoInfoDTO.setSource("Live");
-                        videoInfoDTO.setVideoToPlayURL(obj.getJSONObject("live").getString("url"));
+                        //videoInfoDTO.setVideoToPlayURL(obj.getJSONObject("live").getString("url"));
+                        videoInfoDTO.setVideoToPlayURL(obj.getString("video_m3u8"));
                     } else {
                         if(!(videoInfoDTO.isYoutubeVideo() && videoInfoDTO.getYoutubeVideoID() != null && videoInfoDTO.getYoutubeVideoID().length() > 0)) {
                             //changing this, to Live, because this API is expecting the video source to be a live m3u8
@@ -177,10 +178,17 @@ public class LiveVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.ICom
                             videoInfoDTO.setSource("Live");
                             try {
                                 String videoToPlayURL = obj.getString("video_m3u8");
-                                if(!videoToPlayURL.substring(0,7).equals("http://") && !videoToPlayURL.substring(0,8).equals("https://"))
+                                if(videoToPlayURL.indexOf("https:") < 0 && videoToPlayURL.indexOf("http:") < 0) {
+                                    if(videoToPlayURL.substring(0, 2).equalsIgnoreCase("//")) {
+                                        videoToPlayURL = "https:" + videoToPlayURL;
+                                    } else {
+                                        videoToPlayURL = "https://" + videoToPlayURL;
+                                    }
+                                }
+                                /*if(!videoToPlayURL.substring(0,7).equals("http://") && !videoToPlayURL.substring(0,8).equals("https://"))
                                     videoToPlayURL = "https://"+videoToPlayURL;
                                 if (!videoToPlayURL.substring(0, 4).equals("http"))
-                                    videoToPlayURL = "https://" + videoToPlayURL;
+                                    videoToPlayURL = "https://" + videoToPlayURL;*/
                                 videoInfoDTO.setVideoToPlayURL(videoToPlayURL);
 
                                 //https://k7q5a5e5.ssl.hwcdn.net/files/company/53fd1266d66da833047b23c6/assets/videos/540f28fdd66da89e1ed70281/vod/540f28fdd66da89e1ed70281.m3u8
@@ -207,11 +215,18 @@ public class LiveVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.ICom
                     }
 
                     try {
+                        videoInfoDTO.setServerSideAdsEnabled(obj.getBoolean("server_side_ads"));
+                    } catch(Exception e) {
+                        videoInfoDTO.setServerSideAdsEnabled(false);
+                        e.printStackTrace();
+                    }
+
+                    try {
                         videoInfoDTO.setAccessValue(obj.getString("access"));
                         videoInfoDTO.setIsTeaserAvailable(false);
 
                         if (videoInfoDTO.getAccessValue().equals("paywall")) {
-                            videoInfoDTO.setTeaserID(obj.getJSONObject("teaser").getString("_id"));
+                            videoInfoDTO.setTeaserID(obj.getJSONObject("teaser_trailer").getString("_id"));
                             videoInfoDTO.setIsTeaserAvailable(true);
                         } else {
                             videoInfoDTO.setIsTeaserAvailable(false);
@@ -221,6 +236,40 @@ public class LiveVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.ICom
                             videoInfoDTO.setRentalPrice(obj.getJSONObject("paywall").getString("rental_price"));
                         } catch(JSONException e) {
                             videoInfoDTO.setRentalPrice("");
+                        }
+
+                        try {
+                            if(obj.getJSONObject("paywall").has("presell")) {
+                                try {
+                                    JSONObject presell = obj.getJSONObject("paywall").getJSONObject("presell");
+                                    if(presell.has("stream_start")) {
+                                        videoInfoDTO.getPresellDTO().streamStart = presell.getString("stream_start");
+                                    }
+                                    if(presell.has("stream_end")) {
+                                        videoInfoDTO.getPresellDTO().streamEnd = presell.getString("stream_end");
+                                    }
+                                    if(presell.has("rental_price")) {
+                                        videoInfoDTO.getPresellDTO().rentalPrice = presell.getString("rental_price");
+                                    }
+                                } catch(Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            if(obj.getJSONObject("paywall").has("apple_price_tier")) {
+                                    try {
+                                        JSONObject paywall = obj.getJSONObject("paywall");
+                                        if(paywall.has("apple_price_tier")) {
+                                            videoInfoDTO.setApplePriceTier(paywall.getInt("apple_price_tier"));
+                                        }
+
+                                    } catch(Exception e) {
+                                        e.printStackTrace();
+                                        //videoInfoDTO.setApplePriceTier("");
+                                    }
+                                }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
 
                         try {
@@ -234,15 +283,27 @@ public class LiveVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.ICom
 
                     try {
                         videoInfoDTO.setAndroidZoneID(obj.getJSONObject("company").getJSONObject("adserver").getString("android"));
-                    } catch(Exception e) {
+                    } catch (Exception e) {
                         videoInfoDTO.setAndroidZoneID("");
                         e.printStackTrace();
                     }
 
                     if (videoInfoDTO.isTeaserAvailable()) {
                         String teaserURL = "";
-                        try {
+                        /*try {
                             teaserURL = ApplicationConstantURL.getInstance().TEASER_DOMAIN + obj.getJSONObject("teaser").getString("paths");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }*/
+                        try {
+                            teaserURL = obj.getJSONObject("teaser_trailer").getString("url");
+                            if (teaserURL.indexOf("https:") < 0 && teaserURL.indexOf("http:") < 0) {
+                                if (teaserURL.substring(0, 2).equalsIgnoreCase("//")) {
+                                    teaserURL = "https:" + teaserURL;
+                                } else {
+                                    teaserURL = "https://" + teaserURL;
+                                }
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -253,10 +314,56 @@ public class LiveVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.ICom
                             videoInfoDTO.setIsTeaserAvailable(false);
                     }
 
-                    if (obj.getJSONObject("ads").getString("pre").equals("yes")) {
-                        videoInfoDTO.setIsPreRollToBePlayed(true);
-                    } else {
-                        videoInfoDTO.setIsPreRollToBePlayed(false);
+                    try {
+                        String posterDataURL = obj.getString("thumb");
+                        posterDataURL = CommonServiceUtils.replaceDotstudioproWithMyspotlightForImage(posterDataURL);
+
+                        videoInfoDTO.setThumb(posterDataURL);
+                    } catch (JSONException e) {
+                        videoInfoDTO.setThumb("");
+                    }
+
+                    try {
+                        if (obj.has("teaser_trailer")) {
+                            if (obj.getJSONObject("teaser_trailer").has("_id")) {
+                                videoInfoDTO.setTeaserID(obj.getJSONObject("teaser_trailer").getString("_id"));
+                            } else {
+                                videoInfoDTO.setTeaserID("");
+                            }
+                        }
+                    } catch (JSONException e) {
+                        videoInfoDTO.setTeaserID("");
+                    }
+                    try {
+                        if (obj.has("teaser_trailer")) {
+                            if (obj.getJSONObject("teaser_trailer").has("url")) {
+                                videoInfoDTO.setTeaserTrailer(obj.getJSONObject("teaser_trailer").getString("url"));
+                            } else {
+                                videoInfoDTO.setTeaserTrailer("");
+                            }
+                        }
+                    } catch (JSONException e) {
+                        videoInfoDTO.setTeaserTrailer("");
+                    }
+                    try {
+                        if (obj.has("teaser_trailer")) {
+                            if (obj.getJSONObject("teaser_trailer").has("thumb")) {
+                                videoInfoDTO.setTeaserTrailerThumb(obj.getJSONObject("teaser_trailer").getString("thumb"));
+                            } else {
+                                videoInfoDTO.setTeaserTrailerThumb("");
+                            }
+                        }
+                    } catch (JSONException e) {
+                        videoInfoDTO.setTeaserTrailerThumb("");
+                    }
+
+                    try {
+                        if (obj.getJSONObject("ads").getString("pre").equals("yes"))
+                            videoInfoDTO.setIsPreRollToBePlayed(true);
+                        else
+                            videoInfoDTO.setIsPreRollToBePlayed(false);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
 
                     try {
@@ -520,6 +627,37 @@ public class LiveVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.ICom
                     } catch(Exception e1){}
 
                     e.printStackTrace();
+                }
+
+                try {
+                    String videoWallpaperURL = obj.getString("wallpaper");
+                    videoInfoDTO.setWallpaper(videoWallpaperURL);
+                } catch (Exception e) {
+                    videoInfoDTO.setWallpaper("");
+                    e.printStackTrace();
+                }
+
+                try {
+                    if (obj.has("teaser_trailer")) {
+                        if (obj.getJSONObject("teaser_trailer").has("url")) {
+                            videoInfoDTO.setTeaserTrailer(obj.getJSONObject("teaser_trailer").getString("url"));
+                        } else {
+                            videoInfoDTO.setTeaserTrailer("");
+                        }
+                    }
+                } catch (JSONException e) {
+                    videoInfoDTO.setTeaserTrailer("");
+                }
+                try {
+                    if (obj.has("teaser_trailer")) {
+                        if (obj.getJSONObject("teaser_trailer").has("thumb")) {
+                            videoInfoDTO.setTeaserTrailerThumb(obj.getJSONObject("teaser_trailer").getString("thumb"));
+                        } else {
+                            videoInfoDTO.setTeaserTrailerThumb("");
+                        }
+                    }
+                } catch (JSONException e) {
+                    videoInfoDTO.setTeaserTrailerThumb("");
                 }
 
                 try {

@@ -178,7 +178,8 @@ public class SeriesVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.IC
 
                     if (sourceValue.equals("Live")) {
                         videoInfoDTO.setSource("Live");
-                        videoInfoDTO.setVideoToPlayURL(obj.getJSONObject("live").getString("url"));
+                        //videoInfoDTO.setVideoToPlayURL(obj.getJSONObject("live").getString("url"));
+                        videoInfoDTO.setVideoToPlayURL(obj.getString("video_m3u8"));
                     } else {
                         if (!(videoInfoDTO.isYoutubeVideo() && videoInfoDTO.getYoutubeVideoID() != null && videoInfoDTO.getYoutubeVideoID().length() > 0)) {
                             videoInfoDTO.setSource("");
