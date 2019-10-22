@@ -304,10 +304,11 @@ public class GetAllSubscriptionsService_V1 implements CommonAsyncHttpClient_V1.I
             }
         }
 
-        return subscriptionDTOArrayList;
-        /*iGetAllSubscriptionsService.getAllSubscriptionsServiceResponse(
+        iGetAllSubscriptionsService.getAllSubscriptionsServiceResponse(
                 subscriptionDTOArrayList
-        );*/
+        );
+
+        return subscriptionDTOArrayList;
     }
 
     /*public ArrayList resultProcessingForCategories(ArrayList response) {

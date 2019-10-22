@@ -55,7 +55,7 @@ public class GetUserSubscriptionsService_V1 implements CommonAsyncHttpClient_V1.
 
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));
-        headerItemsArrayList.add(new ParameterItem("x-client-token", xAccessToken));
+        headerItemsArrayList.add(new ParameterItem("x-client-token", xClientToken));
 
         CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, null,
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
@@ -64,10 +64,10 @@ public class GetUserSubscriptionsService_V1 implements CommonAsyncHttpClient_V1.
     public void onResultHandler(JSONObject response) {
         try {
             Log.d("GetUserSubscription", "onResultHandler==>"+response);
-            /*if (response.has("subscriptions"))
+            if (response.has("subscriptions"))
                 resultProcessingForSubscriptions(response.getJSONArray("subscriptions"));
             else
-                iGetUserSubscriptionsService.getUserSubscriptionsError("No Subscriptions available");*/
+                iGetUserSubscriptionsService.getUserSubscriptionsError("No Subscriptions available");
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -340,11 +340,11 @@ public class GetUserSubscriptionsService_V1 implements CommonAsyncHttpClient_V1.
             }
         }
 
-        return userSubscriptionDTOArrayList;
-
-        /*iGetUserSubscriptionsService.getUserSubscriptionsServiceResponse(
+        iGetUserSubscriptionsService.getUserSubscriptionsServiceResponse(
                 userSubscriptionDTOArrayList
-        );*/
+        );
+
+        return userSubscriptionDTOArrayList;
     }
 
     public ArrayList<SubscriptionDTO> resultProcessingForSubscriptions(JSONObject childObj) {
