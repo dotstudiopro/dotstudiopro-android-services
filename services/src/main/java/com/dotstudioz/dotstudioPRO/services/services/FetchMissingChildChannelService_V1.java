@@ -54,7 +54,7 @@ public class FetchMissingChildChannelService_V1 /*implements CommonAsyncHttpClie
     public void setFetchMissingChildChannelService_V1Listener(IFetchMissingChildChannelService_V1 callback) {
         this.iFetchMissingChildChannelService_V1 = callback;
     }
-
+    private String channelSlug;
     public void fetchMissingChildChannelData(String selectedParentCategorySlug, String selectedParentChannelSlug, String channelSlug, ArrayList<SpotLightCategoriesDTO> spotLightCategoriesDTOArrayList, boolean isSeasonClicked, int seasonToLoad) {
         if (iFetchMissingChildChannelService_V1 == null) {
             if (context != null && context instanceof FetchMissingChildChannelService_V1.IFetchMissingChildChannelService_V1) {
@@ -65,6 +65,7 @@ public class FetchMissingChildChannelService_V1 /*implements CommonAsyncHttpClie
             }
         }
 
+        this.channelSlug = channelSlug;
         this.selectedParentCategorySlug = selectedParentCategorySlug;
         this.selectedParentChannelSlug = selectedParentChannelSlug;
         this.spotLightCategoriesDTOList = spotLightCategoriesDTOArrayList;
@@ -173,7 +174,10 @@ public class FetchMissingChildChannelService_V1 /*implements CommonAsyncHttpClie
     }
     //@Override
     public void accessTokenExpired1() {
-        iFetchMissingChildChannelService_V1.accessTokenExpired1();
+        if(!refreshAccessToken)
+            refreshAccessToken();
+        else
+            iFetchMissingChildChannelService_V1.accessTokenExpired1();
     }
     //@Override
     public void clientTokenExpired1() {
@@ -1169,5 +1173,29 @@ public class FetchMissingChildChannelService_V1 /*implements CommonAsyncHttpClie
         void populateEpisodesListWithNewData(ArrayList<VideoInfoDTO> videoInfoDtosList);
         void processMissingChildChannelDataServiceError(String ERROR);
         void accessTokenExpired1();
+    }
+
+    boolean refreshAccessToken = false;
+    private void refreshAccessToken() {
+        CompanyTokenService companyTokenService = new CompanyTokenService(context);
+        companyTokenService.setCompanyTokenServiceListener(new CompanyTokenService.ICompanyTokenService() {
+            @Override
+            public void companyTokenServiceResponse(JSONObject responseBody) {
+                try {
+                    ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    fetchMissingChildChannelData(selectedParentCategorySlug, selectedParentChannelSlug, channelSlug, spotLightCategoriesDTOList, isSeasonClicked, seasonToLoad);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iFetchMissingChildChannelService_V1.accessTokenExpired1();
+                }
+            }
+
+            @Override
+            public void companyTokenServiceError(String responseBody) {
+                iFetchMissingChildChannelService_V1.accessTokenExpired1();
+            }
+        });
+        refreshAccessToken = true;
+        companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
     }
 }

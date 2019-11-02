@@ -38,8 +38,10 @@ public class SliderShowcaseChannelService_V1 /*implements CommonAsyncHttpClient_
         this.iSliderShowcaseChannelService_V1 = callback;
     }
 
+    String categorySlug;
     public void getSliderShowcaseChannel(String categorySlug) {
 
+        this.categorySlug = categorySlug;
         if (iSliderShowcaseChannelService_V1 == null) {
             if (context != null && context instanceof SliderShowcaseChannelService_V1.ISliderShowcaseChannelService_V1) {
                 iSliderShowcaseChannelService_V1 = (SliderShowcaseChannelService_V1.ISliderShowcaseChannelService_V1) context;
@@ -98,10 +100,37 @@ public class SliderShowcaseChannelService_V1 /*implements CommonAsyncHttpClient_
     }
     //@Override
     public void accessTokenExpired1() {
-        iSliderShowcaseChannelService_V1.accessTokenExpired1();
+        if(!refreshAccessToken)
+            refreshAccessToken();
+        else
+            iSliderShowcaseChannelService_V1.accessTokenExpired1();
     }
     //@Override
     public void clientTokenExpired1() {
         iSliderShowcaseChannelService_V1.clientTokenExpired1();
+    }
+
+    boolean refreshAccessToken = false;
+    private void refreshAccessToken() {
+        CompanyTokenService companyTokenService = new CompanyTokenService(context);
+        companyTokenService.setCompanyTokenServiceListener(new CompanyTokenService.ICompanyTokenService() {
+            @Override
+            public void companyTokenServiceResponse(JSONObject responseBody) {
+                try {
+                    ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    getSliderShowcaseChannel(categorySlug);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iSliderShowcaseChannelService_V1.accessTokenExpired1();
+                }
+            }
+
+            @Override
+            public void companyTokenServiceError(String responseBody) {
+                iSliderShowcaseChannelService_V1.accessTokenExpired1();
+            }
+        });
+        refreshAccessToken = true;
+        companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
     }
 }

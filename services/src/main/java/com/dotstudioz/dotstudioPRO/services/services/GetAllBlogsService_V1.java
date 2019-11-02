@@ -5,6 +5,8 @@ import android.content.Context;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.SpotLightBlogDTO;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 import com.google.gson.internal.LinkedTreeMap;
 
 import org.json.JSONArray;
@@ -44,7 +46,11 @@ public class GetAllBlogsService_V1 /*implements CommonAsyncHttpClient_V1.ICommon
     }
 
     public String slug;
+    private String xAccessToken;
+    private String api;
     public void getAllBlogService(String xAccessToken, String API_URL, String slug) {
+        this.api = API_URL;
+        this.xAccessToken = xAccessToken;
         if (iGetAllBlogService_V1 == null) {
             if (context != null && context instanceof GetAllBlogsService_V1.IGetAllBlogService_V1) {
                 iGetAllBlogService_V1 = (GetAllBlogsService_V1.IGetAllBlogService_V1) context;
@@ -121,7 +127,10 @@ public class GetAllBlogsService_V1 /*implements CommonAsyncHttpClient_V1.ICommon
     }
     //@Override
     public void accessTokenExpired1() {
-        iGetAllBlogService_V1.accessTokenExpired1();
+        if(!refreshAccessToken)
+            refreshAccessToken();
+        else
+            iGetAllBlogService_V1.accessTokenExpired1();
     }
     //@Override
     public void clientTokenExpired1() {
@@ -368,5 +377,31 @@ public class GetAllBlogsService_V1 /*implements CommonAsyncHttpClient_V1.ICommon
         iGetAllBlogService_V1.getAllBlogServiceResponse(
                 spotLightBlogDTOListALL
         );
+    }
+
+
+
+    boolean refreshAccessToken = false;
+    private void refreshAccessToken() {
+        CompanyTokenService companyTokenService = new CompanyTokenService(context);
+        companyTokenService.setCompanyTokenServiceListener(new CompanyTokenService.ICompanyTokenService() {
+            @Override
+            public void companyTokenServiceResponse(JSONObject responseBody) {
+                try {
+                    ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    getAllBlogService(ApplicationConstants.xAccessToken, api, slug);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iGetAllBlogService_V1.accessTokenExpired1();
+                }
+            }
+
+            @Override
+            public void companyTokenServiceError(String responseBody) {
+                iGetAllBlogService_V1.accessTokenExpired1();
+            }
+        });
+        refreshAccessToken = true;
+        companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
     }
 }

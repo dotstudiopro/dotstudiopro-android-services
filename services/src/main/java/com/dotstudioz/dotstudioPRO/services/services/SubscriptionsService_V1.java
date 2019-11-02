@@ -5,6 +5,8 @@ import android.util.Log;
 
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,6 +51,12 @@ public class SubscriptionsService_V1 /*implements CommonAsyncHttpClient_V1.IComm
     }
 
     public void createBrainTreeCustomerUsingNonce(String xAccessToken, String xClientToken, String nonceString, String API_URL) {
+        this.xAccessToken = xAccessToken;
+        this.xClientToken = xClientToken;
+        this.subscriptionID = subscriptionID;
+        this.api = API_URL;
+        this.nonceString = nonceString;
+
         if (iSubscriptionsService == null) {
             if (context != null && context instanceof SubscriptionsService_V1.ISubscriptionsService) {
                 iSubscriptionsService = (SubscriptionsService_V1.ISubscriptionsService) context;
@@ -105,9 +113,15 @@ public class SubscriptionsService_V1 /*implements CommonAsyncHttpClient_V1.IComm
         return commonAsyncHttpClientV1;
     }
 
+    String xAccessToken; String xClientToken; String subscriptionID; String api; String nonceString;
     public void createChargifyCustomerUsingSubscriptionID(String xAccessToken, String xClientToken, String subscriptionID, String API_URL) {
         isBraintreeServiceCall = false;
         isChargifyServiceCall = true;
+
+        this.xAccessToken = xAccessToken;
+        this.xClientToken = xClientToken;
+        this.subscriptionID = subscriptionID;
+        this.api = API_URL;
 
         Log.d("tag", "API_URL==>"+API_URL);
 
@@ -118,6 +132,27 @@ public class SubscriptionsService_V1 /*implements CommonAsyncHttpClient_V1.IComm
         ArrayList<ParameterItem> requestParamsArrayList = new ArrayList<>();
         requestParamsArrayList.add(new ParameterItem("subscription_id", subscriptionID));
 
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
         getCommonAsyncHttpClientV1().postAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
     }
@@ -163,10 +198,41 @@ public class SubscriptionsService_V1 /*implements CommonAsyncHttpClient_V1.IComm
     }
     //@Override
     public void accessTokenExpired1() {
-        iSubscriptionsService.accessTokenExpired1();
+        if(!refreshAccessToken)
+            refreshAccessToken();
+        else
+            iSubscriptionsService.accessTokenExpired1();
     }
     //@Override
     public void clientTokenExpired1() {
         iSubscriptionsService.clientTokenExpired1();
+    }
+
+    boolean refreshAccessToken = false;
+    private void refreshAccessToken() {
+        CompanyTokenService companyTokenService = new CompanyTokenService(context);
+        companyTokenService.setCompanyTokenServiceListener(new CompanyTokenService.ICompanyTokenService() {
+            @Override
+            public void companyTokenServiceResponse(JSONObject responseBody) {
+                try {
+                    ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    if(isBraintreeServiceCall) {
+                        createBrainTreeCustomerUsingNonce(ApplicationConstants.xAccessToken, xClientToken, nonceString, api);
+                    } else if(isChargifyServiceCall) {
+                        createChargifyCustomerUsingSubscriptionID(ApplicationConstants.xAccessToken, xClientToken, subscriptionID, api);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iSubscriptionsService.accessTokenExpired1();
+                }
+            }
+
+            @Override
+            public void companyTokenServiceError(String responseBody) {
+                iSubscriptionsService.accessTokenExpired1();
+            }
+        });
+        refreshAccessToken = true;
+        companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
     }
 }

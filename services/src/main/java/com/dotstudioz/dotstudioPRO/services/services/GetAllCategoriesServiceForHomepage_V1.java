@@ -8,6 +8,8 @@ import com.dotstudioz.dotstudioPRO.models.dto.SpotLightCategoriesDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.SpotLightChannelDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.VideoInfoDTO;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 import com.dotstudioz.dotstudioPRO.services.util.CommonServiceUtils;
 
 import org.json.JSONArray;
@@ -44,7 +46,11 @@ public class GetAllCategoriesServiceForHomepage_V1 /*implements CommonAsyncHttpC
         this.iGetAllCategoriesServiceForHomepage_v1 = callback;
     }
 
+    private String xAccessToken;
+    private String api;
     public void getAllCategoriesServiceForHomePage(String xAccessToken, String API_URL) {
+        this.xAccessToken = xAccessToken;
+        this.api = API_URL;
         if (iGetAllCategoriesServiceForHomepage_v1 == null) {
             if (context != null && context instanceof GetAllCategoriesServiceForHomepage_V1.IGetAllCategoriesServiceForHomepage_V1) {
                 iGetAllCategoriesServiceForHomepage_v1 = (GetAllCategoriesServiceForHomepage_V1.IGetAllCategoriesServiceForHomepage_V1) context;
@@ -60,22 +66,22 @@ public class GetAllCategoriesServiceForHomepage_V1 /*implements CommonAsyncHttpC
         getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
             @Override
             public void onResultHandler(JSONObject response) {
-                onResultHandler11(response);
+                onResultHandler1(response);
             }
 
             @Override
             public void onErrorHandler(String ERROR) {
-                onErrorHandler11(ERROR);
+                onErrorHandler1(ERROR);
             }
 
             @Override
             public void accessTokenExpired() {
-                accessTokenExpired11();
+                accessTokenExpired1();
             }
 
             @Override
             public void clientTokenExpired() {
-                clientTokenExpired11();
+                clientTokenExpired1();
             }
         });
 
@@ -92,7 +98,7 @@ public class GetAllCategoriesServiceForHomepage_V1 /*implements CommonAsyncHttpC
     }
 
     //@Override
-    public void onResultHandler11(JSONObject response) {
+    public void onResultHandler1(JSONObject response) {
         try {
             if (response.has("homepage"))
                 resultProcessingForCategories(response.getJSONArray("homepage"));
@@ -108,17 +114,20 @@ public class GetAllCategoriesServiceForHomepage_V1 /*implements CommonAsyncHttpC
     }
 
     //@Override
-    public void onErrorHandler11(String ERROR) {
+    public void onErrorHandler1(String ERROR) {
         iGetAllCategoriesServiceForHomepage_v1.getAllCategoriesForHomepageError(ERROR);
     }
 
     //@Override
-    public void accessTokenExpired11() {
-        iGetAllCategoriesServiceForHomepage_v1.accessTokenExpired1();
+    public void accessTokenExpired1() {
+        if(!refreshAccessToken)
+            refreshAccessToken();
+        else
+            iGetAllCategoriesServiceForHomepage_v1.accessTokenExpired1();
     }
 
     //@Override
-    public void clientTokenExpired11() {
+    public void clientTokenExpired1() {
         iGetAllCategoriesServiceForHomepage_v1.clientTokenExpired1();
     }
 
@@ -539,5 +548,29 @@ public class GetAllCategoriesServiceForHomepage_V1 /*implements CommonAsyncHttpC
         void accessTokenExpired1();
 
         void clientTokenExpired1();
+    }
+
+    boolean refreshAccessToken = false;
+    private void refreshAccessToken() {
+        CompanyTokenService companyTokenService = new CompanyTokenService(context);
+        companyTokenService.setCompanyTokenServiceListener(new CompanyTokenService.ICompanyTokenService() {
+            @Override
+            public void companyTokenServiceResponse(JSONObject responseBody) {
+                try {
+                    ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    getAllCategoriesServiceForHomePage(ApplicationConstants.xAccessToken, api);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iGetAllCategoriesServiceForHomepage_v1.accessTokenExpired1();
+                }
+            }
+
+            @Override
+            public void companyTokenServiceError(String responseBody) {
+                iGetAllCategoriesServiceForHomepage_v1.accessTokenExpired1();
+            }
+        });
+        refreshAccessToken = true;
+        companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
     }
 }

@@ -6,6 +6,7 @@ import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.SpotLightCategoriesDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.SpotLightChannelDTO;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 import com.dotstudioz.dotstudioPRO.services.util.CommonServiceUtils;
 
@@ -49,6 +50,7 @@ public class GetAllChannelsFromAllHomePageCategoriesService_V1 /*implements Comm
 
     private Set<SpotLightChannelDTO> channelDTOList;
     private ArrayList<SpotLightCategoriesDTO> spotLightCategoriesDTOList;
+    String xAccessToken; String api; String categoriesSlug;
     public void getAllChannelsFromAllHomePageCategoriesService(String xAccessToken, String API_URL, String categoriesSlug, Set<SpotLightChannelDTO> channelDTOList, ArrayList<SpotLightCategoriesDTO> spotLightCategoriesDTOList) {
         if (iGetAllChannelsFromAllHomePageCategoriesService_V1 == null) {
             if (context != null && context instanceof GetAllChannelsFromAllHomePageCategoriesService_V1.IGetAllChannelsFromAllHomePageCategoriesService_V1) {
@@ -61,6 +63,9 @@ public class GetAllChannelsFromAllHomePageCategoriesService_V1 /*implements Comm
 
         this.channelDTOList = channelDTOList;
         this.spotLightCategoriesDTOList = spotLightCategoriesDTOList;
+        this.xAccessToken = xAccessToken;
+        this.api = API_URL;
+        this.categoriesSlug = categoriesSlug;
 
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));
@@ -113,11 +118,38 @@ public class GetAllChannelsFromAllHomePageCategoriesService_V1 /*implements Comm
     }
     //@Override
     public void accessTokenExpired1() {
-        iGetAllChannelsFromAllHomePageCategoriesService_V1.accessTokenExpired1();
+        if(!refreshAccessToken)
+            refreshAccessToken();
+        else
+            iGetAllChannelsFromAllHomePageCategoriesService_V1.accessTokenExpired1();
     }
     //@Override
     public void clientTokenExpired1() {
         iGetAllChannelsFromAllHomePageCategoriesService_V1.clientTokenExpired1();
+    }
+
+    boolean refreshAccessToken = false;
+    private void refreshAccessToken() {
+        CompanyTokenService companyTokenService = new CompanyTokenService(context);
+        companyTokenService.setCompanyTokenServiceListener(new CompanyTokenService.ICompanyTokenService() {
+            @Override
+            public void companyTokenServiceResponse(JSONObject responseBody) {
+                try {
+                    ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    getAllChannelsFromAllHomePageCategoriesService(ApplicationConstants.xAccessToken, api, categoriesSlug, channelDTOList, spotLightCategoriesDTOList);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iGetAllChannelsFromAllHomePageCategoriesService_V1.accessTokenExpired1();
+                }
+            }
+
+            @Override
+            public void companyTokenServiceError(String responseBody) {
+                iGetAllChannelsFromAllHomePageCategoriesService_V1.accessTokenExpired1();
+            }
+        });
+        refreshAccessToken = true;
+        companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
     }
 
     public void resultProcessingForAllChannelsFromAllCategories(JSONObject response) {

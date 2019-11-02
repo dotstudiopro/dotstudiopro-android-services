@@ -54,7 +54,9 @@ public class LiveVideoDetailsService_V1 /*implements CommonAsyncHttpClient_V1.IC
         this.iLiveVideoDetailsService_V1 = callback;
     }
 
+    String api;
     public void fetchLiveVideoDetails(String API_URL) {
+        this.api = API_URL;
         if (iLiveVideoDetailsService_V1 == null) {
             if (context != null && context instanceof LiveVideoDetailsService_V1.ILiveVideoDetailsService_V1) {
                 iLiveVideoDetailsService_V1 = (LiveVideoDetailsService_V1.ILiveVideoDetailsService_V1) context;
@@ -844,10 +846,37 @@ public class LiveVideoDetailsService_V1 /*implements CommonAsyncHttpClient_V1.IC
     }
     //@Override
     public void accessTokenExpired1() {
-        iLiveVideoDetailsService_V1.accessTokenExpired1();
+        if(!refreshAccessToken)
+            refreshAccessToken();
+        else
+            iLiveVideoDetailsService_V1.accessTokenExpired1();
     }
     //@Override
     public void clientTokenExpired1() {
         iLiveVideoDetailsService_V1.clientTokenExpired1();
+    }
+
+    boolean refreshAccessToken = false;
+    private void refreshAccessToken() {
+        CompanyTokenService companyTokenService = new CompanyTokenService(context);
+        companyTokenService.setCompanyTokenServiceListener(new CompanyTokenService.ICompanyTokenService() {
+            @Override
+            public void companyTokenServiceResponse(JSONObject responseBody) {
+                try {
+                    ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    fetchLiveVideoDetails(api);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iLiveVideoDetailsService_V1.accessTokenExpired1();
+                }
+            }
+
+            @Override
+            public void companyTokenServiceError(String responseBody) {
+                iLiveVideoDetailsService_V1.accessTokenExpired1();
+            }
+        });
+        refreshAccessToken = true;
+        companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
     }
 }

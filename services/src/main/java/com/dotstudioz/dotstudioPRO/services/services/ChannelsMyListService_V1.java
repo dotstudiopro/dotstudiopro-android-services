@@ -7,6 +7,8 @@ import com.dotstudioz.dotstudioPRO.models.dto.ChannelMyListDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.ChannelsMyListDTOForMyList;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -64,7 +66,16 @@ public class ChannelsMyListService_V1 /*implements CommonAsyncHttpClient_V1.ICom
         this.iChannelsMyListService = callback;
     }
 
+    private String channelID;
+    private String parentChannelID;
+    private String xAccessToken;
+    private String xClientToken;
+    private String api;
     public void addChannelToMyList(String channelID, String xAccessToken, String xClientToken, String API_URL) {
+        this.channelID = channelID;
+        this.xAccessToken = xAccessToken;
+        this.xClientToken = xClientToken;
+        this.api = API_URL;
         if (iChannelsMyListService == null) {
             if (context != null && context instanceof ChannelsMyListService_V1.IChannelsMyListService) {
                 iChannelsMyListService = (ChannelsMyListService_V1.IChannelsMyListService) context;
@@ -118,6 +129,11 @@ public class ChannelsMyListService_V1 /*implements CommonAsyncHttpClient_V1.ICom
     }
 
     public void addChannelToMyList(String channelID, String parentChannelID, String xAccessToken, String xClientToken, String API_URL) {
+        this.channelID = channelID;
+        this.parentChannelID = parentChannelID;
+        this.xAccessToken = xAccessToken;
+        this.xClientToken = xClientToken;
+        this.api = API_URL;
         if (iChannelsMyListService == null) {
             if (context != null && context instanceof ChannelsMyListService_V1.IChannelsMyListService) {
                 iChannelsMyListService = (ChannelsMyListService_V1.IChannelsMyListService) context;
@@ -137,11 +153,38 @@ public class ChannelsMyListService_V1 /*implements CommonAsyncHttpClient_V1.ICom
 
         setFlagFor(ADDING_SERVICE_FLAG);
 
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
+
         getCommonAsyncHttpClientV1().postAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
     }
 
     public void deleteChannelFromMyList(String channelID, String xAccessToken, String xClientToken, String API_URL) {
+        this.channelID = channelID;
+        this.xAccessToken = xAccessToken;
+        this.xClientToken = xClientToken;
+        this.api = API_URL;
+
         if (iChannelsMyListService == null) {
             if (context != null && context instanceof ChannelsMyListService_V1.IChannelsMyListService) {
                 iChannelsMyListService = (ChannelsMyListService_V1.IChannelsMyListService) context;
@@ -159,11 +202,37 @@ public class ChannelsMyListService_V1 /*implements CommonAsyncHttpClient_V1.ICom
         requestParamsArrayList.add(new ParameterItem("channel_id", channelID));
 
         setFlagFor(DELETING_SERVICE_FLAG);
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
+
         getCommonAsyncHttpClientV1().deleteAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
     }
 
     public void getChannelFromMyList(String xAccessToken, String xClientToken, String API_URL) {
+        this.xAccessToken = xAccessToken;
+        this.xClientToken = xClientToken;
+        this.api = API_URL;
+
         if (iChannelsMyListService == null) {
             if (context != null && context instanceof ChannelsMyListService_V1.IChannelsMyListService) {
                 iChannelsMyListService = (ChannelsMyListService_V1.IChannelsMyListService) context;
@@ -182,6 +251,28 @@ public class ChannelsMyListService_V1 /*implements CommonAsyncHttpClient_V1.ICom
         Log.d("ChannelsMyListService", "getChannelFromMyList==>"+xAccessToken);
         Log.d("ChannelsMyListService", "getChannelFromMyList==>"+xClientToken);
         Log.d("ChannelsMyListService", "getChannelFromMyList==>"+API_URL);
+
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
 
         getCommonAsyncHttpClientV1().getAsyncHttpsClient(headerItemsArrayList, null,
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
@@ -565,7 +656,10 @@ public class ChannelsMyListService_V1 /*implements CommonAsyncHttpClient_V1.ICom
     }
     //@Override
     public void accessTokenExpired1() {
-        iChannelsMyListService.accessTokenExpired1();
+        if(!refreshAccessToken)
+            refreshAccessToken();
+        else
+            iChannelsMyListService.accessTokenExpired1();
     }
     //@Override
     public void clientTokenExpired1() {
@@ -574,5 +668,38 @@ public class ChannelsMyListService_V1 /*implements CommonAsyncHttpClient_V1.ICom
 
     private void resultProcessingForCategories(JSONArray response) {
 
+    }
+
+    boolean refreshAccessToken = false;
+    private void refreshAccessToken() {
+        CompanyTokenService companyTokenService = new CompanyTokenService(context);
+        companyTokenService.setCompanyTokenServiceListener(new CompanyTokenService.ICompanyTokenService() {
+            @Override
+            public void companyTokenServiceResponse(JSONObject responseBody) {
+                try {
+                    ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    if(addingFlag) {
+                        if(parentChannelID != null && parentChannelID.trim().length() > 0)
+                            addChannelToMyList(channelID, parentChannelID, ApplicationConstants.xAccessToken, xClientToken, api);
+                        else
+                            addChannelToMyList(channelID, ApplicationConstants.xAccessToken, xClientToken, api);
+                    } else if(deletingFlag) {
+                        deleteChannelFromMyList(channelID, ApplicationConstants.xAccessToken, xClientToken, api);
+                    } else if(gettingFlag) {
+                        getChannelFromMyList(ApplicationConstants.xAccessToken, xClientToken, api);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iChannelsMyListService.accessTokenExpired1();
+                }
+            }
+
+            @Override
+            public void companyTokenServiceError(String responseBody) {
+                iChannelsMyListService.accessTokenExpired1();
+            }
+        });
+        refreshAccessToken = true;
+        companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
     }
 }

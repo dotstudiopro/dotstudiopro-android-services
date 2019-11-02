@@ -32,7 +32,17 @@ public class ClientTokenService /*implements CommonAsyncHttpClient_V1.ICommonAsy
         this.iClientTokenService = callback;
     }
 
+    private String xAccessToken;
+    private String xClientToken;
+    private String api;
+    private String userIdString;
+    private String userEmailId;
     public void getClientToken(String xAccessToken, String xClientToken, String CLIENT_TOKEN_API, String userIdString, String userEmailId) {
+        this.xAccessToken = xAccessToken;
+        this.xClientToken = xClientToken;
+        this.api = CLIENT_TOKEN_API;
+        this.userIdString = userIdString;
+        this.userEmailId = userEmailId;
         if (iClientTokenService == null) {
             if (context != null && context instanceof ClientTokenService.IClientTokenService) {
                 iClientTokenService = (ClientTokenService.IClientTokenService) context;
@@ -91,7 +101,10 @@ public class ClientTokenService /*implements CommonAsyncHttpClient_V1.ICommonAsy
     }
     //@Override
     public void accessTokenExpired1() {
-        iClientTokenService.accessTokenExpired1();
+        if(!refreshAccessToken)
+            refreshAccessToken();
+        else
+            iClientTokenService.accessTokenExpired1();
     }
     //@Override
     public void clientTokenExpired1() {
@@ -103,5 +116,29 @@ public class ClientTokenService /*implements CommonAsyncHttpClient_V1.ICommonAsy
         void clientTokenServiceError(String error);
         void accessTokenExpired1();
         void clientTokenExpired1();
+    }
+
+    boolean refreshAccessToken = false;
+    private void refreshAccessToken() {
+        CompanyTokenService companyTokenService = new CompanyTokenService(context);
+        companyTokenService.setCompanyTokenServiceListener(new CompanyTokenService.ICompanyTokenService() {
+            @Override
+            public void companyTokenServiceResponse(JSONObject responseBody) {
+                try {
+                    ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    getClientToken(ApplicationConstants.xAccessToken, xClientToken, api, userIdString, userEmailId);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iClientTokenService.accessTokenExpired1();
+                }
+            }
+
+            @Override
+            public void companyTokenServiceError(String responseBody) {
+                iClientTokenService.accessTokenExpired1();
+            }
+        });
+        refreshAccessToken = true;
+        companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
     }
 }

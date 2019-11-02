@@ -44,7 +44,11 @@ public class FetchMissingChannelService_V1 /*implements CommonAsyncHttpClient_V1
     }
 
     Context context;
+    private String channelSlug;
+    private ArrayList<SpotLightCategoriesDTO> spotLightCategoriesDTOArrayList;
     public void fetchMissingChannelData(String channelSlug, ArrayList<SpotLightCategoriesDTO> spotLightCategoriesDTOArrayList) {
+        this.channelSlug = channelSlug;
+        this.spotLightCategoriesDTOArrayList = spotLightCategoriesDTOArrayList;
         if (iFetchMissingChannelService_V1 == null) {
             if (context != null && context instanceof FetchMissingChannelService_V1.IFetchMissingChannelService_V1) {
                 iFetchMissingChannelService_V1 = (FetchMissingChannelService_V1.IFetchMissingChannelService_V1) context;
@@ -158,7 +162,10 @@ public class FetchMissingChannelService_V1 /*implements CommonAsyncHttpClient_V1
     }
     //@Override
     public void accessTokenExpired1() {
-        iFetchMissingChannelService_V1.accessTokenExpired1();
+        if(!refreshAccessToken)
+            refreshAccessToken();
+        else
+            iFetchMissingChannelService_V1.accessTokenExpired1();
     }
     //@Override
     public void clientTokenExpired1() {
@@ -893,5 +900,29 @@ public class FetchMissingChannelService_V1 /*implements CommonAsyncHttpClient_V1
         void postProcessingMissingChannelDataServiceResponse(String selectedChannelID, SpotLightChannelDTO spotLightChannelDTO, SpotLightCategoriesDTO spotLightCategoriesDTO, JSONObject channel, ArrayList<VideoInfoDTO> missingVideoInfoDTOList);
         void processMissingChannelDataServiceError(String ERROR);
         void accessTokenExpired1();
+    }
+
+    boolean refreshAccessToken = false;
+    private void refreshAccessToken() {
+        CompanyTokenService companyTokenService = new CompanyTokenService(context);
+        companyTokenService.setCompanyTokenServiceListener(new CompanyTokenService.ICompanyTokenService() {
+            @Override
+            public void companyTokenServiceResponse(JSONObject responseBody) {
+                try {
+                    ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    fetchMissingChannelData(channelSlug, spotLightCategoriesDTOArrayList);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iFetchMissingChannelService_V1.accessTokenExpired1();
+                }
+            }
+
+            @Override
+            public void companyTokenServiceError(String responseBody) {
+                iFetchMissingChannelService_V1.accessTokenExpired1();
+            }
+        });
+        refreshAccessToken = true;
+        companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
     }
 }

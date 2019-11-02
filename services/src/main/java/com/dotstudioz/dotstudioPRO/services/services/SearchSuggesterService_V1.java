@@ -6,6 +6,7 @@ import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.SearchResultDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.SearchSuggesterDTO;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 
 import org.json.JSONArray;
@@ -37,8 +38,13 @@ public class SearchSuggesterService_V1 /*implements CommonAsyncHttpClient_V1.ICo
     }
 
 
+    String xAccessToken; String xClientToken; String searchQueryString; String api;
     public void search(String xAccessToken, String xClientToken, String searchQueryString, String SEARCH_API_URL) {
 
+        this.xAccessToken = xAccessToken;
+        this.xClientToken = xClientToken;
+        this.searchQueryString = searchQueryString;
+        this.api = SEARCH_API_URL;
         if (iSearchSuggesterService == null) {
             if (context != null && context instanceof SearchSuggesterService_V1.ISearchSuggesterService) {
                 iSearchSuggesterService = (SearchSuggesterService_V1.ISearchSuggesterService) context;
@@ -109,11 +115,38 @@ public class SearchSuggesterService_V1 /*implements CommonAsyncHttpClient_V1.ICo
 
     //@Override
     public void accessTokenExpired1() {
-        iSearchSuggesterService.accessTokenExpired1();
+        if(!refreshAccessToken)
+            refreshAccessToken();
+        else
+            iSearchSuggesterService.accessTokenExpired1();
     }
     //@Override
     public void clientTokenExpired1() {
         iSearchSuggesterService.clientTokenExpired1();
+    }
+
+    boolean refreshAccessToken = false;
+    private void refreshAccessToken() {
+        CompanyTokenService companyTokenService = new CompanyTokenService(context);
+        companyTokenService.setCompanyTokenServiceListener(new CompanyTokenService.ICompanyTokenService() {
+            @Override
+            public void companyTokenServiceResponse(JSONObject responseBody) {
+                try {
+                    ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    search(ApplicationConstants.xAccessToken, xClientToken, searchQueryString, api);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iSearchSuggesterService.accessTokenExpired1();
+                }
+            }
+
+            @Override
+            public void companyTokenServiceError(String responseBody) {
+                iSearchSuggesterService.accessTokenExpired1();
+            }
+        });
+        refreshAccessToken = true;
+        companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
     }
 
 

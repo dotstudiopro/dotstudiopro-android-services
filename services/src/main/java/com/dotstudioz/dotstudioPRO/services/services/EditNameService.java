@@ -4,6 +4,8 @@ import android.content.Context;
 
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 
 import org.json.JSONObject;
 
@@ -30,7 +32,17 @@ public class EditNameService /*implements CommonAsyncHttpClient_V1.ICommonAsyncH
         this.iEditNameService = callback;
     }
 
+    private String xAccessToken;
+    private String xClientToken;
+    private String api;
+    private String fName;
+    private String lName;
     public void saveName(String xAccessToken, String xClientToken, String USER_DETAILS_URL, String fName, String lName) {
+        this.xAccessToken = xAccessToken;
+        this.xClientToken = xClientToken;
+        this.api = USER_DETAILS_URL;
+        this.fName = fName;
+        this.lName = lName;
         if (iEditNameService == null) {
             if (context != null && context instanceof EditNameService.IEditNameService) {
                 iEditNameService = (EditNameService.IEditNameService) context;
@@ -109,7 +121,10 @@ public class EditNameService /*implements CommonAsyncHttpClient_V1.ICommonAsyncH
 
     //@Override
     public void accessTokenExpired1() {
-        iEditNameService.accessTokenExpired1();
+        if(!refreshAccessToken)
+            refreshAccessToken();
+        else
+            iEditNameService.accessTokenExpired1();
     }
 
     //@Override
@@ -123,5 +138,29 @@ public class EditNameService /*implements CommonAsyncHttpClient_V1.ICommonAsyncH
         void editNameServiceError(String ERROR);
         void accessTokenExpired1();
         void clientTokenExpired1();
+    }
+
+    boolean refreshAccessToken = false;
+    private void refreshAccessToken() {
+        CompanyTokenService companyTokenService = new CompanyTokenService(context);
+        companyTokenService.setCompanyTokenServiceListener(new CompanyTokenService.ICompanyTokenService() {
+            @Override
+            public void companyTokenServiceResponse(JSONObject responseBody) {
+                try {
+                    ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    saveName(ApplicationConstants.xAccessToken, xClientToken, api, fName, lName);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iEditNameService.accessTokenExpired1();
+                }
+            }
+
+            @Override
+            public void companyTokenServiceError(String responseBody) {
+                iEditNameService.accessTokenExpired1();
+            }
+        });
+        refreshAccessToken = true;
+        companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
     }
 }

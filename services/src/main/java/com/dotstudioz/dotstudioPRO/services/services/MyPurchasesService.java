@@ -6,6 +6,7 @@ import com.dotstudioz.dotstudioPRO.models.dto.MyPurchaseItemDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.SpotLightCategoriesDTO;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 import com.dotstudioz.dotstudioPRO.services.util.CommonServiceUtils;
 
@@ -42,7 +43,11 @@ public class MyPurchasesService /*implements CommonAsyncHttpClient_V1.ICommonAsy
     }
 
     List<SpotLightCategoriesDTO> spotLightCategoriesDTOListGeneric;
+    String xAccessToken; String xClientToken; String api;
     public void getMyPurchases(String xAccessToken, String xClientToken, String MY_PURCHASES_URL, final List<SpotLightCategoriesDTO> spotLightCategoriesDTOList) {
+        this.xAccessToken = xAccessToken;
+        this.xClientToken = xClientToken;
+        this.api = MY_PURCHASES_URL;
         spotLightCategoriesDTOListGeneric = spotLightCategoriesDTOList;
         try {
             try {
@@ -240,12 +245,39 @@ public class MyPurchasesService /*implements CommonAsyncHttpClient_V1.ICommonAsy
 
     //@Override
     public void accessTokenExpired1() {
-        iMyPurchasesService.accessTokenExpired1();
+        if(!refreshAccessToken)
+            refreshAccessToken();
+        else
+            iMyPurchasesService.accessTokenExpired1();
     }
 
     //@Override
     public void clientTokenExpired1() {
         iMyPurchasesService.clientTokenExpired1();
+    }
+
+    boolean refreshAccessToken = false;
+    private void refreshAccessToken() {
+        CompanyTokenService companyTokenService = new CompanyTokenService(context);
+        companyTokenService.setCompanyTokenServiceListener(new CompanyTokenService.ICompanyTokenService() {
+            @Override
+            public void companyTokenServiceResponse(JSONObject responseBody) {
+                try {
+                    ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    getMyPurchases(ApplicationConstants.xAccessToken, xClientToken, api, spotLightCategoriesDTOListGeneric);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iMyPurchasesService.accessTokenExpired1();
+                }
+            }
+
+            @Override
+            public void companyTokenServiceError(String responseBody) {
+                iMyPurchasesService.accessTokenExpired1();
+            }
+        });
+        refreshAccessToken = true;
+        companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
     }
 
 

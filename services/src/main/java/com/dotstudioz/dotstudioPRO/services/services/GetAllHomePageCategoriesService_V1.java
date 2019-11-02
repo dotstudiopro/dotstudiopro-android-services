@@ -6,6 +6,8 @@ import android.util.Log;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.SpotLightCategoriesDTO;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,7 +49,10 @@ public class GetAllHomePageCategoriesService_V1 /*implements CommonAsyncHttpClie
         this.iGetAllHomePageCategoriesService_V1 = callback;
     }
 
+    String xAccessToken; String api;
     public void getAllHomePageCategoriesService(String xAccessToken, String API_URL) {
+        this.xAccessToken = xAccessToken;
+        this.api = API_URL;
         if (iGetAllHomePageCategoriesService_V1 == null) {
             if (context != null && context instanceof GetAllHomePageCategoriesService_V1.IGetAllHomePageCategoriesService_V1) {
                 iGetAllHomePageCategoriesService_V1 = (GetAllHomePageCategoriesService_V1.IGetAllHomePageCategoriesService_V1) context;
@@ -112,11 +117,38 @@ public class GetAllHomePageCategoriesService_V1 /*implements CommonAsyncHttpClie
     }
     //@Override
     public void accessTokenExpired1() {
-        iGetAllHomePageCategoriesService_V1.accessTokenExpired1();
+        if(!refreshAccessToken)
+            refreshAccessToken();
+        else
+            iGetAllHomePageCategoriesService_V1.accessTokenExpired1();
     }
     //@Override
     public void clientTokenExpired1() {
         iGetAllHomePageCategoriesService_V1.clientTokenExpired1();
+    }
+
+    boolean refreshAccessToken = false;
+    private void refreshAccessToken() {
+        CompanyTokenService companyTokenService = new CompanyTokenService(context);
+        companyTokenService.setCompanyTokenServiceListener(new CompanyTokenService.ICompanyTokenService() {
+            @Override
+            public void companyTokenServiceResponse(JSONObject responseBody) {
+                try {
+                    ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    getAllHomePageCategoriesService(ApplicationConstants.xAccessToken, api);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iGetAllHomePageCategoriesService_V1.accessTokenExpired1();
+                }
+            }
+
+            @Override
+            public void companyTokenServiceError(String responseBody) {
+                iGetAllHomePageCategoriesService_V1.accessTokenExpired1();
+            }
+        });
+        refreshAccessToken = true;
+        companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
     }
 
     private ArrayList<SpotLightCategoriesDTO> spotLightHomePageCategoriesDTOList = new ArrayList<SpotLightCategoriesDTO>();

@@ -7,6 +7,7 @@ import com.dotstudioz.dotstudioPRO.models.dto.CustomFieldDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.VideoInfoDTO;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 import com.dotstudioz.dotstudioPRO.services.util.CommonServiceUtils;
 
@@ -55,6 +56,8 @@ public class VideoDetailsService_V1 /*implements CommonAsyncHttpClient_V1.ICommo
     }
 
     public void fetchVideoDetails(String API_URL) {
+        usingSlug = false;
+        this.api = API_URL;
         if (iVideoDetailsService_V1 == null) {
             if (context != null && context instanceof VideoDetailsService_V1.IVideoDetailsService_V1) {
                 iVideoDetailsService_V1 = (VideoDetailsService_V1.IVideoDetailsService_V1) context;
@@ -102,7 +105,11 @@ public class VideoDetailsService_V1 /*implements CommonAsyncHttpClient_V1.ICommo
         }
         return commonAsyncHttpClientV1;
     }
+    String api;
+    boolean usingSlug = false;
     public void fetchVideoDetailsUsingSlug(String API_URL) {
+        usingSlug = true;
+        this.api = API_URL;
         if (iVideoDetailsService_V1 == null) {
             if (context != null && context instanceof VideoDetailsService_V1.IVideoDetailsService_V1) {
                 iVideoDetailsService_V1 = (VideoDetailsService_V1.IVideoDetailsService_V1) context;
@@ -117,6 +124,27 @@ public class VideoDetailsService_V1 /*implements CommonAsyncHttpClient_V1.ICommo
         if(ApplicationConstants.CLIENT_TOKEN != null && ApplicationConstants.CLIENT_TOKEN.length() > 0)
             headerItemsArrayList.add(new ParameterItem("x-client-token", ApplicationConstants.CLIENT_TOKEN));
 
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
         getCommonAsyncHttpClientV1().getAsyncHttpsClient(headerItemsArrayList, null,
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInSingleVideoPageString);
 
@@ -927,10 +955,41 @@ public class VideoDetailsService_V1 /*implements CommonAsyncHttpClient_V1.ICommo
     }
     //@Override
     public void accessTokenExpired1() {
-        iVideoDetailsService_V1.accessTokenExpired1();
+        if(!refreshAccessToken)
+            refreshAccessToken();
+        else
+            iVideoDetailsService_V1.accessTokenExpired1();
     }
     //@Override
     public void clientTokenExpired1() {
         iVideoDetailsService_V1.clientTokenExpired1();
+    }
+
+    boolean refreshAccessToken = false;
+    private void refreshAccessToken() {
+        CompanyTokenService companyTokenService = new CompanyTokenService(context);
+        companyTokenService.setCompanyTokenServiceListener(new CompanyTokenService.ICompanyTokenService() {
+            @Override
+            public void companyTokenServiceResponse(JSONObject responseBody) {
+                try {
+                    ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    if(!usingSlug) {
+                        fetchVideoDetails(api);
+                    } else if(usingSlug) {
+                        fetchVideoDetailsUsingSlug(api);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iVideoDetailsService_V1.accessTokenExpired1();
+                }
+            }
+
+            @Override
+            public void companyTokenServiceError(String responseBody) {
+                iVideoDetailsService_V1.accessTokenExpired1();
+            }
+        });
+        refreshAccessToken = true;
+        companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
     }
 }

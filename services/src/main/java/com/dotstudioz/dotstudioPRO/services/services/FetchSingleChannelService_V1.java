@@ -39,7 +39,9 @@ public class FetchSingleChannelService_V1 /*implements CommonAsyncHttpClient_V1.
     }
 
     Context context;
+    private String channelSlug;
     public void fetchSingleChannelData(String channelSlug) {
+        this.channelSlug = channelSlug;
         if (iFetchSingleChannelService_V1 == null) {
             if (context != null && context instanceof FetchSingleChannelService_V1.IFetchSingleChannelService_V1) {
                 iFetchSingleChannelService_V1 = (FetchSingleChannelService_V1.IFetchSingleChannelService_V1) context;
@@ -102,7 +104,10 @@ public class FetchSingleChannelService_V1 /*implements CommonAsyncHttpClient_V1.
     }
     //@Override
     public void accessTokenExpired1() {
-        iFetchSingleChannelService_V1.accessTokenExpired1();
+        if(!refreshAccessToken)
+            refreshAccessToken();
+        else
+            iFetchSingleChannelService_V1.accessTokenExpired1();
     }
     //@Override
     public void clientTokenExpired1() {
@@ -834,5 +839,29 @@ public class FetchSingleChannelService_V1 /*implements CommonAsyncHttpClient_V1.
         void fetchLiveVideoChannelDataServiceResponse(SpotLightChannelDTO spotLightChannelDTO);
         void fetchLiveVideoChannelDataServiceError(String ERROR);
         void accessTokenExpired1();
+    }
+
+    boolean refreshAccessToken = false;
+    private void refreshAccessToken() {
+        CompanyTokenService companyTokenService = new CompanyTokenService(context);
+        companyTokenService.setCompanyTokenServiceListener(new CompanyTokenService.ICompanyTokenService() {
+            @Override
+            public void companyTokenServiceResponse(JSONObject responseBody) {
+                try {
+                    ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    fetchSingleChannelData(channelSlug);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iFetchSingleChannelService_V1.accessTokenExpired1();
+                }
+            }
+
+            @Override
+            public void companyTokenServiceError(String responseBody) {
+                iFetchSingleChannelService_V1.accessTokenExpired1();
+            }
+        });
+        refreshAccessToken = true;
+        companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
     }
 }

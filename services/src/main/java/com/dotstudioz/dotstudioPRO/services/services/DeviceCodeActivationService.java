@@ -4,6 +4,8 @@ import android.content.Context;
 
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 
 import org.json.JSONObject;
 
@@ -31,8 +33,15 @@ public class DeviceCodeActivationService /*implements CommonAsyncHttpClient_V1.I
         this.iDeviceCodeActivationService = callback;
     }
 
+    private String xAccessToken;
+    private String code;
+    private String customerId;
+    private String api;
     public void getDeviceActivationWithCode(String xAccessToken,String code,String customerId, String TOKEN_URL) {
-
+        this.xAccessToken = xAccessToken;
+        this.code = code;
+        this.customerId = customerId;
+        this.api = TOKEN_URL;
 
         if (iDeviceCodeActivationService == null) {
             if (context != null && context instanceof DeviceCodeActivationService.IDeviceCodeActivationService) {
@@ -96,7 +105,10 @@ public class DeviceCodeActivationService /*implements CommonAsyncHttpClient_V1.I
 
     //@Override
     public void accessTokenExpired1() {
-        iDeviceCodeActivationService.accessTokenExpired1();
+        if(!refreshAccessToken)
+            refreshAccessToken();
+        else
+            iDeviceCodeActivationService.accessTokenExpired1();
     }
 
     //@Override
@@ -108,5 +120,29 @@ public class DeviceCodeActivationService /*implements CommonAsyncHttpClient_V1.I
         void deviceCodeActivationServiceResponse(JSONObject responseBody);
         void deviceCodeActivationServiceError(String responseBody);
         void accessTokenExpired1();
+    }
+
+    boolean refreshAccessToken = false;
+    private void refreshAccessToken() {
+        CompanyTokenService companyTokenService = new CompanyTokenService(context);
+        companyTokenService.setCompanyTokenServiceListener(new CompanyTokenService.ICompanyTokenService() {
+            @Override
+            public void companyTokenServiceResponse(JSONObject responseBody) {
+                try {
+                    ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    getDeviceActivationWithCode(ApplicationConstants.xAccessToken, code, customerId, api);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iDeviceCodeActivationService.accessTokenExpired1();
+                }
+            }
+
+            @Override
+            public void companyTokenServiceError(String responseBody) {
+                iDeviceCodeActivationService.accessTokenExpired1();
+            }
+        });
+        refreshAccessToken = true;
+        companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
     }
 }

@@ -33,8 +33,10 @@ public class GetLeanChannelsWRTCategoryService_V1 /*implements CommonAsyncHttpCl
         this.iGetLeanChannelsWRTCategoryService_V1 = callback;
     }
 
+    String categorySlug;
     public void getLeanChannelDataWRTCategory(String categorySlug) {
 
+        this.categorySlug = categorySlug;
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", ApplicationConstants.xAccessToken));
 
@@ -89,7 +91,10 @@ public class GetLeanChannelsWRTCategoryService_V1 /*implements CommonAsyncHttpCl
 
     //@Override
     public void accessTokenExpired1() {
-        iGetLeanChannelsWRTCategoryService_V1.accessTokenExpired1();
+        if(!refreshAccessToken)
+            refreshAccessToken();
+        else
+            iGetLeanChannelsWRTCategoryService_V1.accessTokenExpired1();
     }
 
     //@Override
@@ -106,5 +111,29 @@ public class GetLeanChannelsWRTCategoryService_V1 /*implements CommonAsyncHttpCl
 
         void numberOfCategoriesAlreadyFetched();
         void requestForFetchingAChannelCompleted();
+    }
+
+    boolean refreshAccessToken = false;
+    private void refreshAccessToken() {
+        CompanyTokenService companyTokenService = new CompanyTokenService(context);
+        companyTokenService.setCompanyTokenServiceListener(new CompanyTokenService.ICompanyTokenService() {
+            @Override
+            public void companyTokenServiceResponse(JSONObject responseBody) {
+                try {
+                    ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    getLeanChannelDataWRTCategory(categorySlug);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iGetLeanChannelsWRTCategoryService_V1.accessTokenExpired1();
+                }
+            }
+
+            @Override
+            public void companyTokenServiceError(String responseBody) {
+                iGetLeanChannelsWRTCategoryService_V1.accessTokenExpired1();
+            }
+        });
+        refreshAccessToken = true;
+        companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
     }
 }

@@ -2,10 +2,12 @@ package com.dotstudioz.dotstudioPRO.services.services;
 
 import android.content.Context;
 
+import com.auth0.jwt.internal.org.apache.commons.codec.binary.Base64;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -101,5 +103,41 @@ public class CompanyTokenService /*implements CommonAsyncHttpClient_V1.ICommonAs
     public interface ICompanyTokenService {
         void companyTokenServiceResponse(JSONObject responseBody);
         void companyTokenServiceError(String responseBody);
+    }
+
+    public String extractKeyFromToken(String token) {
+        String companyKeyFromAccessToken = "";
+        String companyNameFromAccessToken = "";
+        try {
+            Base64 decoder = new Base64(true);
+            byte[] secret = decoder.decodeBase64(token.split("\\.")[1]);
+            String s = new String(secret);
+
+            try {
+                JSONObject spotlightJSONObject = new JSONObject(s);
+
+                if (spotlightJSONObject.has("iss")) {
+                    companyKeyFromAccessToken = spotlightJSONObject.getString("iss");
+                }
+
+
+                try {
+                    if (spotlightJSONObject.has("context")) {
+                        if (spotlightJSONObject.get("context") instanceof JSONObject) {
+                            if (spotlightJSONObject.getJSONObject("context").has("name")) {
+                                companyNameFromAccessToken = spotlightJSONObject.getJSONObject("context").getString("name");
+                            }
+                        }
+                    }
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+
+            } catch(JSONException e){
+                e.printStackTrace();
+            }
+        } catch(Exception e){}
+
+        return companyKeyFromAccessToken;
     }
 }

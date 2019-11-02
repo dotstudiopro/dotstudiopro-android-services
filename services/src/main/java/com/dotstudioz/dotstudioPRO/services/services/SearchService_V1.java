@@ -5,6 +5,7 @@ import android.content.Context;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.SearchResultDTO;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 import com.dotstudioz.dotstudioPRO.services.util.CommonServiceUtils;
 
@@ -37,9 +38,13 @@ public class SearchService_V1 /*implements CommonAsyncHttpClient_V1.ICommonAsync
         this.iSearchService = callback;
     }
 
-
+    String xAccessToken; String xClientToken; String searchQueryString; String api;
     public void search(String xAccessToken, String xClientToken, String searchQueryString, String SEARCH_API_URL) {
 
+        this.xAccessToken = xAccessToken;
+        this.xClientToken = xClientToken;
+        this.searchQueryString = searchQueryString;
+        this.api = SEARCH_API_URL;
         if (iSearchService == null) {
             if (context != null && context instanceof SearchService_V1.ISearchService) {
                 iSearchService = (SearchService_V1.ISearchService) context;
@@ -112,11 +117,38 @@ public class SearchService_V1 /*implements CommonAsyncHttpClient_V1.ICommonAsync
     }
     //@Override
     public void accessTokenExpired1() {
-        iSearchService.accessTokenExpired1();
+        if(!refreshAccessToken)
+            refreshAccessToken();
+        else
+            iSearchService.accessTokenExpired1();
     }
     //@Override
     public void clientTokenExpired1() {
         iSearchService.clientTokenExpired1();
+    }
+
+    boolean refreshAccessToken = false;
+    private void refreshAccessToken() {
+        CompanyTokenService companyTokenService = new CompanyTokenService(context);
+        companyTokenService.setCompanyTokenServiceListener(new CompanyTokenService.ICompanyTokenService() {
+            @Override
+            public void companyTokenServiceResponse(JSONObject responseBody) {
+                try {
+                    ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    search(ApplicationConstants.xAccessToken, xClientToken, searchQueryString, api);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iSearchService.accessTokenExpired1();
+                }
+            }
+
+            @Override
+            public void companyTokenServiceError(String responseBody) {
+                iSearchService.accessTokenExpired1();
+            }
+        });
+        refreshAccessToken = true;
+        companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
     }
 
 

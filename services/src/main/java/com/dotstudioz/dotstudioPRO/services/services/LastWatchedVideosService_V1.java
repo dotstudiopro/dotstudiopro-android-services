@@ -8,6 +8,7 @@ import com.dotstudioz.dotstudioPRO.models.dto.LastWatchedVideosPairDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.VideoInfoDTO;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 
 import org.json.JSONArray;
@@ -44,7 +45,10 @@ public class LastWatchedVideosService_V1 /*implements CommonAsyncHttpClient_V1.I
         this.iLastWatchedVideosService_V1 = callback;
     }
 
+    String api;
     public void getLastWatchedVideos(String API_URL, int noOfResults) {
+        this.api = API_URL;
+        this.noOfResults = noOfResults;
         if (iLastWatchedVideosService_V1 == null) {
             if (context != null && context instanceof LastWatchedVideosService_V1.ILastWatchedVideosService_V1) {
                 iLastWatchedVideosService_V1 = (LastWatchedVideosService_V1.ILastWatchedVideosService_V1) context;
@@ -239,10 +243,37 @@ public class LastWatchedVideosService_V1 /*implements CommonAsyncHttpClient_V1.I
     }
     //@Override
     public void accessTokenExpired1() {
-        iLastWatchedVideosService_V1.accessTokenExpired1();
+        if(!refreshAccessToken)
+            refreshAccessToken();
+        else
+            iLastWatchedVideosService_V1.accessTokenExpired1();
     }
     //@Override
     public void clientTokenExpired1() {
         iLastWatchedVideosService_V1.clientTokenExpired1();
+    }
+
+    boolean refreshAccessToken = false;
+    private void refreshAccessToken() {
+        CompanyTokenService companyTokenService = new CompanyTokenService(context);
+        companyTokenService.setCompanyTokenServiceListener(new CompanyTokenService.ICompanyTokenService() {
+            @Override
+            public void companyTokenServiceResponse(JSONObject responseBody) {
+                try {
+                    ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    getLastWatchedVideos(api, noOfResults);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iLastWatchedVideosService_V1.accessTokenExpired1();
+                }
+            }
+
+            @Override
+            public void companyTokenServiceError(String responseBody) {
+                iLastWatchedVideosService_V1.accessTokenExpired1();
+            }
+        });
+        refreshAccessToken = true;
+        companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
     }
 }

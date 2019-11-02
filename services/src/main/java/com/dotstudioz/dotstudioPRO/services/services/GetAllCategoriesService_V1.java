@@ -7,6 +7,8 @@ import com.dotstudioz.dotstudioPRO.models.dto.CustomFieldDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.SpotLightCategoriesDTO;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,7 +54,11 @@ public class GetAllCategoriesService_V1 /*implements CommonAsyncHttpClient_V1.IC
         this.iGetAllCategoriesService_V1 = callback;
     }
 
+    private String xAccessToken;
+    private String api;
     public void getAllCategoriesService(String xAccessToken, String API_URL) {
+        this.xAccessToken = xAccessToken;
+        this.api = API_URL;
         if (iGetAllCategoriesService_V1 == null) {
             if (context != null && context instanceof GetAllCategoriesService_V1.IGetAllCategoriesService_V1) {
                 iGetAllCategoriesService_V1 = (GetAllCategoriesService_V1.IGetAllCategoriesService_V1) context;
@@ -118,7 +124,10 @@ public class GetAllCategoriesService_V1 /*implements CommonAsyncHttpClient_V1.IC
     }
     //@Override
     public void accessTokenExpired11() {
-        iGetAllCategoriesService_V1.accessTokenExpired1();
+        if(!refreshAccessToken)
+            refreshAccessToken();
+        else
+            iGetAllCategoriesService_V1.accessTokenExpired1();
     }
     //@Override
     public void clientTokenExpired11() {
@@ -278,5 +287,29 @@ public class GetAllCategoriesService_V1 /*implements CommonAsyncHttpClient_V1.IC
                 spotLightCategoriesDTOListForRoster,
                 spotLightCategoriesDTOListForGenre
         );
+    }
+
+    boolean refreshAccessToken = false;
+    private void refreshAccessToken() {
+        CompanyTokenService companyTokenService = new CompanyTokenService(context);
+        companyTokenService.setCompanyTokenServiceListener(new CompanyTokenService.ICompanyTokenService() {
+            @Override
+            public void companyTokenServiceResponse(JSONObject responseBody) {
+                try {
+                    ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    getAllCategoriesService(ApplicationConstants.xAccessToken, api);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iGetAllCategoriesService_V1.accessTokenExpired1();
+                }
+            }
+
+            @Override
+            public void companyTokenServiceError(String responseBody) {
+                iGetAllCategoriesService_V1.accessTokenExpired1();
+            }
+        });
+        refreshAccessToken = true;
+        companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
     }
 }

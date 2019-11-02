@@ -6,6 +6,8 @@ import android.util.Log;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.SubscriptionDTO;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 import com.google.gson.Gson;
 
 import org.json.JSONObject;
@@ -43,7 +45,13 @@ public class CheckChannelSubscriptionStatusService_V1 /*implements CommonAsyncHt
         this.iCheckChannelSubscriptionStatusService = callback;
     }
 
+    private String xAccessToken;
+    private String xClientToken;
+    private String api;
     public void checkChannelSubscriptionStatusService(String xAccessToken, String xClientToken, String API_URL) {
+        this.xAccessToken = xAccessToken;
+        this.xClientToken = xClientToken;
+        this.api = API_URL;
         if (iCheckChannelSubscriptionStatusService == null) {
             if (context != null && context instanceof CheckChannelSubscriptionStatusService_V1.ICheckChannelSubscriptionStatusService) {
                 iCheckChannelSubscriptionStatusService = (CheckChannelSubscriptionStatusService_V1.ICheckChannelSubscriptionStatusService) context;
@@ -112,7 +120,10 @@ public class CheckChannelSubscriptionStatusService_V1 /*implements CommonAsyncHt
     }
     //@Override
     public void accessTokenExpired1() {
-        iCheckChannelSubscriptionStatusService.accessTokenExpired1();
+        if(!refreshAccessToken)
+            refreshAccessToken();
+        else
+            iCheckChannelSubscriptionStatusService.accessTokenExpired1();
     }
     //@Override
     public void clientTokenExpired1() {
@@ -305,5 +316,31 @@ public class CheckChannelSubscriptionStatusService_V1 /*implements CommonAsyncHt
                 iCheckChannelSubscriptionStatusService.checkChannelSubscriptionStatusServiceResponse(false, true);
             }
         });
+    }
+
+
+
+    boolean refreshAccessToken = false;
+    private void refreshAccessToken() {
+        CompanyTokenService companyTokenService = new CompanyTokenService(context);
+        companyTokenService.setCompanyTokenServiceListener(new CompanyTokenService.ICompanyTokenService() {
+            @Override
+            public void companyTokenServiceResponse(JSONObject responseBody) {
+                try {
+                    ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    checkChannelSubscriptionStatusService(ApplicationConstants.xAccessToken, xClientToken, api);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iCheckChannelSubscriptionStatusService.accessTokenExpired1();
+                }
+            }
+
+            @Override
+            public void companyTokenServiceError(String responseBody) {
+                iCheckChannelSubscriptionStatusService.accessTokenExpired1();
+            }
+        });
+        refreshAccessToken = true;
+        companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
     }
 }

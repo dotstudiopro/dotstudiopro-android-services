@@ -60,7 +60,13 @@ public class VideoPausedPointService_V1 /*implements CommonAsyncHttpClient_V1.IC
             throw new RuntimeException(ctx.toString()+ " must implement IVideoPausedPointService_V1");*/
     }
 
+    String api; ArrayList<String> videoIDsArrayList; boolean calledInBrowse;
     public void checkForVideoPlaybackStatus(String API_URL, boolean isForSeries, ArrayList<String> videoIDsArrayList, boolean calledInBrowse) {
+        this.api = API_URL;
+        this.isForSeries = isForSeries;
+        this.videoIDsArrayList = videoIDsArrayList;
+        this.calledInBrowse = calledInBrowse;
+
         if (iVideoPausedPointService_V1 == null) {
             if (context != null && context instanceof VideoPausedPointService_V1.IVideoPausedPointService_V1) {
                 iVideoPausedPointService_V1 = (VideoPausedPointService_V1.IVideoPausedPointService_V1) context;
@@ -197,6 +203,9 @@ public class VideoPausedPointService_V1 /*implements CommonAsyncHttpClient_V1.IC
     }
     //@Override
     public void accessTokenExpired1() {
+        if(!refreshAccessToken)
+            refreshAccessToken();
+        else
             iVideoPausedPointService_V1.accessTokenExpired1();
     }
     //@Override
@@ -205,7 +214,9 @@ public class VideoPausedPointService_V1 /*implements CommonAsyncHttpClient_V1.IC
             iVideoPausedPointService_V1.clientTokenExpired1();
     }
 
+    String videoID; int point;
     public void savePointForVideoPlaybackStatus(String videoID, int point) {
+        this.videoID = videoID; this.point = point;
         String API_URL = ApplicationConstantURL.getInstance().VIDEO_PLAYBACK_DETAILS_API + videoID + "/" +point ;
 
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
@@ -236,5 +247,35 @@ public class VideoPausedPointService_V1 /*implements CommonAsyncHttpClient_V1.IC
         });
         getCommonAsyncHttpClientV1().postAsyncHttpsClient(headerItemsArrayList, new ArrayList<ParameterItem>(),
                 API_URL, "");
+    }
+
+
+
+    boolean refreshAccessToken = false;
+    private void refreshAccessToken() {
+        CompanyTokenService companyTokenService = new CompanyTokenService(context);
+        companyTokenService.setCompanyTokenServiceListener(new CompanyTokenService.ICompanyTokenService() {
+            @Override
+            public void companyTokenServiceResponse(JSONObject responseBody) {
+                try {
+                    ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    if(!isSavingTheData) {
+                        checkForVideoPlaybackStatus(api, isForSeries, videoIDsArrayList, calledInBrowse);
+                    } else {
+                        savePointForVideoPlaybackStatus(videoID, point);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iVideoPausedPointService_V1.accessTokenExpired1();
+                }
+            }
+
+            @Override
+            public void companyTokenServiceError(String responseBody) {
+                iVideoPausedPointService_V1.accessTokenExpired1();
+            }
+        });
+        refreshAccessToken = true;
+        companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
     }
 }

@@ -6,6 +6,8 @@ import android.util.Log;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.SubscriptionDTO;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,7 +45,11 @@ public class GetUserSubscriptionsService_V1 /*implements CommonAsyncHttpClient_V
         this.iGetUserSubscriptionsService = callback;
     }
 
+    String xAccessToken; String xClientToken; String api;
     public void getUserSubscriptionsService(String xAccessToken, String xClientToken, String API_URL) {
+        this.xAccessToken = xAccessToken;
+        this.xClientToken = xClientToken;
+        this.api = API_URL;
         if (iGetUserSubscriptionsService == null) {
             if (context != null && context instanceof GetUserSubscriptionsService_V1.IGetUserSubscriptionsService) {
                 iGetUserSubscriptionsService = (GetUserSubscriptionsService_V1.IGetUserSubscriptionsService) context;
@@ -109,11 +115,38 @@ public class GetUserSubscriptionsService_V1 /*implements CommonAsyncHttpClient_V
     }
     //@Override
     public void accessTokenExpired1() {
-        iGetUserSubscriptionsService.accessTokenExpired1();
+        if(!refreshAccessToken)
+            refreshAccessToken();
+        else
+            iGetUserSubscriptionsService.accessTokenExpired1();
     }
     //@Override
     public void clientTokenExpired1() {
         iGetUserSubscriptionsService.clientTokenExpired1();
+    }
+
+    boolean refreshAccessToken = false;
+    private void refreshAccessToken() {
+        CompanyTokenService companyTokenService = new CompanyTokenService(context);
+        companyTokenService.setCompanyTokenServiceListener(new CompanyTokenService.ICompanyTokenService() {
+            @Override
+            public void companyTokenServiceResponse(JSONObject responseBody) {
+                try {
+                    ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    getUserSubscriptionsService(ApplicationConstants.xAccessToken, xClientToken, api);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iGetUserSubscriptionsService.accessTokenExpired1();
+                }
+            }
+
+            @Override
+            public void companyTokenServiceError(String responseBody) {
+                iGetUserSubscriptionsService.accessTokenExpired1();
+            }
+        });
+        refreshAccessToken = true;
+        companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
     }
 
     private ArrayList<SubscriptionDTO> userSubscriptionDTOArrayList = new ArrayList<SubscriptionDTO>();

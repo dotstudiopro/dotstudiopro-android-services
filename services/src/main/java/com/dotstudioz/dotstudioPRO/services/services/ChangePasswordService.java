@@ -4,6 +4,8 @@ import android.content.Context;
 
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 
 import org.json.JSONObject;
 
@@ -31,7 +33,15 @@ public class ChangePasswordService /*implements CommonAsyncHttpClient_V1.ICommon
         this.iChangePasswordService = callback;
     }
 
+    private String xAccessToken;
+    private String xClientToken;
+    private String api;
+    private String newPassword;
     public void changePassword(String xAccessToken, String xClientToken, String CHANGE_PASSWORD_URL, String newPassword) {
+        this.xAccessToken = xAccessToken;
+        this.xClientToken = xClientToken;
+        this.api = CHANGE_PASSWORD_URL;
+        this.newPassword = newPassword;
         if (iChangePasswordService == null) {
             if (context != null && context instanceof ChangePasswordService.IChangePasswordService) {
                 iChangePasswordService = (ChangePasswordService.IChangePasswordService) context;
@@ -98,7 +108,10 @@ public class ChangePasswordService /*implements CommonAsyncHttpClient_V1.ICommon
 
     //@Override
     public void accessTokenExpired1() {
-        iChangePasswordService.accessTokenExpired1();
+        if(!refreshAccessToken)
+            refreshAccessToken();
+        else
+            iChangePasswordService.accessTokenExpired1();
     }
 
     //@Override
@@ -112,5 +125,29 @@ public class ChangePasswordService /*implements CommonAsyncHttpClient_V1.ICommon
         void changePasswordServiceError(String ERROR);
         void accessTokenExpired1();
         void clientTokenExpired1();
+    }
+
+    boolean refreshAccessToken = false;
+    private void refreshAccessToken() {
+        CompanyTokenService companyTokenService = new CompanyTokenService(context);
+        companyTokenService.setCompanyTokenServiceListener(new CompanyTokenService.ICompanyTokenService() {
+            @Override
+            public void companyTokenServiceResponse(JSONObject responseBody) {
+                try {
+                    ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    changePassword(ApplicationConstants.xAccessToken, xClientToken, api, newPassword);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iChangePasswordService.accessTokenExpired1();
+                }
+            }
+
+            @Override
+            public void companyTokenServiceError(String responseBody) {
+                iChangePasswordService.accessTokenExpired1();
+            }
+        });
+        refreshAccessToken = true;
+        companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
     }
 }

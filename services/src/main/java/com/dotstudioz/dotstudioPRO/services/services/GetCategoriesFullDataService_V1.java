@@ -6,6 +6,7 @@ import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.SpotLightCategoriesDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.SpotLightChannelDTO;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 import com.dotstudioz.dotstudioPRO.services.util.CommonServiceUtils;
 
@@ -48,6 +49,7 @@ public class GetCategoriesFullDataService_V1 /*implements CommonAsyncHttpClient_
 
     public SpotLightCategoriesDTO spotLightCategoriesDTO;
     private List<SpotLightCategoriesDTO> spotLightCategoriesDTOList;
+    String xAccessToken; String api;
     public void getCategoriesFullDataService(String xAccessToken, String API_URL, SpotLightCategoriesDTO spotLightCategoriesDTO) {
 
         if (iGetCategoriesFullDataService_V1 == null) {
@@ -60,6 +62,8 @@ public class GetCategoriesFullDataService_V1 /*implements CommonAsyncHttpClient_
         }
 
         this.spotLightCategoriesDTO = spotLightCategoriesDTO;
+        this.api = API_URL;
+        this.xAccessToken = xAccessToken;
 
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));
@@ -111,11 +115,38 @@ public class GetCategoriesFullDataService_V1 /*implements CommonAsyncHttpClient_
     }
     //@Override
     public void accessTokenExpired1() {
-        iGetCategoriesFullDataService_V1.accessTokenExpired1();
+        if(!refreshAccessToken)
+            refreshAccessToken();
+        else
+            iGetCategoriesFullDataService_V1.accessTokenExpired1();
     }
     //@Override
     public void clientTokenExpired1() {
         iGetCategoriesFullDataService_V1.clientTokenExpired1();
+    }
+
+    boolean refreshAccessToken = false;
+    private void refreshAccessToken() {
+        CompanyTokenService companyTokenService = new CompanyTokenService(context);
+        companyTokenService.setCompanyTokenServiceListener(new CompanyTokenService.ICompanyTokenService() {
+            @Override
+            public void companyTokenServiceResponse(JSONObject responseBody) {
+                try {
+                    ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    getCategoriesFullDataService(ApplicationConstants.xAccessToken, api, spotLightCategoriesDTO);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iGetCategoriesFullDataService_V1.accessTokenExpired1();
+                }
+            }
+
+            @Override
+            public void companyTokenServiceError(String responseBody) {
+                iGetCategoriesFullDataService_V1.accessTokenExpired1();
+            }
+        });
+        refreshAccessToken = true;
+        companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
     }
 
     public void resultProcessingForGetCategoriesFullDataService(JSONObject response) {

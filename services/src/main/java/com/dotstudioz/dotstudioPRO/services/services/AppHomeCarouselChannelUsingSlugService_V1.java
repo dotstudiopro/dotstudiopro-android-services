@@ -40,7 +40,13 @@ public class AppHomeCarouselChannelUsingSlugService_V1 /*implements CommonAsyncH
         this.iFetchChannelUsingSlugService_V1 = callback;
     }
 
+    private String channelSlug;
+    private String xAccessToken;
+    private String api;
     public void fetchChannelData(String channelSlug, String xAccessToken) {
+        this.channelSlug = channelSlug;
+        this.xAccessToken = xAccessToken;
+        this.api = ApplicationConstantURL.getInstance().CHANNEL + channelSlug;
         if (iFetchChannelUsingSlugService_V1 == null) {
             if (context != null && context instanceof FetchChannelUsingSlugService_V1.IFetchChannelUsingSlugService_V1) {
                 iFetchChannelUsingSlugService_V1 = (AppHomeCarouselChannelUsingSlugService_V1.IFetchChannelUsingSlugService_V1) context;
@@ -157,7 +163,10 @@ public class AppHomeCarouselChannelUsingSlugService_V1 /*implements CommonAsyncH
     }
     //@Override
     public void accessTokenExpired1() {
-        iFetchChannelUsingSlugService_V1.accessTokenExpired1();
+        if(!refreshAccessToken)
+            refreshAccessToken();
+        else
+            iFetchChannelUsingSlugService_V1.accessTokenExpired1();
     }
     //@Override
     public void clientTokenExpired1() {
@@ -706,5 +715,29 @@ public class AppHomeCarouselChannelUsingSlugService_V1 /*implements CommonAsyncH
         void processMissingChannelDataServiceError(String ERROR);
         //void postProcessingChannelDataServiceResponse(JSONObject response);
         void accessTokenExpired1();
+    }
+
+    boolean refreshAccessToken = false;
+    private void refreshAccessToken() {
+        CompanyTokenService companyTokenService = new CompanyTokenService(context);
+        companyTokenService.setCompanyTokenServiceListener(new CompanyTokenService.ICompanyTokenService() {
+            @Override
+            public void companyTokenServiceResponse(JSONObject responseBody) {
+                try {
+                    ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    fetchChannelData(channelSlug, ApplicationConstants.xAccessToken);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iFetchChannelUsingSlugService_V1.accessTokenExpired1();
+                }
+            }
+
+            @Override
+            public void companyTokenServiceError(String responseBody) {
+                iFetchChannelUsingSlugService_V1.accessTokenExpired1();
+            }
+        });
+        refreshAccessToken = true;
+        companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
     }
 }

@@ -7,6 +7,7 @@ import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.Recommended4ItemPairDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.RecommendedItemDTO;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 
 import org.json.JSONException;
@@ -34,7 +35,12 @@ public class RecommendationChannelService_V1 /*implements CommonAsyncHttpClient_
         this.iRecommendationService = callback;
     }
 
+    String xAccessToken; String api; String id; int size; int from;
     public void getRecommendation(String xAccessToken, String RECOMMENDATION_API, String id, int size, int from) {
+
+        this.xAccessToken = xAccessToken;
+        this.api = RECOMMENDATION_API;
+        this.id = id; this.size = size; this.from = from;
 
         if (iRecommendationService == null) {
             if (context != null && context instanceof RecommendationChannelService_V1.IRecommendationService) {
@@ -128,7 +134,10 @@ public class RecommendationChannelService_V1 /*implements CommonAsyncHttpClient_
     }
     //@Override
     public void accessTokenExpired1() {
-        iRecommendationService.accessTokenExpired1();
+        if(!refreshAccessToken)
+            refreshAccessToken();
+        else
+            iRecommendationService.accessTokenExpired1();
     }
     //@Override
     public void clientTokenExpired1() {
@@ -218,5 +227,29 @@ public class RecommendationChannelService_V1 /*implements CommonAsyncHttpClient_
         void recommendationServiceError(String error);
         void accessTokenExpired1();
         void clientTokenExpired1();
+    }
+
+    boolean refreshAccessToken = false;
+    private void refreshAccessToken() {
+        CompanyTokenService companyTokenService = new CompanyTokenService(context);
+        companyTokenService.setCompanyTokenServiceListener(new CompanyTokenService.ICompanyTokenService() {
+            @Override
+            public void companyTokenServiceResponse(JSONObject responseBody) {
+                try {
+                    ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    getRecommendation(ApplicationConstants.xAccessToken, api, id, size, from);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iRecommendationService.accessTokenExpired1();
+                }
+            }
+
+            @Override
+            public void companyTokenServiceError(String responseBody) {
+                iRecommendationService.accessTokenExpired1();
+            }
+        });
+        refreshAccessToken = true;
+        companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
     }
 }

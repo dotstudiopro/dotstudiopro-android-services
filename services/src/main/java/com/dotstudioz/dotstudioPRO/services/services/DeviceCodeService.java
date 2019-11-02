@@ -4,6 +4,8 @@ import android.content.Context;
 
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 
 import org.json.JSONObject;
 
@@ -30,7 +32,11 @@ public class DeviceCodeService /*implements CommonAsyncHttpClient_V1.ICommonAsyn
         this.iDeviceCodeService = callback;
     }
 
+    private String xAccessToken;
+    private String api;
     public void getDeviceCode(String xAccessToken,String url) {
+        this.xAccessToken = xAccessToken;
+        this.api = url;
         if (iDeviceCodeService == null) {
             if (context != null && context instanceof DeviceCodeService.IDeviceCodeService) {
                 iDeviceCodeService = (DeviceCodeService.IDeviceCodeService) context;
@@ -89,7 +95,10 @@ public class DeviceCodeService /*implements CommonAsyncHttpClient_V1.ICommonAsyn
 
     //@Override
     public void accessTokenExpired1() {
-        iDeviceCodeService.accessTokenExpired1();
+        if(!refreshAccessToken)
+            refreshAccessToken();
+        else
+            iDeviceCodeService.accessTokenExpired1();
     }
 
     //@Override
@@ -102,5 +111,29 @@ public class DeviceCodeService /*implements CommonAsyncHttpClient_V1.ICommonAsyn
         void deviceCodeServiceError(String error);
         void accessTokenExpired1();
 
+    }
+
+    boolean refreshAccessToken = false;
+    private void refreshAccessToken() {
+        CompanyTokenService companyTokenService = new CompanyTokenService(context);
+        companyTokenService.setCompanyTokenServiceListener(new CompanyTokenService.ICompanyTokenService() {
+            @Override
+            public void companyTokenServiceResponse(JSONObject responseBody) {
+                try {
+                    ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    getDeviceCode(ApplicationConstants.xAccessToken, api);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iDeviceCodeService.accessTokenExpired1();
+                }
+            }
+
+            @Override
+            public void companyTokenServiceError(String responseBody) {
+                iDeviceCodeService.accessTokenExpired1();
+            }
+        });
+        refreshAccessToken = true;
+        companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
     }
 }

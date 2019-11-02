@@ -87,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "companyTokenServiceError: Inside Error==>"+responseBody);
             }
         });
+        ApplicationConstants.COMPANY_KEY = "a12878949f4ea52703ab6a07c662b31895886cea";
         companyTokenService.requestForToken("a12878949f4ea52703ab6a07c662b31895886cea", ApplicationConstantURL.getInstance().TOKEN_URL);
     }
 
@@ -128,7 +129,9 @@ public class MainActivity extends AppCompatActivity {
             public void clientTokenExpired1() {
             }
         });
-        getAllCategoriesServiceForHomepageV1.getAllCategoriesServiceForHomePage(ApplicationConstants.xAccessToken, ApplicationConstantURL.getInstance().HOMEPAGE_API_ANDROID);
+        String expiredToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiI1Y2E2M2M3Zjk4ZjgxNTE0M2MwNTIwNDIiLCJleHBpcmVzIjoxNTYxOTEwODI2NzAxLCJjb250ZXh0Ijp7Im5hbWUiOiJpcGJvdHQiLCJzdWJkb21haW4iOiJpcGJvdHQiLCJyZWFkX29ubHkiOmZhbHNlfX0.8SmSqhKbTX-23Mr39z0-CgattkjBYw_nE2guOnEqRw0";
+        //getAllCategoriesServiceForHomepageV1.getAllCategoriesServiceForHomePage(ApplicationConstants.xAccessToken, ApplicationConstantURL.getInstance().HOMEPAGE_API_ANDROID);
+        getAllCategoriesServiceForHomepageV1.getAllCategoriesServiceForHomePage(expiredToken, ApplicationConstantURL.getInstance().HOMEPAGE_API_ANDROID);
 
     }
 
@@ -157,7 +160,9 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        getAllCategoriesService_V1.getAllCategoriesService(ApplicationConstants.xAccessToken, ApplicationConstantURL.getInstance().CATEGORIES_LIST);
+        String expiredToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiI1Y2E2M2M3Zjk4ZjgxNTE0M2MwNTIwNDIiLCJleHBpcmVzIjoxNTYxOTEwODI2NzAxLCJjb250ZXh0Ijp7Im5hbWUiOiJpcGJvdHQiLCJzdWJkb21haW4iOiJpcGJvdHQiLCJyZWFkX29ubHkiOmZhbHNlfX0.8SmSqhKbTX-23Mr39z0-CgattkjBYw_nE2guOnEqRw0";
+        //getAllCategoriesService_V1.getAllCategoriesService(ApplicationConstants.xAccessToken, ApplicationConstantURL.getInstance().CATEGORIES_LIST);
+        getAllCategoriesService_V1.getAllCategoriesService(expiredToken, ApplicationConstantURL.getInstance().CATEGORIES_LIST);
     }
     public void callServiceThree() {
         GetAllSubscriptionsService_V1 getAllSubscriptionServiceV1 = new GetAllSubscriptionsService_V1(this);
@@ -183,6 +188,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        getAllSubscriptionServiceV1.getAllSubscriptionsService(ApplicationConstants.xAccessToken, ApplicationConstantURL.getInstance().SUBSCRIPTION_LIST);
+        String expiredToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiI1Y2E2M2M3Zjk4ZjgxNTE0M2MwNTIwNDIiLCJleHBpcmVzIjoxNTYxOTEwODI2NzAxLCJjb250ZXh0Ijp7Im5hbWUiOiJpcGJvdHQiLCJzdWJkb21haW4iOiJpcGJvdHQiLCJyZWFkX29ubHkiOmZhbHNlfX0.8SmSqhKbTX-23Mr39z0-CgattkjBYw_nE2guOnEqRw0";
+        //getAllSubscriptionServiceV1.getAllSubscriptionsService(ApplicationConstants.xAccessToken, ApplicationConstantURL.getInstance().SUBSCRIPTION_LIST);
+        getAllSubscriptionServiceV1.getAllSubscriptionsService(expiredToken, ApplicationConstantURL.getInstance().SUBSCRIPTION_LIST);
     }
 }

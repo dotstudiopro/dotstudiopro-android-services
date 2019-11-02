@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 
 import org.json.JSONException;
@@ -109,7 +110,15 @@ public class ChannelDetailsService /*implements CommonAsyncHttpClient_V1.ICommon
             iChannelDetailsService.channelDetailsServiceError(e.getMessage());
         }
     }
+    private String xAccessToken;
+    private String api;
+    private String categorySlug;
+    private String channelSlug;
     public void getChannelDetails(String xAccessToken, String URL, String categorySlug, String channelSlug) {
+        this.xAccessToken = xAccessToken;
+        this.api = URL;
+        this.categorySlug = categorySlug;
+        this.channelSlug = channelSlug;
         if (iChannelDetailsService == null) {
             if (context != null && context instanceof ChannelDetailsService.IChannelDetailsService) {
                 iChannelDetailsService = (ChannelDetailsService.IChannelDetailsService) context;
@@ -124,6 +133,28 @@ public class ChannelDetailsService /*implements CommonAsyncHttpClient_V1.ICommon
 
         ArrayList<ParameterItem> paramsItemsArrayList = new ArrayList<>();
         paramsItemsArrayList.add(new ParameterItem("token", ApplicationConstants.xAccessToken));
+
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
 
         getCommonAsyncHttpClientV1().getAsyncHttpsClient(headerItemsArrayList, paramsItemsArrayList,
                 URL + categorySlug + "/" + channelSlug, AccessTokenHandler.getInstance().fetchTokenCalledInChannelsPageString);
@@ -141,7 +172,10 @@ public class ChannelDetailsService /*implements CommonAsyncHttpClient_V1.ICommon
 
     //@Override
     public void accessTokenExpired1() {
-        iChannelDetailsService.accessTokenExpired1();
+        if(!refreshAccessToken)
+            refreshAccessToken();
+        else
+            iChannelDetailsService.accessTokenExpired1();
     }
 
     //@Override
@@ -154,5 +188,29 @@ public class ChannelDetailsService /*implements CommonAsyncHttpClient_V1.ICommon
         void channelDetailsServiceError(String error);
         void accessTokenExpired1();
         void clientTokenExpired1();
+    }
+
+    boolean refreshAccessToken = false;
+    private void refreshAccessToken() {
+        CompanyTokenService companyTokenService = new CompanyTokenService(context);
+        companyTokenService.setCompanyTokenServiceListener(new CompanyTokenService.ICompanyTokenService() {
+            @Override
+            public void companyTokenServiceResponse(JSONObject responseBody) {
+                try {
+                    ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    getChannelDetails(ApplicationConstants.xAccessToken, api, categorySlug, channelSlug);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    iChannelDetailsService.accessTokenExpired1();
+                }
+            }
+
+            @Override
+            public void companyTokenServiceError(String responseBody) {
+                iChannelDetailsService.accessTokenExpired1();
+            }
+        });
+        refreshAccessToken = true;
+        companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
     }
 }
