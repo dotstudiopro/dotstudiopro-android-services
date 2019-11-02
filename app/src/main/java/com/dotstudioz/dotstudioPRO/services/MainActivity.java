@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                Log.d(TAG, "companyTokenServiceError: Inside Error");
+                Log.d(TAG, "companyTokenServiceError: Inside Error==>"+responseBody);
             }
         });
         companyTokenService.requestForToken("a12878949f4ea52703ab6a07c662b31895886cea", ApplicationConstantURL.getInstance().TOKEN_URL);

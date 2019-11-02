@@ -71,6 +71,9 @@ public class CommonAsyncHttpClient_V1 {
      *                               set the failed call API in some variable
      */
     public void getAsyncHttpsClient(ArrayList<ParameterItem> headersArrayList, ArrayList<ParameterItem> requestParamsArrayList, String API_URL, final String API_CALLED_FOR) {
+        if(iCommonAsyncHttpClient_V1 == null) {
+            throw new RuntimeException("Callback missing, must call setCommonAsyncHttpClient_V1Listener");
+        }
         //JsonObject jsonObject = new JsonObject();
 
         //Check for the length of the requestParamsArrayList, if it has any data in it,
@@ -269,6 +272,9 @@ public class CommonAsyncHttpClient_V1 {
      *                               set the failed call API in some variable
      */
     public void postAsyncHttpsClient(ArrayList<ParameterItem> headersArrayList, ArrayList<ParameterItem> requestParamsArrayList, String API_URL, final String API_CALLED_FOR) {
+        if(iCommonAsyncHttpClient_V1 == null) {
+            throw new RuntimeException("Callback missing, must call setCommonAsyncHttpClient_V1Listener");
+        }
 
         //Asynchronous Http client for making the POST request
         //Using com.loopj.android.http library, which internally uses the DefaultHttpClient
@@ -430,7 +436,9 @@ public class CommonAsyncHttpClient_V1 {
      *                               set the failed call API in some variable
      */
     public void postAsyncHttpsClientArray(ArrayList<ParameterItem> headersArrayList, ArrayList<ParameterItemJSONArray> requestParamsArrayList, String API_URL, final String API_CALLED_FOR) {
-
+        if(iCommonAsyncHttpClient_V1 == null) {
+            throw new RuntimeException("Callback missing, must call setCommonAsyncHttpClient_V1Listener");
+        }
         //Asynchronous Http client for making the POST request
         //Using com.loopj.android.http library, which internally uses the DefaultHttpClient
         JsonObject jsonObject = new JsonObject();
@@ -482,6 +490,9 @@ public class CommonAsyncHttpClient_V1 {
      *                               set the failed call API in some variable
      */
     public void deleteAsyncHttpsClient(ArrayList<ParameterItem> headersArrayList, ArrayList<ParameterItem> requestParamsArrayList, String API_URL, final String API_CALLED_FOR) {
+        if(iCommonAsyncHttpClient_V1 == null) {
+            throw new RuntimeException("Callback missing, must call setCommonAsyncHttpClient_V1Listener");
+        }
 
         //Asynchronous Http client for making the POST request
         //Using com.loopj.android.http library, which internally uses the DefaultHttpClient
