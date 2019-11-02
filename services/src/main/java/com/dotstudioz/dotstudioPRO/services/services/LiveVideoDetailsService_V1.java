@@ -22,14 +22,14 @@ import java.util.Iterator;
 /**
  * Created by Admin on 17-01-2016.
  */
-public class LiveVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
+public class LiveVideoDetailsService_V1 /*implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1*/ {
 
     public ILiveVideoDetailsService_V1 iLiveVideoDetailsService_V1;
     public interface ILiveVideoDetailsService_V1 {
         void fetchLiveVideoInfoDTODataServiceResponse(ArrayList<VideoInfoDTO> videoInfoDTOArrayList);
         void fetchLiveVideoInfoDTODataServiceError(String ERROR);
-        void accessTokenExpired();
-        void clientTokenExpired();
+        void accessTokenExpired1();
+        void clientTokenExpired1();
     }
 
     ArrayList<VideoInfoDTO> videoInfoDTOArrayList = null;
@@ -67,8 +67,37 @@ public class LiveVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.ICom
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", ApplicationConstants.xAccessToken));
 
-        CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, null,
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
+        getCommonAsyncHttpClientV1().getAsyncHttpsClient(headerItemsArrayList, null,
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInSingleVideoPageString);
+    }
+
+    private CommonAsyncHttpClient_V1 commonAsyncHttpClientV1;
+    private CommonAsyncHttpClient_V1 getCommonAsyncHttpClientV1() {
+        if(commonAsyncHttpClientV1 == null) {
+            commonAsyncHttpClientV1 = new CommonAsyncHttpClient_V1();
+        }
+        return commonAsyncHttpClientV1;
     }
 
     boolean someVideoDataMissing = false;
@@ -805,20 +834,20 @@ public class LiveVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.ICom
         }
     }
 
-    @Override
-    public void onResultHandler(JSONObject response) {
+    //@Override
+    public void onResultHandler1(JSONObject response) {
         processJSONResponseObject(response);
     }
-    @Override
-    public void onErrorHandler(String ERROR) {
+    //@Override
+    public void onErrorHandler1(String ERROR) {
         iLiveVideoDetailsService_V1.fetchLiveVideoInfoDTODataServiceError(ERROR);
     }
-    @Override
-    public void accessTokenExpired() {
-        iLiveVideoDetailsService_V1.accessTokenExpired();
+    //@Override
+    public void accessTokenExpired1() {
+        iLiveVideoDetailsService_V1.accessTokenExpired1();
     }
-    @Override
-    public void clientTokenExpired() {
-        iLiveVideoDetailsService_V1.clientTokenExpired();
+    //@Override
+    public void clientTokenExpired1() {
+        iLiveVideoDetailsService_V1.clientTokenExpired1();
     }
 }

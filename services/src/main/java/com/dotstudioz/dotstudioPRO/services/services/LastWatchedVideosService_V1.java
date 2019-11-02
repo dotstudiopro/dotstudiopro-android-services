@@ -18,14 +18,14 @@ import java.util.ArrayList;
 /**
  * Created by mohsin on 10-05-2016.
  */
-public class LastWatchedVideosService_V1 implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
+public class LastWatchedVideosService_V1 /*implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1*/ {
 
     public LastWatchedVideosService_V1.ILastWatchedVideosService_V1 iLastWatchedVideosService_V1;
     public interface ILastWatchedVideosService_V1 {
         void callBackFromLastWatchedVideosService(LastWatchedVideosPairDTO lastWatchedVideosPairDTO);
         void getVideoPausedPointServiceError(String ERROR);
-        void accessTokenExpired();
-        void clientTokenExpired();
+        void accessTokenExpired1();
+        void clientTokenExpired1();
     }
 
     public int noOfResults = 0;
@@ -71,15 +71,44 @@ public class LastWatchedVideosService_V1 implements CommonAsyncHttpClient_V1.ICo
         String calledIn = "";
         calledIn = AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString;
 
-        CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
+        getCommonAsyncHttpClientV1().getAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
                 API_URL, calledIn);
 
-       /* CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpClient(headerItemsArrayList, requestParamsArrayList,
+       /* getCommonAsyncHttpClientV1().getAsyncHttpClient(headerItemsArrayList, requestParamsArrayList,
                 API_URL, calledIn);*/
     }
 
-    @Override
-    public void onResultHandler(JSONObject responseBody) {
+    private CommonAsyncHttpClient_V1 commonAsyncHttpClientV1;
+    private CommonAsyncHttpClient_V1 getCommonAsyncHttpClientV1() {
+        if(commonAsyncHttpClientV1 == null) {
+            commonAsyncHttpClientV1 = new CommonAsyncHttpClient_V1();
+        }
+        return commonAsyncHttpClientV1;
+    }
+
+    //@Override
+    public void onResultHandler1(JSONObject responseBody) {
         Log.d("LastWatVidSer", "responseBody==>"+responseBody);
         LastWatchedVideosPairDTO lastWatchedVideosPairDTO = new LastWatchedVideosPairDTO();
         try {
@@ -204,16 +233,16 @@ public class LastWatchedVideosService_V1 implements CommonAsyncHttpClient_V1.ICo
 
         iLastWatchedVideosService_V1.callBackFromLastWatchedVideosService(lastWatchedVideosPairDTO);
     }
-    @Override
-    public void onErrorHandler(String ERROR) {
+    //@Override
+    public void onErrorHandler1(String ERROR) {
         iLastWatchedVideosService_V1.getVideoPausedPointServiceError(ERROR);
     }
-    @Override
-    public void accessTokenExpired() {
-        iLastWatchedVideosService_V1.accessTokenExpired();
+    //@Override
+    public void accessTokenExpired1() {
+        iLastWatchedVideosService_V1.accessTokenExpired1();
     }
-    @Override
-    public void clientTokenExpired() {
-        iLastWatchedVideosService_V1.clientTokenExpired();
+    //@Override
+    public void clientTokenExpired1() {
+        iLastWatchedVideosService_V1.clientTokenExpired1();
     }
 }

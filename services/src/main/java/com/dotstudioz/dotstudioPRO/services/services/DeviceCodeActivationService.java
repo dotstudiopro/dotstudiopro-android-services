@@ -14,7 +14,7 @@ import java.util.ArrayList;
  *
  */
 //TODO: This can be removed after the device activation feature implemented by portal.
-public class DeviceCodeActivationService implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
+public class DeviceCodeActivationService /*implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1*/ {
 
     public IDeviceCodeActivationService iDeviceCodeActivationService;
 
@@ -50,33 +50,63 @@ public class DeviceCodeActivationService implements CommonAsyncHttpClient_V1.ICo
         requestParamsArrayList.add(new ParameterItem("customer_id", customerId));
         requestParamsArrayList.add(new ParameterItem("code", code));
 
-        CommonAsyncHttpClient_V1.getInstance(this).postAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
+
+        getCommonAsyncHttpClientV1().postAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
                 TOKEN_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
     }
 
-    @Override
-    public void onResultHandler(JSONObject response) {
+    private CommonAsyncHttpClient_V1 commonAsyncHttpClientV1;
+    private CommonAsyncHttpClient_V1 getCommonAsyncHttpClientV1() {
+        if(commonAsyncHttpClientV1 == null) {
+            commonAsyncHttpClientV1 = new CommonAsyncHttpClient_V1();
+        }
+        return commonAsyncHttpClientV1;
+    }
+
+    //@Override
+    public void onResultHandler1(JSONObject response) {
         iDeviceCodeActivationService.deviceCodeActivationServiceResponse(response);
     }
 
-    @Override
-    public void onErrorHandler(String ERROR) {
+    //@Override
+    public void onErrorHandler1(String ERROR) {
         iDeviceCodeActivationService.deviceCodeActivationServiceError(ERROR);
     }
 
-    @Override
-    public void accessTokenExpired() {
-        iDeviceCodeActivationService.accessTokenExpired();
+    //@Override
+    public void accessTokenExpired1() {
+        iDeviceCodeActivationService.accessTokenExpired1();
     }
 
-    @Override
-    public void clientTokenExpired() {
+    //@Override
+    public void clientTokenExpired1() {
 
     }
 
     public interface IDeviceCodeActivationService {
         void deviceCodeActivationServiceResponse(JSONObject responseBody);
         void deviceCodeActivationServiceError(String responseBody);
-        void accessTokenExpired();
+        void accessTokenExpired1();
     }
 }

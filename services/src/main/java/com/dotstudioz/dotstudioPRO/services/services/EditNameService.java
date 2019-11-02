@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * Created by mohsin on 10-10-2016.
  */
 
-public class EditNameService implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
+public class EditNameService /*implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1*/ {
 
     public EditNameService.IEditNameService iEditNameService;
 
@@ -50,12 +50,42 @@ public class EditNameService implements CommonAsyncHttpClient_V1.ICommonAsyncHtt
         requestParamsArrayList.add(new ParameterItem("first_name", fName));
         requestParamsArrayList.add(new ParameterItem("last_name", lName));
 
-        CommonAsyncHttpClient_V1.getInstance(this).postAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
+
+        getCommonAsyncHttpClientV1().postAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
                 USER_DETAILS_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
     }
 
-    @Override
-    public void onResultHandler(JSONObject response) {
+    private CommonAsyncHttpClient_V1 commonAsyncHttpClientV1;
+    private CommonAsyncHttpClient_V1 getCommonAsyncHttpClientV1() {
+        if(commonAsyncHttpClientV1 == null) {
+            commonAsyncHttpClientV1 = new CommonAsyncHttpClient_V1();
+        }
+        return commonAsyncHttpClientV1;
+    }
+
+    //@Override
+    public void onResultHandler1(JSONObject response) {
         try {
             try {
                 if (response.getBoolean("success")) {
@@ -72,26 +102,26 @@ public class EditNameService implements CommonAsyncHttpClient_V1.ICommonAsyncHtt
         }
     }
 
-    @Override
-    public void onErrorHandler(String ERROR) {
+    //@Override
+    public void onErrorHandler1(String ERROR) {
         iEditNameService.editNameServiceError(ERROR);
     }
 
-    @Override
-    public void accessTokenExpired() {
-        iEditNameService.accessTokenExpired();
+    //@Override
+    public void accessTokenExpired1() {
+        iEditNameService.accessTokenExpired1();
     }
 
-    @Override
-    public void clientTokenExpired() {
-        iEditNameService.clientTokenExpired();
+    //@Override
+    public void clientTokenExpired1() {
+        iEditNameService.clientTokenExpired1();
     }
 
 
     public interface IEditNameService {
         void editNameServiceResponse(JSONObject jsonObject);
         void editNameServiceError(String ERROR);
-        void accessTokenExpired();
-        void clientTokenExpired();
+        void accessTokenExpired1();
+        void clientTokenExpired1();
     }
 }

@@ -15,7 +15,7 @@ import java.util.ArrayList;
  * Created by mohsin on 08-10-2016.
  */
 
-public class SubscriptionsService_V1 implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
+public class SubscriptionsService_V1 /*implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1*/ {
 
     public boolean isBraintreeServiceCall = false;
     public boolean isChargifyServiceCall = false;
@@ -30,8 +30,8 @@ public class SubscriptionsService_V1 implements CommonAsyncHttpClient_V1.ICommon
                 JSONObject response
         );
         void createChargifyCustomerUsingSubscriptionIDError(String ERROR);
-        void accessTokenExpired();
-        void clientTokenExpired();
+        void accessTokenExpired1();
+        void clientTokenExpired1();
     }
 
     Context context;
@@ -70,10 +70,39 @@ public class SubscriptionsService_V1 implements CommonAsyncHttpClient_V1.ICommon
         ArrayList<ParameterItem> requestParamsArrayList = new ArrayList<>();
         requestParamsArrayList.add(new ParameterItem("nonce", nonceString));
 
-        CommonAsyncHttpClient_V1.getInstance(this).postAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
+        getCommonAsyncHttpClientV1().postAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
-        /*CommonAsyncHttpClient_V1.getInstance(this).postAsyncHttpClient(headerItemsArrayList, requestParamsArrayList,
+        /*getCommonAsyncHttpClientV1().postAsyncHttpClient(headerItemsArrayList, requestParamsArrayList,
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);*/
+    }
+
+    private CommonAsyncHttpClient_V1 commonAsyncHttpClientV1;
+    private CommonAsyncHttpClient_V1 getCommonAsyncHttpClientV1() {
+        if(commonAsyncHttpClientV1 == null) {
+            commonAsyncHttpClientV1 = new CommonAsyncHttpClient_V1();
+        }
+        return commonAsyncHttpClientV1;
     }
 
     public void createChargifyCustomerUsingSubscriptionID(String xAccessToken, String xClientToken, String subscriptionID, String API_URL) {
@@ -89,12 +118,12 @@ public class SubscriptionsService_V1 implements CommonAsyncHttpClient_V1.ICommon
         ArrayList<ParameterItem> requestParamsArrayList = new ArrayList<>();
         requestParamsArrayList.add(new ParameterItem("subscription_id", subscriptionID));
 
-        CommonAsyncHttpClient_V1.getInstance(this).postAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
+        getCommonAsyncHttpClientV1().postAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
     }
 
-    @Override
-    public void onResultHandler(JSONObject response) {
+    //@Override
+    public void onResultHandler1(JSONObject response) {
         if(isBraintreeServiceCall) {
             try {
 
@@ -121,8 +150,8 @@ public class SubscriptionsService_V1 implements CommonAsyncHttpClient_V1.ICommon
             }
         }
     }
-    @Override
-    public void onErrorHandler(String ERROR) {
+    //@Override
+    public void onErrorHandler1(String ERROR) {
         try {
             if (isBraintreeServiceCall)
                 iSubscriptionsService.createBrainTreeCustomerUsingNonceError(ERROR);
@@ -132,12 +161,12 @@ public class SubscriptionsService_V1 implements CommonAsyncHttpClient_V1.ICommon
             e.printStackTrace();
         }
     }
-    @Override
-    public void accessTokenExpired() {
-        iSubscriptionsService.accessTokenExpired();
+    //@Override
+    public void accessTokenExpired1() {
+        iSubscriptionsService.accessTokenExpired1();
     }
-    @Override
-    public void clientTokenExpired() {
-        iSubscriptionsService.clientTokenExpired();
+    //@Override
+    public void clientTokenExpired1() {
+        iSubscriptionsService.clientTokenExpired1();
     }
 }

@@ -29,17 +29,23 @@ import retrofit2.Response;
 
 public class CommonAsyncHttpClient_V1 {
 
-    public static ICommonAsyncHttpClient_V1 iCommonAsyncHttpClient_V1;
+    public ICommonAsyncHttpClient_V1 iCommonAsyncHttpClient_V1;
 
-    private static CommonAsyncHttpClient_V1 ourInstance = new CommonAsyncHttpClient_V1();
+    //private static CommonAsyncHttpClient_V1 ourInstance = new CommonAsyncHttpClient_V1();
 
     public static CommonAsyncHttpClient_V1 getInstance(Object obj) {
-        if (obj instanceof CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1)
+        /*if (obj instanceof CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1)
             iCommonAsyncHttpClient_V1 = (CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1) obj;
         else
-            throw new RuntimeException(obj.toString()+ " must implement ICommonAsyncHttpClient_V1");
+            throw new RuntimeException(obj.toString()+ " must implement ICommonAsyncHttpClient_V1");*/
 
-        return ourInstance;
+        return new CommonAsyncHttpClient_V1();
+        //return ourInstance;
+    }
+
+    // Assign the listener implementing events interface that will receive the events
+    public void setCommonAsyncHttpClient_V1Listener(ICommonAsyncHttpClient_V1 callback) {
+        this.iCommonAsyncHttpClient_V1 = callback;
     }
 
     public CommonAsyncHttpClient_V1() {
@@ -52,6 +58,8 @@ public class CommonAsyncHttpClient_V1 {
         void accessTokenExpired();
         void clientTokenExpired();
     }
+
+
 
     /**
      * All GET requests will be made using this method

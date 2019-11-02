@@ -17,7 +17,7 @@ import java.util.ArrayList;
  * Created by mohsin on 08-10-2016.
  */
 
-public class ChannelsMyListService_V1 implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
+public class ChannelsMyListService_V1 /*implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1*/ {
 
     public IChannelsMyListService iChannelsMyListService;
     public interface IChannelsMyListService {
@@ -25,8 +25,8 @@ public class ChannelsMyListService_V1 implements CommonAsyncHttpClient_V1.ICommo
         void deleteChannelFromMyListResponse(JSONObject response);
         void getMyListResponse(ArrayList<ChannelsMyListDTOForMyList> channelsMyListDTOForMyListArrayList, ArrayList<ChannelMyListDTO> channelMyListDTOArrayList);
         void myListError(String ERROR);
-        void accessTokenExpired();
-        void clientTokenExpired();
+        void accessTokenExpired1();
+        void clientTokenExpired1();
     }
 
     public boolean addingFlag = false;
@@ -83,8 +83,38 @@ public class ChannelsMyListService_V1 implements CommonAsyncHttpClient_V1.ICommo
 
         setFlagFor(ADDING_SERVICE_FLAG);
 
-        CommonAsyncHttpClient_V1.getInstance(this).postAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
+
+        getCommonAsyncHttpClientV1().postAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
+    }
+
+    private CommonAsyncHttpClient_V1 commonAsyncHttpClientV1;
+    private CommonAsyncHttpClient_V1 getCommonAsyncHttpClientV1() {
+        if(commonAsyncHttpClientV1 == null) {
+            commonAsyncHttpClientV1 = new CommonAsyncHttpClient_V1();
+        }
+        return commonAsyncHttpClientV1;
     }
 
     public void addChannelToMyList(String channelID, String parentChannelID, String xAccessToken, String xClientToken, String API_URL) {
@@ -107,7 +137,7 @@ public class ChannelsMyListService_V1 implements CommonAsyncHttpClient_V1.ICommo
 
         setFlagFor(ADDING_SERVICE_FLAG);
 
-        CommonAsyncHttpClient_V1.getInstance(this).postAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
+        getCommonAsyncHttpClientV1().postAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
     }
 
@@ -129,7 +159,7 @@ public class ChannelsMyListService_V1 implements CommonAsyncHttpClient_V1.ICommo
         requestParamsArrayList.add(new ParameterItem("channel_id", channelID));
 
         setFlagFor(DELETING_SERVICE_FLAG);
-        CommonAsyncHttpClient_V1.getInstance(this).deleteAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
+        getCommonAsyncHttpClientV1().deleteAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
     }
 
@@ -153,13 +183,13 @@ public class ChannelsMyListService_V1 implements CommonAsyncHttpClient_V1.ICommo
         Log.d("ChannelsMyListService", "getChannelFromMyList==>"+xClientToken);
         Log.d("ChannelsMyListService", "getChannelFromMyList==>"+API_URL);
 
-        CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, null,
+        getCommonAsyncHttpClientV1().getAsyncHttpsClient(headerItemsArrayList, null,
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
     }
-    @Override
-    public void onResultHandler(JSONObject response) {
+    //@Override
+    public void onResultHandler1(JSONObject response) {
         try {
-            Log.d("ChannelsMyListService", "onResultHandler==>"+response);
+            Log.d("ChannelsMyListService", "onResultHandler1==>"+response);
             if(addingFlag) {
                 iChannelsMyListService.addChannelToMyListResponse(response);
             } else if(deletingFlag) {
@@ -529,17 +559,17 @@ public class ChannelsMyListService_V1 implements CommonAsyncHttpClient_V1.ICommo
             e.printStackTrace();
         }
     }
-    @Override
-    public void onErrorHandler(String ERROR) {
+    //@Override
+    public void onErrorHandler1(String ERROR) {
         iChannelsMyListService.myListError(ERROR);
     }
-    @Override
-    public void accessTokenExpired() {
-        iChannelsMyListService.accessTokenExpired();
+    //@Override
+    public void accessTokenExpired1() {
+        iChannelsMyListService.accessTokenExpired1();
     }
-    @Override
-    public void clientTokenExpired() {
-        iChannelsMyListService.clientTokenExpired();
+    //@Override
+    public void clientTokenExpired1() {
+        iChannelsMyListService.clientTokenExpired1();
     }
 
     private void resultProcessingForCategories(JSONArray response) {

@@ -19,7 +19,7 @@ import java.util.ArrayList;
  * Created by mohsin on 08-10-2016.
  */
 
-public class SearchService_V1 implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
+public class SearchService_V1 /*implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1*/ {
 
     public ISearchService iSearchService;
 
@@ -66,28 +66,57 @@ public class SearchService_V1 implements CommonAsyncHttpClient_V1.ICommonAsyncHt
         }
         requestParamsArrayList.add(new ParameterItem("q", searchQueryStringEncoded));
 
-        CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
+        getCommonAsyncHttpClientV1().getAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
                 SEARCH_API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInSearchPageString);
     }
 
+    private CommonAsyncHttpClient_V1 commonAsyncHttpClientV1;
+    private CommonAsyncHttpClient_V1 getCommonAsyncHttpClientV1() {
+        if(commonAsyncHttpClientV1 == null) {
+            commonAsyncHttpClientV1 = new CommonAsyncHttpClient_V1();
+        }
+        return commonAsyncHttpClientV1;
+    }
 
 
 
-    @Override
-    public void onResultHandler(JSONObject response) {
+
+    //@Override
+    public void onResultHandler1(JSONObject response) {
         resultProcessingForVideoSearch(response);
     }
-    @Override
-    public void onErrorHandler(String ERROR) {
+    //@Override
+    public void onErrorHandler1(String ERROR) {
         iSearchService.searchError(ERROR);
     }
-    @Override
-    public void accessTokenExpired() {
-        iSearchService.accessTokenExpired();
+    //@Override
+    public void accessTokenExpired1() {
+        iSearchService.accessTokenExpired1();
     }
-    @Override
-    public void clientTokenExpired() {
-        iSearchService.clientTokenExpired();
+    //@Override
+    public void clientTokenExpired1() {
+        iSearchService.clientTokenExpired1();
     }
 
 
@@ -195,7 +224,7 @@ public class SearchService_V1 implements CommonAsyncHttpClient_V1.ICommonAsyncHt
         void showProgress(String message);
         void searchServiceResponse(ArrayList<SearchResultDTO> searchResultDTOArrayList);
         void searchError(String ERROR);
-        void accessTokenExpired();
-        void clientTokenExpired();
+        void accessTokenExpired1();
+        void clientTokenExpired1();
     }
 }

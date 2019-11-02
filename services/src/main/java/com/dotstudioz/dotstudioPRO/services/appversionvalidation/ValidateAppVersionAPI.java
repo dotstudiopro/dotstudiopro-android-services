@@ -33,13 +33,13 @@ import retrofit2.Response;
  * Created by mohsin on 24-11-2017.
  */
 
-public class ValidateAppVersionAPI implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
+public class ValidateAppVersionAPI /*implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1*/ {
 
     public IValidateAppVersionAPI iValidateAppVersionAPI;
     public interface IValidateAppVersionAPI {
         void getAppVersionResponse(boolean flag, ValidateAppVersionDTO validateAppVersionDTO);
         void getAppVersionError(String ERROR);
-        void accessTokenExpired();
+        void accessTokenExpired1();
     }
 
     public ValidateAppVersionAPI(Context ctx){
@@ -81,15 +81,44 @@ public class ValidateAppVersionAPI implements CommonAsyncHttpClient_V1.ICommonAs
         }
 
         try {
-            CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(null, null,
+            getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+                @Override
+                public void onResultHandler(JSONObject response) {
+                    onResultHandler1(response);
+                }
+
+                @Override
+                public void onErrorHandler(String ERROR) {
+                    onErrorHandler1(ERROR);
+                }
+
+                @Override
+                public void accessTokenExpired() {
+                    accessTokenExpired1();
+                }
+
+                @Override
+                public void clientTokenExpired() {
+                    clientTokenExpired1();
+                }
+            });
+            getCommonAsyncHttpClientV1().getAsyncHttpsClient(null, null,
                     API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInSingleVideoPageString);
         } catch (Exception e) {
 
         }
     }
 
-    @Override
-    public void onResultHandler(JSONObject response) {
+    private CommonAsyncHttpClient_V1 commonAsyncHttpClientV1;
+    private CommonAsyncHttpClient_V1 getCommonAsyncHttpClientV1() {
+        if(commonAsyncHttpClientV1 == null) {
+            commonAsyncHttpClientV1 = new CommonAsyncHttpClient_V1();
+        }
+        return commonAsyncHttpClientV1;
+    }
+
+    //@Override
+    public void onResultHandler1(JSONObject response) {
         boolean flag = false;
         ValidateAppVersionDTO validateAppVersionDTO = new ValidateAppVersionDTO();
         try {
@@ -121,16 +150,16 @@ public class ValidateAppVersionAPI implements CommonAsyncHttpClient_V1.ICommonAs
 
         iValidateAppVersionAPI.getAppVersionResponse(flag, validateAppVersionDTO);
     }
-    @Override
-    public void onErrorHandler(String ERROR) {
+    //@Override
+    public void onErrorHandler1(String ERROR) {
         iValidateAppVersionAPI.getAppVersionError(ERROR);
     }
-    @Override
-    public void accessTokenExpired() {
-        iValidateAppVersionAPI.accessTokenExpired();
+    //@Override
+    public void accessTokenExpired1() {
+        iValidateAppVersionAPI.accessTokenExpired1();
     }
-    @Override
-    public void clientTokenExpired() {
+    //@Override
+    public void clientTokenExpired1() {
         //empty, as not needed
     }
 

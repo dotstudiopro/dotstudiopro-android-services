@@ -18,7 +18,7 @@ import java.util.ArrayList;
  * Created by mohsin on 08-10-2016.
  */
 
-public class GetAllCategoriesService_V1 implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
+public class GetAllCategoriesService_V1 /*implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1*/ {
 
     public String PLATFORM = "";
     public final static String PLATFORM_TYPE_ANDROID = "andriod";
@@ -35,8 +35,8 @@ public class GetAllCategoriesService_V1 implements CommonAsyncHttpClient_V1.ICom
                 ArrayList<SpotLightCategoriesDTO> spotLightCategoriesDTOListForGenre
         );
         void getAllCategoriesError(String ERROR);
-        void accessTokenExpired();
-        void clientTokenExpired();
+        void accessTokenExpired1();
+        void clientTokenExpired1();
     }
 
     public GetAllCategoriesService_V1(Context ctx) {
@@ -69,11 +69,42 @@ public class GetAllCategoriesService_V1 implements CommonAsyncHttpClient_V1.ICom
             throw new RuntimeException(context.toString()+ " must assign PLATFORM");
         }
 
-       CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, null,
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler11(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler11(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired11();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired11();
+            }
+        });
+
+       getCommonAsyncHttpClientV1().getAsyncHttpsClient(headerItemsArrayList, null,
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
     }
-    @Override
-    public void onResultHandler(JSONObject response) {
+
+    private CommonAsyncHttpClient_V1 commonAsyncHttpClientV1;
+    private CommonAsyncHttpClient_V1 getCommonAsyncHttpClientV1() {
+        if(commonAsyncHttpClientV1 == null) {
+            commonAsyncHttpClientV1 = new CommonAsyncHttpClient_V1();
+        }
+        return commonAsyncHttpClientV1;
+    }
+
+    //@Override
+    public void onResultHandler11(JSONObject response) {
         try {
             if (response.has("categories"))
                 resultProcessingForCategories(response.getJSONArray("categories"));
@@ -81,17 +112,17 @@ public class GetAllCategoriesService_V1 implements CommonAsyncHttpClient_V1.ICom
             e.printStackTrace();
         }
     }
-    @Override
-    public void onErrorHandler(String ERROR) {
+    //@Override
+    public void onErrorHandler11(String ERROR) {
         iGetAllCategoriesService_V1.getAllCategoriesError(ERROR);
     }
-    @Override
-    public void accessTokenExpired() {
-        iGetAllCategoriesService_V1.accessTokenExpired();
+    //@Override
+    public void accessTokenExpired11() {
+        iGetAllCategoriesService_V1.accessTokenExpired1();
     }
-    @Override
-    public void clientTokenExpired() {
-        iGetAllCategoriesService_V1.clientTokenExpired();
+    //@Override
+    public void clientTokenExpired11() {
+        iGetAllCategoriesService_V1.clientTokenExpired1();
     }
 
     private ArrayList<SpotLightCategoriesDTO> spotLightCategoriesDTOListALL = new ArrayList<SpotLightCategoriesDTO>();
@@ -176,7 +207,7 @@ public class GetAllCategoriesService_V1 implements CommonAsyncHttpClient_V1.ICom
                 }
                 try {
                     spotLightCategoriesDTO.setCategoryName(obj.getString("name"));
-                    Log.d("GetAllCategories", "spotLightCategoriesDTO.getCategoryName()==>" + spotLightCategoriesDTO.getCategoryName());
+                    //Log.d("GetAllCategories", "spotLightCategoriesDTO.getCategoryName()==>" + spotLightCategoriesDTO.getCategoryName());
                 } catch (JSONException e) {
                     spotLightCategoriesDTO.setCategoryName("");
                 }

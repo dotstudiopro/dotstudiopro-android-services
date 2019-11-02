@@ -23,7 +23,7 @@ import java.util.List;
  * Created by mohsin on 08-10-2016.
  */
 
-public class MyPurchasesService implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
+public class MyPurchasesService /*implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1*/ {
 
     public IMyPurchasesService iMyPurchasesService;
 
@@ -55,7 +55,28 @@ public class MyPurchasesService implements CommonAsyncHttpClient_V1.ICommonAsync
                 headerItemsArrayList.add(new ParameterItem("x-access-token", ApplicationConstants.xAccessToken));
                 headerItemsArrayList.add(new ParameterItem("x-client-token", ApplicationConstants.CLIENT_TOKEN));
 
-                CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, null,
+                getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+                    @Override
+                    public void onResultHandler(JSONObject response) {
+                        onResultHandler1(response);
+                    }
+
+                    @Override
+                    public void onErrorHandler(String ERROR) {
+                        onErrorHandler1(ERROR);
+                    }
+
+                    @Override
+                    public void accessTokenExpired() {
+                        accessTokenExpired1();
+                    }
+
+                    @Override
+                    public void clientTokenExpired() {
+                        clientTokenExpired1();
+                    }
+                });
+                getCommonAsyncHttpClientV1().getAsyncHttpsClient(headerItemsArrayList, null,
                         MY_PURCHASES_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
 
                 /*RestClientInterface restClientInterface = RestClientManager.getClient(MY_PURCHASES_URL, ApplicationConstants.xAccessToken, ApplicationConstants.CLIENT_TOKEN, null).create(RestClientInterface.class);
@@ -85,7 +106,7 @@ public class MyPurchasesService implements CommonAsyncHttpClient_V1.ICommonAsync
 
                                     try {
                                         if (responseBody.has("message")) {
-                                            iMyPurchasesService.accessTokenExpired();
+                                            iMyPurchasesService.accessTokenExpired1();
                                         }
                                     } catch (Exception e)
                                     {
@@ -121,6 +142,14 @@ public class MyPurchasesService implements CommonAsyncHttpClient_V1.ICommonAsync
         } catch (Exception e) {
             iMyPurchasesService.myPurchasesServiceError(e.getMessage());
         }
+    }
+
+    private CommonAsyncHttpClient_V1 commonAsyncHttpClientV1;
+    private CommonAsyncHttpClient_V1 getCommonAsyncHttpClientV1() {
+        if(commonAsyncHttpClientV1 == null) {
+            commonAsyncHttpClientV1 = new CommonAsyncHttpClient_V1();
+        }
+        return commonAsyncHttpClientV1;
     }
 
     public void myPurchasesServiceResponse(JSONArray responseBody, List<SpotLightCategoriesDTO> spotLightCategoriesDTOList) {
@@ -194,8 +223,8 @@ public class MyPurchasesService implements CommonAsyncHttpClient_V1.ICommonAsync
         }
     }
 
-    @Override
-    public void onResultHandler(JSONObject response) {
+    //@Override
+    public void onResultHandler1(JSONObject response) {
         try {
             JSONArray responseBody = response.getJSONArray("result");
             myPurchasesServiceResponse(responseBody, spotLightCategoriesDTOListGeneric);
@@ -204,26 +233,26 @@ public class MyPurchasesService implements CommonAsyncHttpClient_V1.ICommonAsync
         }
     }
 
-    @Override
-    public void onErrorHandler(String ERROR) {
+    //@Override
+    public void onErrorHandler1(String ERROR) {
         iMyPurchasesService.myPurchasesServiceError(ERROR);
     }
 
-    @Override
-    public void accessTokenExpired() {
-        iMyPurchasesService.accessTokenExpired();
+    //@Override
+    public void accessTokenExpired1() {
+        iMyPurchasesService.accessTokenExpired1();
     }
 
-    @Override
-    public void clientTokenExpired() {
-        iMyPurchasesService.clientTokenExpired();
+    //@Override
+    public void clientTokenExpired1() {
+        iMyPurchasesService.clientTokenExpired1();
     }
 
 
     public interface IMyPurchasesService {
         void myPurchasesServiceResponse(List<MyPurchaseItemDTO> myPurchaseItemDTOList);
         void myPurchasesServiceError(String ERROR);
-        void accessTokenExpired();
-        void clientTokenExpired();
+        void accessTokenExpired1();
+        void clientTokenExpired1();
     }
 }

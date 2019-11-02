@@ -17,7 +17,7 @@ import java.util.ArrayList;
  * Created by mohsin on 08-10-2016.
  */
 
-public class GetAllBlogsService_V1 implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
+public class GetAllBlogsService_V1 /*implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1*/ {
 
     public IGetAllBlogService_V1 iGetAllBlogService_V1;
     public interface IGetAllBlogService_V1 {
@@ -25,8 +25,8 @@ public class GetAllBlogsService_V1 implements CommonAsyncHttpClient_V1.ICommonAs
                 ArrayList<SpotLightBlogDTO> spotLightBlogDTOListALL
         );
         void getAllBlogError(String ERROR);
-        void accessTokenExpired();
-        void clientTokenExpired();
+        void accessTokenExpired1();
+        void clientTokenExpired1();
     }
 
     Context context;
@@ -58,11 +58,42 @@ public class GetAllBlogsService_V1 implements CommonAsyncHttpClient_V1.ICommonAs
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));
 
-        CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, null,
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
+
+        getCommonAsyncHttpClientV1().getAsyncHttpsClient(headerItemsArrayList, null,
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
     }
+
+    private CommonAsyncHttpClient_V1 commonAsyncHttpClientV1;
+    private CommonAsyncHttpClient_V1 getCommonAsyncHttpClientV1() {
+        if(commonAsyncHttpClientV1 == null) {
+            commonAsyncHttpClientV1 = new CommonAsyncHttpClient_V1();
+        }
+        return commonAsyncHttpClientV1;
+    }
+
     /*@Override
-    public void onResultHandler(JSONArray response) {
+    public void onResultHandler1(JSONArray response) {
         try {
             resultProcessingForBlog(response);
         } catch(Exception e) {
@@ -70,8 +101,8 @@ public class GetAllBlogsService_V1 implements CommonAsyncHttpClient_V1.ICommonAs
             resultProcessingForBlog(response);
         }
     }*/
-    @Override
-    public void onResultHandler(JSONObject response) {
+    //@Override
+    public void onResultHandler1(JSONObject response) {
         try {
             resultProcessingForBlog(response.getJSONArray("result"));
         } catch(Exception e) {
@@ -84,17 +115,17 @@ public class GetAllBlogsService_V1 implements CommonAsyncHttpClient_V1.ICommonAs
             }
         }
     }
-    @Override
-    public void onErrorHandler(String ERROR) {
+    //@Override
+    public void onErrorHandler1(String ERROR) {
         iGetAllBlogService_V1.getAllBlogError(ERROR);
     }
-    @Override
-    public void accessTokenExpired() {
-        iGetAllBlogService_V1.accessTokenExpired();
+    //@Override
+    public void accessTokenExpired1() {
+        iGetAllBlogService_V1.accessTokenExpired1();
     }
-    @Override
-    public void clientTokenExpired() {
-        iGetAllBlogService_V1.clientTokenExpired();
+    //@Override
+    public void clientTokenExpired1() {
+        iGetAllBlogService_V1.clientTokenExpired1();
     }
 
     private ArrayList<SpotLightBlogDTO> spotLightBlogDTOListALL = new ArrayList<SpotLightBlogDTO>();

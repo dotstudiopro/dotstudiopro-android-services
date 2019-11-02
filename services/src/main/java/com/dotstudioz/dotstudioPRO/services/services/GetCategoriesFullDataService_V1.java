@@ -20,7 +20,7 @@ import java.util.List;
  * Created by mohsin on 08-10-2016.
  */
 
-public class GetCategoriesFullDataService_V1 implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
+public class GetCategoriesFullDataService_V1 /*implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1*/ {
 
     public IGetCategoriesFullDataService_V1 iGetCategoriesFullDataService_V1;
     public interface IGetCategoriesFullDataService_V1 {
@@ -28,8 +28,8 @@ public class GetCategoriesFullDataService_V1 implements CommonAsyncHttpClient_V1
                 SpotLightCategoriesDTO spotLightCategoriesDTO
         );
         void getCategoriesFullDataServiceError(String ERROR);
-        void accessTokenExpired();
-        void clientTokenExpired();
+        void accessTokenExpired1();
+        void clientTokenExpired1();
     }
 
     Context context;
@@ -68,24 +68,54 @@ public class GetCategoriesFullDataService_V1 implements CommonAsyncHttpClient_V1
         //requestParamsArrayList.add(new ParameterItem("detail", "lean"));
         //requestParamsArrayList.add(new ParameterItem("categories", categoriesSlug));
 
-        CommonAsyncHttpClient_V1.getInstance(this).postAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
+        getCommonAsyncHttpClientV1().postAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
     }
-    @Override
-    public void onResultHandler(JSONObject response) {
+
+    private CommonAsyncHttpClient_V1 commonAsyncHttpClientV1;
+    private CommonAsyncHttpClient_V1 getCommonAsyncHttpClientV1() {
+        if(commonAsyncHttpClientV1 == null) {
+            commonAsyncHttpClientV1 = new CommonAsyncHttpClient_V1();
+        }
+        return commonAsyncHttpClientV1;
+    }
+
+    //@Override
+    public void onResultHandler1(JSONObject response) {
         resultProcessingForGetCategoriesFullDataService(response);
     }
-    @Override
-    public void onErrorHandler(String ERROR) {
+    //@Override
+    public void onErrorHandler1(String ERROR) {
         iGetCategoriesFullDataService_V1.getCategoriesFullDataServiceError(ERROR);
     }
-    @Override
-    public void accessTokenExpired() {
-        iGetCategoriesFullDataService_V1.accessTokenExpired();
+    //@Override
+    public void accessTokenExpired1() {
+        iGetCategoriesFullDataService_V1.accessTokenExpired1();
     }
-    @Override
-    public void clientTokenExpired() {
-        iGetCategoriesFullDataService_V1.clientTokenExpired();
+    //@Override
+    public void clientTokenExpired1() {
+        iGetCategoriesFullDataService_V1.clientTokenExpired1();
     }
 
     public void resultProcessingForGetCategoriesFullDataService(JSONObject response) {

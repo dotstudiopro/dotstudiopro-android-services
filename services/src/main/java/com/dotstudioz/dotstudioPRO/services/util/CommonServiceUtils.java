@@ -13,7 +13,7 @@ import android.graphics.Rect;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v4.media.session.MediaButtonReceiver;
+//import android.support.v4.media.session.MediaButtonReceiver;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -533,7 +533,7 @@ public class CommonServiceUtils {
 
             if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
                 // other app had stopped playing song now , so u can do u stuff now .
-                am.registerMediaButtonEventReceiver(new ComponentName(context.getPackageName(), MediaButtonReceiver.class.getName()));
+                //am.registerMediaButtonEventReceiver(new ComponentName(context.getPackageName(), MediaButtonReceiver.class.getName()));
             }
         } catch (Exception e) {
             e.printStackTrace();

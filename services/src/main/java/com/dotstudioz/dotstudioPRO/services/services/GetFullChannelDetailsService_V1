@@ -75,7 +75,7 @@ public class GetFullChannelDetailsService_V1 {
                         if(AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
                             AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
                             if(AccessTokenHandler.getInstance().foundAnyError)
-                                iGetFullChannelDetailsService_V1.accessTokenExpired();
+                                iGetFullChannelDetailsService_V1.accessTokenExpired1();
                         }
                     }
                 }
@@ -106,7 +106,7 @@ public class GetFullChannelDetailsService_V1 {
                             if(AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
                                 AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
                                 if(AccessTokenHandler.getInstance().foundAnyError)
-                                    iGetFullChannelDetailsService_V1.accessTokenExpired();
+                                    iGetFullChannelDetailsService_V1.accessTokenExpired1();
                             }
                         }
                     }
@@ -386,6 +386,6 @@ public class GetFullChannelDetailsService_V1 {
                 ArrayList<SpotLightCategoriesDTO> spotLightCategoriesDTOListForGenre
         );
         void getAllCategoriesError(String ERROR);
-        void accessTokenExpired();
+        void accessTokenExpired1();
     }
 }

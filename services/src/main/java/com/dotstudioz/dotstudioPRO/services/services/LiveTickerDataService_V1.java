@@ -14,7 +14,7 @@ import java.util.ArrayList;
 /**
  * Created by Admin on 17-01-2016.
  */
-public class LiveTickerDataService_V1 implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
+public class LiveTickerDataService_V1 /*implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1*/ {
 
     public ILiveTickerDataService_V1 iLiveTickerDataService_V1;
     public interface ILiveTickerDataService_V1 {
@@ -47,12 +47,41 @@ public class LiveTickerDataService_V1 implements CommonAsyncHttpClient_V1.ICommo
         }
 
         Log.d("LiveTickerData", "Calling fetchLiveTickerData==>"+API_URL);
-        /*CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(null, null,
+        /*getCommonAsyncHttpClientV1().getAsyncHttpsClient(null, null,
                 API_URL, "");*/
 
-        CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(null, null,
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
+        getCommonAsyncHttpClientV1().getAsyncHttpsClient(null, null,
                 API_URL, "");
 
+    }
+
+    private CommonAsyncHttpClient_V1 commonAsyncHttpClientV1;
+    private CommonAsyncHttpClient_V1 getCommonAsyncHttpClientV1() {
+        if(commonAsyncHttpClientV1 == null) {
+            commonAsyncHttpClientV1 = new CommonAsyncHttpClient_V1();
+        }
+        return commonAsyncHttpClientV1;
     }
 
     public void processJSONResponseObject(JSONObject response) {
@@ -103,18 +132,18 @@ public class LiveTickerDataService_V1 implements CommonAsyncHttpClient_V1.ICommo
         }
     }
 
-    @Override
-    public void onResultHandler(JSONObject response) {
+    //@Override
+    public void onResultHandler1(JSONObject response) {
         processJSONResponseObject(response);
     }
-    @Override
-    public void onErrorHandler(String ERROR) {
+    //@Override
+    public void onErrorHandler1(String ERROR) {
         iLiveTickerDataService_V1.fetchLiveTickerDataServiceError(ERROR);
     }
-    @Override
-    public void accessTokenExpired() {
+    //@Override
+    public void accessTokenExpired1() {
     }
-    @Override
-    public void clientTokenExpired() {
+    //@Override
+    public void clientTokenExpired1() {
     }
 }

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 /**
  * Created by Admin on 17-01-2016.
  */
-public class RecommendationService implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
+public class RecommendationService /*implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1*/ {
     public RecommendationService.IRecommendationService iRecommendationService;
 
     Context context;
@@ -54,9 +54,39 @@ public class RecommendationService implements CommonAsyncHttpClient_V1.ICommonAs
         requestParamsArrayList.add(pi2);
         requestParamsArrayList.add(pi3);
 
-        CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
+        getCommonAsyncHttpClientV1().getAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
                 RECOMMENDATION_API, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
     }
+
+    private CommonAsyncHttpClient_V1 commonAsyncHttpClientV1;
+    private CommonAsyncHttpClient_V1 getCommonAsyncHttpClientV1() {
+        if(commonAsyncHttpClientV1 == null) {
+            commonAsyncHttpClientV1 = new CommonAsyncHttpClient_V1();
+        }
+        return commonAsyncHttpClientV1;
+    }
+
     private ArrayList<RecommendedItemDTO> recommendedItemDTOList;
     private ArrayList<RecommendedItemPairDTO> recommendedItemPairDTOList;
     private void processResponse(JSONObject jsonObject) {
@@ -117,30 +147,30 @@ public class RecommendationService implements CommonAsyncHttpClient_V1.ICommonAs
         iRecommendationService.recommendationServiceResponse(recommendedItemPairDTOList);
     }
 
-    @Override
-    public void onResultHandler(JSONObject response) {
+    //@Override
+    public void onResultHandler1(JSONObject response) {
         processResponse(response);
     }
 
-    @Override
-    public void onErrorHandler(String ERROR) {
+    //@Override
+    public void onErrorHandler1(String ERROR) {
         iRecommendationService.recommendationServiceError(ERROR);
     }
 
-    @Override
-    public void accessTokenExpired() {
-        iRecommendationService.accessTokenExpired();
+    //@Override
+    public void accessTokenExpired1() {
+        iRecommendationService.accessTokenExpired1();
     }
 
-    @Override
-    public void clientTokenExpired() {
-        iRecommendationService.clientTokenExpired();
+    //@Override
+    public void clientTokenExpired1() {
+        iRecommendationService.clientTokenExpired1();
     }
 
     public interface IRecommendationService {
         void recommendationServiceResponse(ArrayList recommendedItemPairDTOList);
         void recommendationServiceError(String error);
-        void accessTokenExpired();
-        void clientTokenExpired();
+        void accessTokenExpired1();
+        void clientTokenExpired1();
     }
 }

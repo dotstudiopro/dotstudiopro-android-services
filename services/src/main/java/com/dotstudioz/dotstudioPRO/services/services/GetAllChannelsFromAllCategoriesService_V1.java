@@ -21,7 +21,7 @@ import java.util.Set;
  * Created by mohsin on 08-10-2016.
  */
 
-public class GetAllChannelsFromAllCategoriesService_V1 implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
+public class GetAllChannelsFromAllCategoriesService_V1 /*implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1*/ {
 
     public IGetAllChannelsFromAllCategoriesService_V1 iGetAllChannelsFromAllCategoriesService_V1;
     public interface IGetAllChannelsFromAllCategoriesService_V1 {
@@ -30,8 +30,8 @@ public class GetAllChannelsFromAllCategoriesService_V1 implements CommonAsyncHtt
                 List<SpotLightCategoriesDTO> spotLightCategoriesDTOList
         );
         void getAllChannelsFromAllCategoriesServiceError(String ERROR);
-        void accessTokenExpired();
-        void clientTokenExpired();
+        void accessTokenExpired1();
+        void clientTokenExpired1();
     }
 
     Context context;
@@ -70,24 +70,55 @@ public class GetAllChannelsFromAllCategoriesService_V1 implements CommonAsyncHtt
         requestParamsArrayList.add(new ParameterItem("detail", "lean"));
         requestParamsArrayList.add(new ParameterItem("categories", categoriesSlug));
 
-        CommonAsyncHttpClient_V1.getInstance(this).postAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
+
+        getCommonAsyncHttpClientV1().postAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
     }
-    @Override
-    public void onResultHandler(JSONObject response) {
+
+    private CommonAsyncHttpClient_V1 commonAsyncHttpClientV1;
+    private CommonAsyncHttpClient_V1 getCommonAsyncHttpClientV1() {
+        if(commonAsyncHttpClientV1 == null) {
+            commonAsyncHttpClientV1 = new CommonAsyncHttpClient_V1();
+        }
+        return commonAsyncHttpClientV1;
+    }
+
+    //@Override
+    public void onResultHandler1(JSONObject response) {
         resultProcessingForAllChannelsFromAllCategories(response);
     }
-    @Override
-    public void onErrorHandler(String ERROR) {
+    //@Override
+    public void onErrorHandler1(String ERROR) {
         iGetAllChannelsFromAllCategoriesService_V1.getAllChannelsFromAllCategoriesServiceError(ERROR);
     }
-    @Override
-    public void accessTokenExpired() {
-        iGetAllChannelsFromAllCategoriesService_V1.accessTokenExpired();
+    //@Override
+    public void accessTokenExpired1() {
+        iGetAllChannelsFromAllCategoriesService_V1.accessTokenExpired1();
     }
-    @Override
-    public void clientTokenExpired() {
-        iGetAllChannelsFromAllCategoriesService_V1.clientTokenExpired();
+    //@Override
+    public void clientTokenExpired1() {
+        iGetAllChannelsFromAllCategoriesService_V1.clientTokenExpired1();
     }
 
     public void resultProcessingForAllChannelsFromAllCategories(JSONObject response) {

@@ -20,7 +20,7 @@ import java.util.Date;
 /**
  * Created by Admin on 17-01-2016.
  */
-public class LiveScheduleDataService_V1 implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
+public class LiveScheduleDataService_V1 /*implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1*/ {
 
     public ILiveScheduleDataService_V1 iLiveScheduleDataService_V1;
     public interface ILiveScheduleDataService_V1 {
@@ -56,8 +56,37 @@ public class LiveScheduleDataService_V1 implements CommonAsyncHttpClient_V1.ICom
         headerItemsArrayList.add(new ParameterItem("x-access-token", ApplicationConstants.xAccessToken));
 
 
-        CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, null,
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
+        getCommonAsyncHttpClientV1().getAsyncHttpsClient(headerItemsArrayList, null,
                 API_URL, "");
+    }
+
+    private CommonAsyncHttpClient_V1 commonAsyncHttpClientV1;
+    private CommonAsyncHttpClient_V1 getCommonAsyncHttpClientV1() {
+        if(commonAsyncHttpClientV1 == null) {
+            commonAsyncHttpClientV1 = new CommonAsyncHttpClient_V1();
+        }
+        return commonAsyncHttpClientV1;
     }
 
     public void processJSONResponseObject(JSONObject response) {
@@ -155,18 +184,18 @@ public class LiveScheduleDataService_V1 implements CommonAsyncHttpClient_V1.ICom
         }
     }
 
-    @Override
-    public void onResultHandler(JSONObject response) {
+    //@Override
+    public void onResultHandler1(JSONObject response) {
         processJSONResponseObject(response);
     }
-    @Override
-    public void onErrorHandler(String ERROR) {
+    //@Override
+    public void onErrorHandler1(String ERROR) {
         iLiveScheduleDataService_V1.fetchLiveScheduleDataServiceError(ERROR);
     }
-    @Override
-    public void accessTokenExpired() {
+    //@Override
+    public void accessTokenExpired1() {
     }
-    @Override
-    public void clientTokenExpired() {
+    //@Override
+    public void clientTokenExpired1() {
     }
 }

@@ -22,7 +22,7 @@ import java.util.ArrayList;
  * Created by mohsin on 02-03-2017.
  */
 
-public class FetchChannelUsingSlugForSubscriptionStatusService_V1 implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
+public class FetchChannelUsingSlugForSubscriptionStatusService_V1 /*implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1*/ {
 
     public IFetchChannelUsingSlugForSubscriptionStatusService_V1 iFetchChannelUsingSlugForSubscriptionStatusService_V1;
 
@@ -58,15 +58,46 @@ public class FetchChannelUsingSlugForSubscriptionStatusService_V1 implements Com
             if(ApplicationConstants.CLIENT_TOKEN != null && ApplicationConstants.CLIENT_TOKEN.length() > 0)
                 headerItemsArrayList.add(new ParameterItem("x-client-token", ApplicationConstants.CLIENT_TOKEN));
 
-            CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, null,
+            getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+                @Override
+                public void onResultHandler(JSONObject response) {
+                    onResultHandler1(response);
+                }
+
+                @Override
+                public void onErrorHandler(String ERROR) {
+                    onErrorHandler1(ERROR);
+                }
+
+                @Override
+                public void accessTokenExpired() {
+                    accessTokenExpired1();
+                }
+
+                @Override
+                public void clientTokenExpired() {
+                    clientTokenExpired1();
+                }
+            });
+
+            getCommonAsyncHttpClientV1().getAsyncHttpsClient(headerItemsArrayList, null,
                     ApplicationConstantURL.getInstance().CHANNEL + channelSlug, AccessTokenHandler.getInstance().fetchTokenCalledInChannelPageString);
 
         } catch (Exception e) {
             iFetchChannelUsingSlugForSubscriptionStatusService_V1.hidePDialog();
         }
     }
-    @Override
-    public void onResultHandler(JSONObject responseBody) {
+
+    private CommonAsyncHttpClient_V1 commonAsyncHttpClientV1;
+    private CommonAsyncHttpClient_V1 getCommonAsyncHttpClientV1() {
+        if(commonAsyncHttpClientV1 == null) {
+            commonAsyncHttpClientV1 = new CommonAsyncHttpClient_V1();
+        }
+        return commonAsyncHttpClientV1;
+    }
+
+    //@Override
+    public void onResultHandler1(JSONObject responseBody) {
         //iFetchChannelUsingSlugForSubscriptionStatusService_V1(response);
         try {
             boolean isSuccess = true;
@@ -84,7 +115,7 @@ public class FetchChannelUsingSlugForSubscriptionStatusService_V1 implements Com
                 if (AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
                     AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInChannelPageString);
                     if (AccessTokenHandler.getInstance().foundAnyError)
-                        iFetchChannelUsingSlugForSubscriptionStatusService_V1.accessTokenExpired();
+                        iFetchChannelUsingSlugForSubscriptionStatusService_V1.accessTokenExpired1();
                 }
             }
         } catch(Exception e) {
@@ -92,8 +123,8 @@ public class FetchChannelUsingSlugForSubscriptionStatusService_V1 implements Com
             iFetchChannelUsingSlugForSubscriptionStatusService_V1.hidePDialog();
         }
     }
-    @Override
-    public void onErrorHandler(String ERROR) {
+    //@Override
+    public void onErrorHandler1(String ERROR) {
         //iFetchChannelUsingSlugForSubscriptionStatusService_V1.getVideoDetailsServiceError(ERROR);
         try {
             JSONObject responseBody = new JSONObject(ERROR);
@@ -111,7 +142,7 @@ public class FetchChannelUsingSlugForSubscriptionStatusService_V1 implements Com
                     if(AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
                         AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInChannelPageString);
                         if(AccessTokenHandler.getInstance().foundAnyError)
-                            iFetchChannelUsingSlugForSubscriptionStatusService_V1.accessTokenExpired();
+                            iFetchChannelUsingSlugForSubscriptionStatusService_V1.accessTokenExpired1();
                     }
                 }
             }
@@ -120,12 +151,12 @@ public class FetchChannelUsingSlugForSubscriptionStatusService_V1 implements Com
             iFetchChannelUsingSlugForSubscriptionStatusService_V1.hidePDialog();
         }
     }
-    @Override
-    public void accessTokenExpired() {
-        iFetchChannelUsingSlugForSubscriptionStatusService_V1.accessTokenExpired();
+    //@Override
+    public void accessTokenExpired1() {
+        iFetchChannelUsingSlugForSubscriptionStatusService_V1.accessTokenExpired1();
     }
-    @Override
-    public void clientTokenExpired() {
+    //@Override
+    public void clientTokenExpired1() {
 
     }
     JSONArray channelsArray;
@@ -656,7 +687,7 @@ public class FetchChannelUsingSlugForSubscriptionStatusService_V1 implements Com
         void hidePDialog();
         void fetchChannelUsingSlugServiceResponse(SpotLightChannelDTO spotLightChannelDTO);
         void fetchChannelUsingSlugServiceError(String ERROR);
-        void accessTokenExpired();
+        void accessTokenExpired1();
     }
 }
 

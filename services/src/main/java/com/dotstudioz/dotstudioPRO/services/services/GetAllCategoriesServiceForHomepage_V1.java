@@ -20,7 +20,7 @@ import java.util.ArrayList;
  * Created by Mohsin on 27-07-2019.
  */
 
-public class GetAllCategoriesServiceForHomepage_V1 implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
+public class GetAllCategoriesServiceForHomepage_V1 /*implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1*/ {
 
     public String PLATFORM = "";
     public IGetAllCategoriesServiceForHomepage_V1 iGetAllCategoriesServiceForHomepage_v1;
@@ -57,12 +57,42 @@ public class GetAllCategoriesServiceForHomepage_V1 implements CommonAsyncHttpCli
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));
 
-        CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, null,
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler11(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler11(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired11();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired11();
+            }
+        });
+
+        getCommonAsyncHttpClientV1().getAsyncHttpsClient(headerItemsArrayList, null,
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
     }
 
-    @Override
-    public void onResultHandler(JSONObject response) {
+    private CommonAsyncHttpClient_V1 commonAsyncHttpClientV1;
+    private CommonAsyncHttpClient_V1 getCommonAsyncHttpClientV1() {
+        if(commonAsyncHttpClientV1 == null) {
+            commonAsyncHttpClientV1 = new CommonAsyncHttpClient_V1();
+        }
+        return commonAsyncHttpClientV1;
+    }
+
+    //@Override
+    public void onResultHandler11(JSONObject response) {
         try {
             if (response.has("homepage"))
                 resultProcessingForCategories(response.getJSONArray("homepage"));
@@ -77,19 +107,19 @@ public class GetAllCategoriesServiceForHomepage_V1 implements CommonAsyncHttpCli
         }
     }
 
-    @Override
-    public void onErrorHandler(String ERROR) {
+    //@Override
+    public void onErrorHandler11(String ERROR) {
         iGetAllCategoriesServiceForHomepage_v1.getAllCategoriesForHomepageError(ERROR);
     }
 
-    @Override
-    public void accessTokenExpired() {
-        iGetAllCategoriesServiceForHomepage_v1.accessTokenExpired();
+    //@Override
+    public void accessTokenExpired11() {
+        iGetAllCategoriesServiceForHomepage_v1.accessTokenExpired1();
     }
 
-    @Override
-    public void clientTokenExpired() {
-        iGetAllCategoriesServiceForHomepage_v1.clientTokenExpired();
+    //@Override
+    public void clientTokenExpired11() {
+        iGetAllCategoriesServiceForHomepage_v1.clientTokenExpired1();
     }
 
     private void resultProcessingForCategories(JSONArray response) {
@@ -103,6 +133,11 @@ public class GetAllCategoriesServiceForHomepage_V1 implements CommonAsyncHttpCli
             try {
                 JSONObject obj = response.getJSONObject(ct);
                 if (obj.has("channels")) {
+                    if(obj.has("channels") && obj.get("channels") instanceof JSONArray) {
+
+                    } else {
+                        return;
+                    }
                     JSONArray channelsArray = obj.getJSONArray("channels");
                     if (channelsArray.length() > 0) {
                         SpotLightCategoriesDTO spotLightCategoriesDTO = new SpotLightCategoriesDTO();
@@ -323,7 +358,7 @@ public class GetAllCategoriesServiceForHomepage_V1 implements CommonAsyncHttpCli
                                         }
 
                                         try {
-                                            if(channel.getJSONObject("video").has("custom_fields")) {
+                                            if(channel.has("video") && channel.getJSONObject("video").has("custom_fields")) {
                                                 for (int j = 0; j < channel.getJSONObject("video").getJSONArray("custom_fields").length(); j++) {
                                                     CustomFieldDTO customFieldDTO = new CustomFieldDTO();
                                                     if(((JSONObject)channel.getJSONObject("video").getJSONArray("custom_fields").get(j)).has("field_title"))
@@ -501,8 +536,8 @@ public class GetAllCategoriesServiceForHomepage_V1 implements CommonAsyncHttpCli
 
         void getAllCategoriesForHomepageError(String ERROR);
 
-        void accessTokenExpired();
+        void accessTokenExpired1();
 
-        void clientTokenExpired();
+        void clientTokenExpired1();
     }
 }

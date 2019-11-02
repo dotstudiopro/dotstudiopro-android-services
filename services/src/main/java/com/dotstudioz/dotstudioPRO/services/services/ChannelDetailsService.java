@@ -15,7 +15,7 @@ import java.util.ArrayList;
  * Created by mohsin on 09-10-2016.
  */
 
-public class ChannelDetailsService implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
+public class ChannelDetailsService /*implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1*/ {
 
     public IChannelDetailsService iChannelDetailsService;
     Context context;
@@ -45,8 +45,38 @@ public class ChannelDetailsService implements CommonAsyncHttpClient_V1.ICommonAs
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", ApplicationConstants.xAccessToken));
 
-        CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, null,
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
+
+        getCommonAsyncHttpClientV1().getAsyncHttpsClient(headerItemsArrayList, null,
                 URL + categorySlug + "/" + channelSlug, AccessTokenHandler.getInstance().fetchTokenCalledInChannelsPageString);
+    }
+
+    private CommonAsyncHttpClient_V1 commonAsyncHttpClientV1;
+    private CommonAsyncHttpClient_V1 getCommonAsyncHttpClientV1() {
+        if(commonAsyncHttpClientV1 == null) {
+            commonAsyncHttpClientV1 = new CommonAsyncHttpClient_V1();
+        }
+        return commonAsyncHttpClientV1;
     }
 
     private void handleSuccess(JSONObject response) {
@@ -67,9 +97,9 @@ public class ChannelDetailsService implements CommonAsyncHttpClient_V1.ICommonAs
                     if (AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
                         AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInChannelsPageString);
                         if (AccessTokenHandler.getInstance().foundAnyError)
-                            iChannelDetailsService.accessTokenExpired();
+                            iChannelDetailsService.accessTokenExpired1();
                         else if (AccessTokenHandler.getInstance().foundAnyErrorForClientToken)
-                            iChannelDetailsService.clientTokenExpired();
+                            iChannelDetailsService.clientTokenExpired1();
                     }
                 }
             } catch (JSONException e) {
@@ -95,34 +125,34 @@ public class ChannelDetailsService implements CommonAsyncHttpClient_V1.ICommonAs
         ArrayList<ParameterItem> paramsItemsArrayList = new ArrayList<>();
         paramsItemsArrayList.add(new ParameterItem("token", ApplicationConstants.xAccessToken));
 
-        CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, paramsItemsArrayList,
+        getCommonAsyncHttpClientV1().getAsyncHttpsClient(headerItemsArrayList, paramsItemsArrayList,
                 URL + categorySlug + "/" + channelSlug, AccessTokenHandler.getInstance().fetchTokenCalledInChannelsPageString);
     }
 
-    @Override
-    public void onResultHandler(JSONObject response) {
+    //@Override
+    public void onResultHandler1(JSONObject response) {
         handleSuccess(response);
     }
 
-    @Override
-    public void onErrorHandler(String ERROR) {
+    //@Override
+    public void onErrorHandler1(String ERROR) {
         iChannelDetailsService.channelDetailsServiceError(ERROR);
     }
 
-    @Override
-    public void accessTokenExpired() {
-        iChannelDetailsService.accessTokenExpired();
+    //@Override
+    public void accessTokenExpired1() {
+        iChannelDetailsService.accessTokenExpired1();
     }
 
-    @Override
-    public void clientTokenExpired() {
-        iChannelDetailsService.clientTokenExpired();
+    //@Override
+    public void clientTokenExpired1() {
+        iChannelDetailsService.clientTokenExpired1();
     }
 
     public interface IChannelDetailsService {
         void channelDetailsServiceResponse(JSONObject jsonObject);
         void channelDetailsServiceError(String error);
-        void accessTokenExpired();
-        void clientTokenExpired();
+        void accessTokenExpired1();
+        void clientTokenExpired1();
     }
 }

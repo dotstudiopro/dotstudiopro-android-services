@@ -24,15 +24,15 @@ import java.util.List;
 /**
  * Created by Admin on 17-01-2016.
  */
-public class SliderShowcaseSeriesVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
+public class SliderShowcaseSeriesVideoDetailsService_V1 /*implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1*/ {
 
     public SliderShowcaseSeriesVideoDetailsService_V1.ISliderShowcaseSeriesVideoDetailsService_V1 iSliderShowcaseSeriesVideoDetailsService_V1;
     public interface ISliderShowcaseSeriesVideoDetailsService_V1 {
         void callBackFromFetchSeriesVideoDetailsForSliderShowcase(ArrayList<VideoInfoDTO> videoInfoDTOArrayListForSliderShowcase);
         void fetchNextVideoFromPlaylistForSliderShowcase(int index);
         void getSliderShowcaseSeriesVideoDetailsServiceError(String ERROR);
-        void accessTokenExpired();
-        void clientTokenExpired();
+        void accessTokenExpired1();
+        void clientTokenExpired1();
     }
 
     ArrayList<VideoInfoDTO> videoInfoDTOArrayListForSliderShowcase = null;
@@ -79,12 +79,41 @@ public class SliderShowcaseSeriesVideoDetailsService_V1 implements CommonAsyncHt
         headerItemsArrayList.add(new ParameterItem("x-access-token", ApplicationConstants.xAccessToken));
         //headerItemsArrayList.add(new ParameterItem("x-client-token", ApplicationConstants.CLIENT_TOKEN));
 
-        CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, null,
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
+        getCommonAsyncHttpClientV1().getAsyncHttpsClient(headerItemsArrayList, null,
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
 
-      /*  CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpClient(headerItemsArrayList, null,
+      /*  getCommonAsyncHttpClientV1().getAsyncHttpClient(headerItemsArrayList, null,
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);*/
 
+    }
+
+    private CommonAsyncHttpClient_V1 commonAsyncHttpClientV1;
+    private CommonAsyncHttpClient_V1 getCommonAsyncHttpClientV1() {
+        if(commonAsyncHttpClientV1 == null) {
+            commonAsyncHttpClientV1 = new CommonAsyncHttpClient_V1();
+        }
+        return commonAsyncHttpClientV1;
     }
 
     boolean someVideoDataMissing = false;
@@ -551,20 +580,20 @@ public class SliderShowcaseSeriesVideoDetailsService_V1 implements CommonAsyncHt
         }
     }
 
-    @Override
-    public void onResultHandler(JSONObject response) {
+    //@Override
+    public void onResultHandler1(JSONObject response) {
         processJSONResponseObjectForSliderShowcase(response);
     }
-    @Override
-    public void onErrorHandler(String ERROR) {
+    //@Override
+    public void onErrorHandler1(String ERROR) {
         iSliderShowcaseSeriesVideoDetailsService_V1.getSliderShowcaseSeriesVideoDetailsServiceError(ERROR);
     }
-    @Override
-    public void accessTokenExpired() {
-        iSliderShowcaseSeriesVideoDetailsService_V1.accessTokenExpired();
+    //@Override
+    public void accessTokenExpired1() {
+        iSliderShowcaseSeriesVideoDetailsService_V1.accessTokenExpired1();
     }
-    @Override
-    public void clientTokenExpired() {
-        iSliderShowcaseSeriesVideoDetailsService_V1.clientTokenExpired();
+    //@Override
+    public void clientTokenExpired1() {
+        iSliderShowcaseSeriesVideoDetailsService_V1.clientTokenExpired1();
     }
 }

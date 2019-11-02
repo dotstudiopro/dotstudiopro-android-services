@@ -25,7 +25,7 @@ import retrofit2.Response;
  * Created by mohsin on 02-03-2017.
  */
 
-public class FetchChannelUsingSlugService_V1 implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
+public class FetchChannelUsingSlugService_V1 /*implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1*/ {
 
     public IFetchChannelUsingSlugService_V1 iFetchChannelUsingSlugService_V1;
 
@@ -62,12 +62,12 @@ public class FetchChannelUsingSlugService_V1 implements CommonAsyncHttpClient_V1
                         if(AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
                             AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInChannelPageString);
                             if(AccessTokenHandler.getInstance().foundAnyError)
-                                iFetchChannelUsingSlugService_V1.accessTokenExpired();
+                                iFetchChannelUsingSlugService_V1.accessTokenExpired1();
                         }
                         else {
                             try {
                                 iFetchChannelUsingSlugService_V1.processMissingChannelDataServiceError((responseBody.getString("message") != null) ? responseBody.getString("message") : "ERROR");
-                                //  iChangePasswordService.onErrorHandler((responseBody.getString("message") != null) ? responseBody.getString("message") : "ERROR");
+                                //  iChangePasswordService.onErrorHandler1((responseBody.getString("message") != null) ? responseBody.getString("message") : "ERROR");
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -111,10 +111,41 @@ public class FetchChannelUsingSlugService_V1 implements CommonAsyncHttpClient_V1
         if(ApplicationConstants.CLIENT_TOKEN != null && ApplicationConstants.CLIENT_TOKEN.length() > 0)
             headerItemsArrayList.add(new ParameterItem("x-client-token", ApplicationConstants.CLIENT_TOKEN));
 
-        CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, null,
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
+
+        getCommonAsyncHttpClientV1().getAsyncHttpsClient(headerItemsArrayList, null,
                 ApplicationConstantURL.getInstance().CHANNEL + channelSlug, AccessTokenHandler.getInstance().fetchTokenCalledInChannelPageString);
 
     }
+
+    private CommonAsyncHttpClient_V1 commonAsyncHttpClientV1;
+    private CommonAsyncHttpClient_V1 getCommonAsyncHttpClientV1() {
+        if(commonAsyncHttpClientV1 == null) {
+            commonAsyncHttpClientV1 = new CommonAsyncHttpClient_V1();
+        }
+        return commonAsyncHttpClientV1;
+    }
+
     JSONArray channelsArray;
     ArrayList<VideoInfoDTO> missingVideoInfoDTOList;
     String selectedChannelID;
@@ -815,25 +846,25 @@ public class FetchChannelUsingSlugService_V1 implements CommonAsyncHttpClient_V1
         }
     }
 
-    @Override
-    public void onResultHandler(JSONObject response) {
+    //@Override
+    public void onResultHandler1(JSONObject response) {
         fetchChannelData(response);
     }
 
-    @Override
-    public void onErrorHandler(String ERROR) {
+    //@Override
+    public void onErrorHandler1(String ERROR) {
         iFetchChannelUsingSlugService_V1.hidePDialog();
         iFetchChannelUsingSlugService_V1.processMissingChannelDataServiceError(ERROR);
     }
 
-    @Override
-    public void accessTokenExpired() {
+    //@Override
+    public void accessTokenExpired1() {
         iFetchChannelUsingSlugService_V1.hidePDialog();
-        iFetchChannelUsingSlugService_V1.accessTokenExpired();
+        iFetchChannelUsingSlugService_V1.accessTokenExpired1();
     }
 
-    @Override
-    public void clientTokenExpired() {
+    //@Override
+    public void clientTokenExpired1() {
         iFetchChannelUsingSlugService_V1.hidePDialog();
     }
 
@@ -844,6 +875,6 @@ public class FetchChannelUsingSlugService_V1 implements CommonAsyncHttpClient_V1
         void postProcessingChannelDataServiceResponse(SpotLightChannelDTO spotLightChannelDTO);
         void processMissingChannelDataServiceError(String ERROR);
         //void postProcessingChannelDataServiceResponse(JSONObject response);
-        void accessTokenExpired();
+        void accessTokenExpired1();
     }
 }

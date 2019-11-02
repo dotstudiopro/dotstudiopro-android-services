@@ -17,7 +17,7 @@ import retrofit2.Response;
  * Created by mohsin on 07-10-2016.
  */
 
-public class PostSubscriptionResultService implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
+public class PostSubscriptionResultService /*implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1*/ {
 
     public String ACTUAL_RESPONSE = "";
 
@@ -74,27 +74,56 @@ public class PostSubscriptionResultService implements CommonAsyncHttpClient_V1.I
         requestParamsArrayList.add(new ParameterItem("autoRenewing", purchase.isAutoRenewing()));
         requestParamsArrayList.add(new ParameterItem("signature", purchase.getSignature()));
 
-        CommonAsyncHttpClient_V1.getInstance(this).postAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
+        getCommonAsyncHttpClientV1().postAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
                 ApplicationConstantURL.getInstance().SUBSCRIPTION_API, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
     }
 
-    @Override
-    public void onResultHandler(JSONObject response) {
+    private CommonAsyncHttpClient_V1 commonAsyncHttpClientV1;
+    private CommonAsyncHttpClient_V1 getCommonAsyncHttpClientV1() {
+        if(commonAsyncHttpClientV1 == null) {
+            commonAsyncHttpClientV1 = new CommonAsyncHttpClient_V1();
+        }
+        return commonAsyncHttpClientV1;
+    }
+
+    //@Override
+    public void onResultHandler1(JSONObject response) {
         iPostSubscriptionResultService.postSubscriptionResultServiceResponse(response);
     }
 
-    @Override
-    public void onErrorHandler(String ERROR) {
+    //@Override
+    public void onErrorHandler1(String ERROR) {
         iPostSubscriptionResultService.postSubscriptionResultServiceError(ERROR);
     }
 
-    @Override
-    public void accessTokenExpired() {
+    //@Override
+    public void accessTokenExpired1() {
 
     }
 
-    @Override
-    public void clientTokenExpired() {
+    //@Override
+    public void clientTokenExpired1() {
 
     }
 

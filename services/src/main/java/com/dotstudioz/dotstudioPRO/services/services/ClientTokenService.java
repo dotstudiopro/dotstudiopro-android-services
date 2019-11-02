@@ -14,7 +14,7 @@ import java.util.ArrayList;
 /**
  * Created by Admin on 17-01-2016.
  */
-public class ClientTokenService implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
+public class ClientTokenService /*implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1*/ {
 
     public IClientTokenService iClientTokenService;
     Context context;
@@ -47,30 +47,61 @@ public class ClientTokenService implements CommonAsyncHttpClient_V1.ICommonAsync
         if(ApplicationConstants.CLIENT_TOKEN != null && ApplicationConstants.CLIENT_TOKEN.length() > 0)
             headerItemsArrayList.add(new ParameterItem("x-client-token", ApplicationConstants.CLIENT_TOKEN));
 
-        CommonAsyncHttpClient_V1.getInstance(this).postAsyncHttpsClient(headerItemsArrayList, null,
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
+
+        getCommonAsyncHttpClientV1().postAsyncHttpsClient(headerItemsArrayList, null,
                 ApplicationConstantURL.getInstance().TOKEN_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
     }
-    @Override
-    public void onResultHandler(JSONObject responseBody) {
+
+    private CommonAsyncHttpClient_V1 commonAsyncHttpClientV1;
+    private CommonAsyncHttpClient_V1 getCommonAsyncHttpClientV1() {
+        if(commonAsyncHttpClientV1 == null) {
+            commonAsyncHttpClientV1 = new CommonAsyncHttpClient_V1();
+        }
+        return commonAsyncHttpClientV1;
+    }
+
+    //@Override
+    public void onResultHandler1(JSONObject responseBody) {
         iClientTokenService.clientTokenServiceResponse(responseBody);
     }
-    @Override
-    public void onErrorHandler(String ERROR) {
+    //@Override
+    public void onErrorHandler1(String ERROR) {
         iClientTokenService.clientTokenServiceError(ERROR);
     }
-    @Override
-    public void accessTokenExpired() {
-        iClientTokenService.accessTokenExpired();
+    //@Override
+    public void accessTokenExpired1() {
+        iClientTokenService.accessTokenExpired1();
     }
-    @Override
-    public void clientTokenExpired() {
-        iClientTokenService.clientTokenExpired();
+    //@Override
+    public void clientTokenExpired1() {
+        iClientTokenService.clientTokenExpired1();
     }
 
     public interface IClientTokenService {
         void clientTokenServiceResponse(JSONObject jsonObject);
         void clientTokenServiceError(String error);
-        void accessTokenExpired();
-        void clientTokenExpired();
+        void accessTokenExpired1();
+        void clientTokenExpired1();
     }
 }

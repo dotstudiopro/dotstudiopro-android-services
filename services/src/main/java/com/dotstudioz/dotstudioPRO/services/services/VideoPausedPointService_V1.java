@@ -18,7 +18,7 @@ import java.util.ArrayList;
 /**
  * Created by mohsin on 10-05-2016.
  */
-public class VideoPausedPointService_V1 implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
+public class VideoPausedPointService_V1 /*implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1*/ {
 
     public boolean isSavingTheData = false;
     public boolean isCalledInBrowsePage = false;
@@ -32,8 +32,8 @@ public class VideoPausedPointService_V1 implements CommonAsyncHttpClient_V1.ICom
         void callBackFromVideoPausedPointServiceForBrowsePage(ArrayList<VideoInfoDTO> videoInfoDTOArrayList);
         void callBackFromVideoPausedPointServiceForRecommendation(ArrayList<VideoInfoDTO> videoInfoDTOArrayList);
         void errorBackFromVideoPausedPointServiceForBrowsePage(String ERROR);
-        void accessTokenExpired();
-        void clientTokenExpired();
+        void accessTokenExpired1();
+        void clientTokenExpired1();
     }
 
     public boolean isForSeries = false;
@@ -115,12 +115,41 @@ public class VideoPausedPointService_V1 implements CommonAsyncHttpClient_V1.ICom
         else
             calledIn = AccessTokenHandler.getInstance().fetchTokenCalledInSingleVideoPageString;
 
-        CommonAsyncHttpClient_V1.getInstance(this).postAsyncHttpsClientArray(headerItemsArrayList, requestParamsArrayList,
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
+        getCommonAsyncHttpClientV1().postAsyncHttpsClientArray(headerItemsArrayList, requestParamsArrayList,
                 API_URL, calledIn);
     }
 
-    @Override
-    public void onResultHandler(JSONObject responseBody) {
+    private CommonAsyncHttpClient_V1 commonAsyncHttpClientV1;
+    private CommonAsyncHttpClient_V1 getCommonAsyncHttpClientV1() {
+        if(commonAsyncHttpClientV1 == null) {
+            commonAsyncHttpClientV1 = new CommonAsyncHttpClient_V1();
+        }
+        return commonAsyncHttpClientV1;
+    }
+
+    //@Override
+    public void onResultHandler1(JSONObject responseBody) {
         if(!isSavingTheData) {
             ArrayList<VideoInfoDTO> vList = new ArrayList<>();
             try {
@@ -157,8 +186,8 @@ public class VideoPausedPointService_V1 implements CommonAsyncHttpClient_V1.ICom
             //}
         }
     }
-    @Override
-    public void onErrorHandler(String ERROR) {
+    //@Override
+    public void onErrorHandler1(String ERROR) {
         if(!isSavingTheData) {
             if(isCalledInBrowsePage)
                 iVideoPausedPointService_V1.errorBackFromVideoPausedPointServiceForBrowsePage(ERROR);
@@ -166,14 +195,14 @@ public class VideoPausedPointService_V1 implements CommonAsyncHttpClient_V1.ICom
                 iVideoPausedPointService_V1.getVideoPausedPointServiceError(ERROR);
         }
     }
-    @Override
-    public void accessTokenExpired() {
-            iVideoPausedPointService_V1.accessTokenExpired();
+    //@Override
+    public void accessTokenExpired1() {
+            iVideoPausedPointService_V1.accessTokenExpired1();
     }
-    @Override
-    public void clientTokenExpired() {
+    //@Override
+    public void clientTokenExpired1() {
         if(!isSavingTheData)
-            iVideoPausedPointService_V1.clientTokenExpired();
+            iVideoPausedPointService_V1.clientTokenExpired1();
     }
 
     public void savePointForVideoPlaybackStatus(String videoID, int point) {
@@ -184,7 +213,28 @@ public class VideoPausedPointService_V1 implements CommonAsyncHttpClient_V1.ICom
         if(ApplicationConstants.CLIENT_TOKEN != null && ApplicationConstants.CLIENT_TOKEN.length() > 0)
             headerItemsArrayList.add(new ParameterItem("x-client-token", ApplicationConstants.CLIENT_TOKEN));
 
-        CommonAsyncHttpClient_V1.getInstance(this).postAsyncHttpsClient(headerItemsArrayList, new ArrayList<ParameterItem>(),
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
+        getCommonAsyncHttpClientV1().postAsyncHttpsClient(headerItemsArrayList, new ArrayList<ParameterItem>(),
                 API_URL, "");
     }
 }

@@ -18,7 +18,7 @@ import java.util.ArrayList;
  * Created by mohsin on 08-10-2016.
  */
 
-public class GetAllSubscriptionsService_V1 implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
+public class GetAllSubscriptionsService_V1 /*implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1*/ {
 
     public IGetAllSubscriptionsService iGetAllSubscriptionsService;
     public interface IGetAllSubscriptionsService {
@@ -26,8 +26,8 @@ public class GetAllSubscriptionsService_V1 implements CommonAsyncHttpClient_V1.I
                 ArrayList<SubscriptionDTO> subscriptionDTOArrayList
         );
         void getAllSubscriptionsError(String ERROR);
-        void accessTokenExpired();
-        void clientTokenExpired();
+        void accessTokenExpired1();
+        void clientTokenExpired1();
     }
 
     Context context;
@@ -57,11 +57,41 @@ public class GetAllSubscriptionsService_V1 implements CommonAsyncHttpClient_V1.I
         ArrayList<ParameterItem> headerItemsArrayList = new ArrayList<>();
         headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));
 
-        CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, null,
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
+        getCommonAsyncHttpClientV1().getAsyncHttpsClient(headerItemsArrayList, null,
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
     }
-    @Override
-    public void onResultHandler(JSONObject response) {
+
+    private CommonAsyncHttpClient_V1 commonAsyncHttpClientV1;
+    private CommonAsyncHttpClient_V1 getCommonAsyncHttpClientV1() {
+        if(commonAsyncHttpClientV1 == null) {
+            commonAsyncHttpClientV1 = new CommonAsyncHttpClient_V1();
+        }
+        return commonAsyncHttpClientV1;
+    }
+
+    //@Override
+    public void onResultHandler1(JSONObject response) {
         try {
 
             Log.d("GetAllSubscrip", "response==>"+response);
@@ -73,17 +103,17 @@ public class GetAllSubscriptionsService_V1 implements CommonAsyncHttpClient_V1.I
             e.printStackTrace();
         }
     }
-    @Override
-    public void onErrorHandler(String ERROR) {
+    //@Override
+    public void onErrorHandler1(String ERROR) {
         iGetAllSubscriptionsService.getAllSubscriptionsError(ERROR);
     }
-    @Override
-    public void accessTokenExpired() {
-        iGetAllSubscriptionsService.accessTokenExpired();
+    //@Override
+    public void accessTokenExpired1() {
+        iGetAllSubscriptionsService.accessTokenExpired1();
     }
-    @Override
-    public void clientTokenExpired() {
-        iGetAllSubscriptionsService.clientTokenExpired();
+    //@Override
+    public void clientTokenExpired1() {
+        iGetAllSubscriptionsService.clientTokenExpired1();
     }
 
     private ArrayList<SubscriptionDTO> subscriptionDTOArrayList = new ArrayList<SubscriptionDTO>();

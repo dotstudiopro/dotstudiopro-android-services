@@ -24,15 +24,15 @@ import java.util.List;
 /**
  * Created by Admin on 17-01-2016.
  */
-public class SeriesVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
+public class SeriesVideoDetailsService_V1 /*implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1*/ {
 
     public ISeriesVideoDetailsService_V1 iSeriesVideoDetailsService_V1;
     public interface ISeriesVideoDetailsService_V1 {
         void callBackFromFetchSeriesVideoDetails(ArrayList<VideoInfoDTO> videoInfoDTOArrayList);
         void fetchVideoPlaybackDetailsForSeries(String videoID);
         void getSeriesVideoDetailsServiceError(String ERROR);
-        void accessTokenExpired();
-        void clientTokenExpired();
+        void accessTokenExpired1();
+        void clientTokenExpired1();
     }
 
     ArrayList<VideoInfoDTO> videoInfoDTOArrayList = null;
@@ -82,10 +82,39 @@ public class SeriesVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.IC
         }
         System.out.println("fetchSeriesVideoDetails==>ApplicationConstants.CLIENT_TOKEN==>"+ApplicationConstants.CLIENT_TOKEN);*/
 
-        CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, null,
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
+        getCommonAsyncHttpClientV1().getAsyncHttpsClient(headerItemsArrayList, null,
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInSeriesVideoPageString);
-    /*    CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpClient(headerItemsArrayList, null,
+    /*    getCommonAsyncHttpClientV1().getAsyncHttpClient(headerItemsArrayList, null,
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInSeriesVideoPageString);*/
+    }
+
+    private CommonAsyncHttpClient_V1 commonAsyncHttpClientV1;
+    private CommonAsyncHttpClient_V1 getCommonAsyncHttpClientV1() {
+        if(commonAsyncHttpClientV1 == null) {
+            commonAsyncHttpClientV1 = new CommonAsyncHttpClient_V1();
+        }
+        return commonAsyncHttpClientV1;
     }
 
     boolean someVideoDataMissing = false;
@@ -860,20 +889,20 @@ public class SeriesVideoDetailsService_V1 implements CommonAsyncHttpClient_V1.IC
         }
     }
 
-    @Override
-    public void onResultHandler(JSONObject response) {
+    //@Override
+    public void onResultHandler1(JSONObject response) {
         processJSONResponseObject(response);
     }
-    @Override
-    public void onErrorHandler(String ERROR) {
+    //@Override
+    public void onErrorHandler1(String ERROR) {
         iSeriesVideoDetailsService_V1.getSeriesVideoDetailsServiceError(ERROR);
     }
-    @Override
-    public void accessTokenExpired() {
-        iSeriesVideoDetailsService_V1.accessTokenExpired();
+    //@Override
+    public void accessTokenExpired1() {
+        iSeriesVideoDetailsService_V1.accessTokenExpired1();
     }
-    @Override
-    public void clientTokenExpired() {
-        iSeriesVideoDetailsService_V1.clientTokenExpired();
+    //@Override
+    public void clientTokenExpired1() {
+        iSeriesVideoDetailsService_V1.clientTokenExpired1();
     }
 }

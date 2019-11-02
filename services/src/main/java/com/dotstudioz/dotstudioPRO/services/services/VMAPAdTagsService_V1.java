@@ -10,7 +10,7 @@ import org.json.JSONObject;
 /**
  * Created by Admin on 17-01-2016.
  */
-public class VMAPAdTagsService_V1 implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
+public class VMAPAdTagsService_V1 /*implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1*/ {
 
     public IVMAPAdTagsService_V1 iVMAPAdTagsService_V1;
     public interface IVMAPAdTagsService_V1 {
@@ -50,8 +50,37 @@ public class VMAPAdTagsService_V1 implements CommonAsyncHttpClient_V1.ICommonAsy
 
         Log.d("VMAPAdTagsService", "fetchVMAPAdTags: fetchVMAPAdTags API_URL==>"+API_URL);
 
-        CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(null, null,
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
+        getCommonAsyncHttpClientV1().getAsyncHttpsClient(null, null,
                 API_URL, "");
+    }
+
+    private CommonAsyncHttpClient_V1 commonAsyncHttpClientV1;
+    private CommonAsyncHttpClient_V1 getCommonAsyncHttpClientV1() {
+        if(commonAsyncHttpClientV1 == null) {
+            commonAsyncHttpClientV1 = new CommonAsyncHttpClient_V1();
+        }
+        return commonAsyncHttpClientV1;
     }
 
     boolean someVideoDataMissing = false;
@@ -144,21 +173,21 @@ public class VMAPAdTagsService_V1 implements CommonAsyncHttpClient_V1.ICommonAsy
         return videoInfoDTO;
     }
 
-    @Override
-    public void onResultHandler(JSONObject response) {
+    //@Override
+    public void onResultHandler1(JSONObject response) {
         processJSONResponseObject(response);
     }
-    @Override
-    public void onErrorHandler(String ERROR) {
-        Log.d("VMAPAdTagsService", "VMAP onErrorHandler==>"+ERROR);
+    //@Override
+    public void onErrorHandler1(String ERROR) {
+        Log.d("VMAPAdTagsService", "VMAP onErrorHandler1==>"+ERROR);
         iVMAPAdTagsService_V1.getVMAPAdTagsServiceError(ERROR);
     }
-    @Override
-    public void accessTokenExpired() {
+    //@Override
+    public void accessTokenExpired1() {
 
     }
-    @Override
-    public void clientTokenExpired() {
+    //@Override
+    public void clientTokenExpired1() {
 
     }
 }

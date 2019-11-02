@@ -19,14 +19,14 @@ import retrofit2.Callback;
  * Created by mohsin on 08-10-2016.
  */
 
-public class CheckChannelSubscriptionStatusService_V1 implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
+public class CheckChannelSubscriptionStatusService_V1 /*implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1*/ {
 
     public ICheckChannelSubscriptionStatusService iCheckChannelSubscriptionStatusService;
     public interface ICheckChannelSubscriptionStatusService {
         void checkChannelSubscriptionStatusServiceResponse(boolean unlockedFlag, boolean adsEnabledFlag);
         void checkChannelSubscriptionStatusServiceError(String ERROR);
-        void accessTokenExpired();
-        void clientTokenExpired();
+        void accessTokenExpired1();
+        void clientTokenExpired1();
     }
 
     Context context;
@@ -57,13 +57,44 @@ public class CheckChannelSubscriptionStatusService_V1 implements CommonAsyncHttp
         headerItemsArrayList.add(new ParameterItem("x-access-token", xAccessToken));
         headerItemsArrayList.add(new ParameterItem("x-client-token", xAccessToken));
 
-        CommonAsyncHttpClient_V1.getInstance(this).getAsyncHttpsClient(headerItemsArrayList, null,
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
+
+        getCommonAsyncHttpClientV1().getAsyncHttpsClient(headerItemsArrayList, null,
                 API_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
     }
-    @Override
-    public void onResultHandler(JSONObject response) {
+
+    private CommonAsyncHttpClient_V1 commonAsyncHttpClientV1;
+    private CommonAsyncHttpClient_V1 getCommonAsyncHttpClientV1() {
+        if(commonAsyncHttpClientV1 == null) {
+            commonAsyncHttpClientV1 = new CommonAsyncHttpClient_V1();
+        }
+        return commonAsyncHttpClientV1;
+    }
+
+    //@Override
+    public void onResultHandler1(JSONObject response) {
         if(response != null)
-            Log.d("onResultHandler", "onResultHandler==>"+response.toString());
+            Log.d("onResultHandler1", "onResultHandler1==>"+response.toString());
         try {
             if (response != null)
                 resultProcessingForSubscriptions(response);
@@ -74,18 +105,18 @@ public class CheckChannelSubscriptionStatusService_V1 implements CommonAsyncHttp
             iCheckChannelSubscriptionStatusService.checkChannelSubscriptionStatusServiceResponse(false, true);
         }
     }
-    @Override
-    public void onErrorHandler(String ERROR) {
-        Log.d("onErrorHandler", "onErrorHandler==>"+ERROR);
+    //@Override
+    public void onErrorHandler1(String ERROR) {
+        Log.d("onErrorHandler1", "onErrorHandler1==>"+ERROR);
         iCheckChannelSubscriptionStatusService.checkChannelSubscriptionStatusServiceError(ERROR);
     }
-    @Override
-    public void accessTokenExpired() {
-        iCheckChannelSubscriptionStatusService.accessTokenExpired();
+    //@Override
+    public void accessTokenExpired1() {
+        iCheckChannelSubscriptionStatusService.accessTokenExpired1();
     }
-    @Override
-    public void clientTokenExpired() {
-        iCheckChannelSubscriptionStatusService.clientTokenExpired();
+    //@Override
+    public void clientTokenExpired1() {
+        iCheckChannelSubscriptionStatusService.clientTokenExpired1();
     }
 
     private ArrayList<SubscriptionDTO> userSubscriptionDTOArrayList = new ArrayList<SubscriptionDTO>();

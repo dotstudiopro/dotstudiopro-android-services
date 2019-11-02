@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * Created by mohsin on 10-10-2016.
  */
 
-public class ChangePasswordService implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1 {
+public class ChangePasswordService /*implements CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1*/ {
 
     public IChangePasswordService iChangePasswordService;
     Context context;
@@ -48,12 +48,42 @@ public class ChangePasswordService implements CommonAsyncHttpClient_V1.ICommonAs
         ArrayList<ParameterItem> requestParamsArrayList = new ArrayList<>();
         requestParamsArrayList.add(new ParameterItem("password", newPassword));
 
-        CommonAsyncHttpClient_V1.getInstance(this).postAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
+        getCommonAsyncHttpClientV1().setCommonAsyncHttpClient_V1Listener(new CommonAsyncHttpClient_V1.ICommonAsyncHttpClient_V1() {
+            @Override
+            public void onResultHandler(JSONObject response) {
+                onResultHandler1(response);
+            }
+
+            @Override
+            public void onErrorHandler(String ERROR) {
+                onErrorHandler1(ERROR);
+            }
+
+            @Override
+            public void accessTokenExpired() {
+                accessTokenExpired1();
+            }
+
+            @Override
+            public void clientTokenExpired() {
+                clientTokenExpired1();
+            }
+        });
+
+        getCommonAsyncHttpClientV1().postAsyncHttpsClient(headerItemsArrayList, requestParamsArrayList,
                 CHANGE_PASSWORD_URL, AccessTokenHandler.getInstance().fetchTokenCalledInCategoriesPageString);
     }
 
-    @Override
-    public void onResultHandler(JSONObject response) {
+    private CommonAsyncHttpClient_V1 commonAsyncHttpClientV1;
+    private CommonAsyncHttpClient_V1 getCommonAsyncHttpClientV1() {
+        if(commonAsyncHttpClientV1 == null) {
+            commonAsyncHttpClientV1 = new CommonAsyncHttpClient_V1();
+        }
+        return commonAsyncHttpClientV1;
+    }
+
+    //@Override
+    public void onResultHandler1(JSONObject response) {
         try {
             iChangePasswordService.changePasswordServiceResponse(response);
         } catch (Exception e) {
@@ -61,26 +91,26 @@ public class ChangePasswordService implements CommonAsyncHttpClient_V1.ICommonAs
         }
     }
 
-    @Override
-    public void onErrorHandler(String ERROR) {
+    //@Override
+    public void onErrorHandler1(String ERROR) {
         iChangePasswordService.changePasswordServiceError(ERROR);
     }
 
-    @Override
-    public void accessTokenExpired() {
-        iChangePasswordService.accessTokenExpired();
+    //@Override
+    public void accessTokenExpired1() {
+        iChangePasswordService.accessTokenExpired1();
     }
 
-    @Override
-    public void clientTokenExpired() {
-        iChangePasswordService.clientTokenExpired();
+    //@Override
+    public void clientTokenExpired1() {
+        iChangePasswordService.clientTokenExpired1();
     }
 
 
     public interface IChangePasswordService {
         void changePasswordServiceResponse(JSONObject jsonObject);
         void changePasswordServiceError(String ERROR);
-        void accessTokenExpired();
-        void clientTokenExpired();
+        void accessTokenExpired1();
+        void clientTokenExpired1();
     }
 }
