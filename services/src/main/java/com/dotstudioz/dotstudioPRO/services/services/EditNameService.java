@@ -141,7 +141,9 @@ public class EditNameService /*implements CommonAsyncHttpClient_V1.ICommonAsyncH
         void editNameServiceResponse(JSONObject jsonObject);
         void editNameServiceError(String ERROR);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
         void clientTokenExpired1();
+        void clientTokenRefreshed(String clientToken);
     }
 
     boolean refreshAccessToken = false;
@@ -152,6 +154,7 @@ public class EditNameService /*implements CommonAsyncHttpClient_V1.ICommonAsyncH
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iEditNameService.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     saveName(ApplicationConstants.xAccessToken, xClientToken, api, fName, lName);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -176,6 +179,7 @@ public class EditNameService /*implements CommonAsyncHttpClient_V1.ICommonAsyncH
             public void clientTokenResponse(String ACTUAL_RESPONSE) {
                 try {
                     String idToken = ACTUAL_RESPONSE;
+                    iEditNameService.clientTokenRefreshed(idToken);
                     ApplicationConstants.CLIENT_TOKEN = idToken;
                     saveName(ApplicationConstants.xAccessToken, idToken, api, fName, lName);
                 } catch(Exception e) {

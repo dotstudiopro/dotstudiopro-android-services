@@ -133,6 +133,7 @@ public class SearchSuggesterService_V1 /*implements CommonAsyncHttpClient_V1.ICo
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iSearchSuggesterService.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     search(ApplicationConstants.xAccessToken, xClientToken, searchQueryString, api);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -208,6 +209,7 @@ public class SearchSuggesterService_V1 /*implements CommonAsyncHttpClient_V1.ICo
         void searchSuggesterServiceResponse(ArrayList<SearchSuggesterDTO> searchSuggesterDTOArrayList);
         void searchSuggesterError(String ERROR);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
         void clientTokenExpired1();
     }
 }

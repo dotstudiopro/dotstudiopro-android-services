@@ -110,7 +110,7 @@ public class DeviceCodeService /*implements CommonAsyncHttpClient_V1.ICommonAsyn
         void deviceCodeServiceResponse(JSONObject jsonObject);
         void deviceCodeServiceError(String error);
         void accessTokenExpired1();
-
+        void accessTokenRefreshed(String accessToken);
     }
 
     boolean refreshAccessToken = false;
@@ -121,6 +121,7 @@ public class DeviceCodeService /*implements CommonAsyncHttpClient_V1.ICommonAsyn
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iDeviceCodeService.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     getDeviceCode(ApplicationConstants.xAccessToken, api);
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -120,6 +120,7 @@ public class DeviceCodeActivationService /*implements CommonAsyncHttpClient_V1.I
         void deviceCodeActivationServiceResponse(JSONObject responseBody);
         void deviceCodeActivationServiceError(String responseBody);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
     }
 
     boolean refreshAccessToken = false;
@@ -130,6 +131,7 @@ public class DeviceCodeActivationService /*implements CommonAsyncHttpClient_V1.I
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iDeviceCodeActivationService.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     getDeviceActivationWithCode(ApplicationConstants.xAccessToken, code, customerId, api);
                 } catch (Exception e) {
                     e.printStackTrace();

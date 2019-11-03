@@ -22,6 +22,7 @@ public class SliderShowcaseChannelService_V1 /*implements CommonAsyncHttpClient_
         void processSliderShowcaseChannelServiceResponse(JSONObject response);
         void getSliderShowcaseChannelError(String ERROR);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
         void clientTokenExpired1();
     }
     Context context;
@@ -118,6 +119,7 @@ public class SliderShowcaseChannelService_V1 /*implements CommonAsyncHttpClient_
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iSliderShowcaseChannelService_V1.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     getSliderShowcaseChannel(categorySlug);
                 } catch (Exception e) {
                     e.printStackTrace();

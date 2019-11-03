@@ -152,6 +152,7 @@ public class RecommendationChannelService_V2 /*implements CommonAsyncHttpClient_
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iRecommendationService.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     getRecommendation(ApplicationConstants.xAccessToken, api, id, size, from);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -254,6 +255,7 @@ public class RecommendationChannelService_V2 /*implements CommonAsyncHttpClient_
         void recommendationServiceResponse(ArrayList recommendedItemDTOList);
         void recommendationServiceError(String error);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
         void clientTokenExpired1();
     }
 }

@@ -839,6 +839,7 @@ public class FetchSingleChannelService_V1 /*implements CommonAsyncHttpClient_V1.
         void fetchLiveVideoChannelDataServiceResponse(SpotLightChannelDTO spotLightChannelDTO);
         void fetchLiveVideoChannelDataServiceError(String ERROR);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
     }
 
     boolean refreshAccessToken = false;
@@ -849,6 +850,7 @@ public class FetchSingleChannelService_V1 /*implements CommonAsyncHttpClient_V1.
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iFetchSingleChannelService_V1.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     fetchSingleChannelData(channelSlug);
                 } catch (Exception e) {
                     e.printStackTrace();

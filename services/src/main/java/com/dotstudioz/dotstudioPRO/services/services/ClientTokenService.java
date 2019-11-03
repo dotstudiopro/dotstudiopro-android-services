@@ -115,6 +115,7 @@ public class ClientTokenService /*implements CommonAsyncHttpClient_V1.ICommonAsy
         void clientTokenServiceResponse(JSONObject jsonObject);
         void clientTokenServiceError(String error);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
         void clientTokenExpired1();
     }
 
@@ -126,6 +127,7 @@ public class ClientTokenService /*implements CommonAsyncHttpClient_V1.ICommonAsy
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iClientTokenService.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     getClientToken(ApplicationConstants.xAccessToken, xClientToken, api, userIdString, userEmailId);
                 } catch (Exception e) {
                     e.printStackTrace();

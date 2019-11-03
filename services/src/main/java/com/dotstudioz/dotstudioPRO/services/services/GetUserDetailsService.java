@@ -115,7 +115,9 @@ public class GetUserDetailsService /*implements CommonAsyncHttpClient_V1.ICommon
         void getUserDetailsServiceResponse(JSONObject jsonObject);
         void getUserDetailsServiceError(String error);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
         void clientTokenExpired1();
+        void clientTokenRefreshed(String clientToken);
     }
 
     boolean refreshAccessToken = false;
@@ -126,6 +128,7 @@ public class GetUserDetailsService /*implements CommonAsyncHttpClient_V1.ICommon
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iGetUserDetailsService.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     getUserDetails(ApplicationConstants.xAccessToken, xClientToken, api);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -150,6 +153,7 @@ public class GetUserDetailsService /*implements CommonAsyncHttpClient_V1.ICommon
             public void clientTokenResponse(String ACTUAL_RESPONSE) {
                 try {
                     String idToken = ACTUAL_RESPONSE;
+                    iGetUserDetailsService.clientTokenRefreshed(idToken);
                     ApplicationConstants.CLIENT_TOKEN = idToken;
                     getUserDetails(ApplicationConstants.xAccessToken, idToken, api);
                 } catch(Exception e) {

@@ -29,6 +29,7 @@ public class GetAllSubscriptionsService_V1 /*implements CommonAsyncHttpClient_V1
         );
         void getAllSubscriptionsError(String ERROR);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
         void clientTokenExpired1();
     }
 
@@ -358,6 +359,7 @@ public class GetAllSubscriptionsService_V1 /*implements CommonAsyncHttpClient_V1
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iGetAllSubscriptionsService.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     getAllSubscriptionsService(ApplicationConstants.xAccessToken, api);
                 } catch (Exception e) {
                     e.printStackTrace();

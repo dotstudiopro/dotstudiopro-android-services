@@ -192,6 +192,7 @@ public class ChannelDetailsService /*implements CommonAsyncHttpClient_V1.ICommon
         void channelDetailsServiceError(String error);
         void accessTokenExpired1();
         void clientTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
     }
 
     boolean refreshAccessToken = false;
@@ -202,6 +203,7 @@ public class ChannelDetailsService /*implements CommonAsyncHttpClient_V1.ICommon
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iChannelDetailsService.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     getChannelDetails(ApplicationConstants.xAccessToken, api, categorySlug, channelSlug);
                 } catch (Exception e) {
                     e.printStackTrace();

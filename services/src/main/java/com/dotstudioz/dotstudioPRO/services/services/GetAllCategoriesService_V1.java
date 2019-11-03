@@ -39,6 +39,7 @@ public class GetAllCategoriesService_V1 /*implements CommonAsyncHttpClient_V1.IC
         void getAllCategoriesError(String ERROR);
         void accessTokenExpired1();
         void clientTokenExpired1();
+        void accessTokenRefreshed(String xAccessToken);
     }
 
     public GetAllCategoriesService_V1(Context ctx) {
@@ -297,6 +298,7 @@ public class GetAllCategoriesService_V1 /*implements CommonAsyncHttpClient_V1.IC
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iGetAllCategoriesService_V1.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     getAllCategoriesService(ApplicationConstants.xAccessToken, api);
                 } catch (Exception e) {
                     e.printStackTrace();

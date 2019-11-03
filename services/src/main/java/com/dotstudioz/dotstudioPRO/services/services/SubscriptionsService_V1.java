@@ -34,7 +34,9 @@ public class SubscriptionsService_V1 /*implements CommonAsyncHttpClient_V1.IComm
         );
         void createChargifyCustomerUsingSubscriptionIDError(String ERROR);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
         void clientTokenExpired1();
+        void clientTokenRefreshed(String clientToken);
     }
 
     Context context;
@@ -220,6 +222,7 @@ public class SubscriptionsService_V1 /*implements CommonAsyncHttpClient_V1.IComm
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iSubscriptionsService.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     if(isBraintreeServiceCall) {
                         createBrainTreeCustomerUsingNonce(ApplicationConstants.xAccessToken, xClientToken, nonceString, api);
                     } else if(isChargifyServiceCall) {
@@ -248,6 +251,7 @@ public class SubscriptionsService_V1 /*implements CommonAsyncHttpClient_V1.IComm
             public void clientTokenResponse(String ACTUAL_RESPONSE) {
                 try {
                     String idToken = ACTUAL_RESPONSE;
+                    iSubscriptionsService.clientTokenRefreshed(idToken);
                     ApplicationConstants.CLIENT_TOKEN = idToken;
                     if(isBraintreeServiceCall) {
                         createBrainTreeCustomerUsingNonce(ApplicationConstants.xAccessToken, idToken, nonceString, api);

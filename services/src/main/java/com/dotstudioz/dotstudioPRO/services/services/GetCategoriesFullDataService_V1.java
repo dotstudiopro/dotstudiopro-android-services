@@ -30,6 +30,7 @@ public class GetCategoriesFullDataService_V1 /*implements CommonAsyncHttpClient_
         );
         void getCategoriesFullDataServiceError(String ERROR);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
         void clientTokenExpired1();
     }
 
@@ -133,6 +134,7 @@ public class GetCategoriesFullDataService_V1 /*implements CommonAsyncHttpClient_
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iGetCategoriesFullDataService_V1.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     getCategoriesFullDataService(ApplicationConstants.xAccessToken, api, spotLightCategoriesDTO);
                 } catch (Exception e) {
                     e.printStackTrace();

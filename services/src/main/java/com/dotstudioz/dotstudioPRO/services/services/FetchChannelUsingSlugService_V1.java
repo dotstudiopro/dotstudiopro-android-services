@@ -884,6 +884,7 @@ public class FetchChannelUsingSlugService_V1 /*implements CommonAsyncHttpClient_
         void processMissingChannelDataServiceError(String ERROR);
         //void postProcessingChannelDataServiceResponse(JSONObject response);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
     }
 
     boolean refreshAccessToken = false;
@@ -894,6 +895,7 @@ public class FetchChannelUsingSlugService_V1 /*implements CommonAsyncHttpClient_
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iFetchChannelUsingSlugService_V1.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     fetchChannelData(ApplicationConstants.xAccessToken, channelSlug);
                 } catch (Exception e) {
                     e.printStackTrace();

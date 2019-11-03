@@ -900,6 +900,7 @@ public class FetchMissingChannelService_V1 /*implements CommonAsyncHttpClient_V1
         void postProcessingMissingChannelDataServiceResponse(String selectedChannelID, SpotLightChannelDTO spotLightChannelDTO, SpotLightCategoriesDTO spotLightCategoriesDTO, JSONObject channel, ArrayList<VideoInfoDTO> missingVideoInfoDTOList);
         void processMissingChannelDataServiceError(String ERROR);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
     }
 
     boolean refreshAccessToken = false;
@@ -910,6 +911,7 @@ public class FetchMissingChannelService_V1 /*implements CommonAsyncHttpClient_V1
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iFetchMissingChannelService_V1.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     fetchMissingChannelData(channelSlug, spotLightCategoriesDTOArrayList);
                 } catch (Exception e) {
                     e.printStackTrace();

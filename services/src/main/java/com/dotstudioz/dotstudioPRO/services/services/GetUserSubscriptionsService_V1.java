@@ -29,7 +29,9 @@ public class GetUserSubscriptionsService_V1 /*implements CommonAsyncHttpClient_V
         );
         void getUserSubscriptionsError(String ERROR);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
         void clientTokenExpired1();
+        void clientTokenRefreshed(String clientToken);
     }
 
     Context context;
@@ -137,6 +139,7 @@ public class GetUserSubscriptionsService_V1 /*implements CommonAsyncHttpClient_V
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iGetUserSubscriptionsService.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     getUserSubscriptionsService(ApplicationConstants.xAccessToken, xClientToken, api);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -161,6 +164,7 @@ public class GetUserSubscriptionsService_V1 /*implements CommonAsyncHttpClient_V
             public void clientTokenResponse(String ACTUAL_RESPONSE) {
                 try {
                     String idToken = ACTUAL_RESPONSE;
+                    iGetUserSubscriptionsService.clientTokenRefreshed(idToken);
                     ApplicationConstants.CLIENT_TOKEN = idToken;
                     getUserSubscriptionsService(ApplicationConstants.xAccessToken, idToken, api);
                 } catch(Exception e) {

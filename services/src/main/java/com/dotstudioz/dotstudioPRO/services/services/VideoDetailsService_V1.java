@@ -30,6 +30,7 @@ public class VideoDetailsService_V1 /*implements CommonAsyncHttpClient_V1.ICommo
         void fetchVideoPlaybackDetails(String videoID);
         void getVideoDetailsServiceError(String ERROR);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
         void clientTokenExpired1();
     }
 
@@ -973,6 +974,7 @@ public class VideoDetailsService_V1 /*implements CommonAsyncHttpClient_V1.ICommo
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iVideoDetailsService_V1.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     if(!usingSlug) {
                         fetchVideoDetails(api);
                     } else if(usingSlug) {

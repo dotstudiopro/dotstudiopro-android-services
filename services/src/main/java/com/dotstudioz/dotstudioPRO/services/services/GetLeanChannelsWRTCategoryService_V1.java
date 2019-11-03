@@ -108,6 +108,7 @@ public class GetLeanChannelsWRTCategoryService_V1 /*implements CommonAsyncHttpCl
         void processLeanChannelWRTCategoryServiceResponse(JSONObject response);
         void processLeanChannelWRTCategoryServiceError(String ERROR);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
 
         void numberOfCategoriesAlreadyFetched();
         void requestForFetchingAChannelCompleted();
@@ -121,6 +122,7 @@ public class GetLeanChannelsWRTCategoryService_V1 /*implements CommonAsyncHttpCl
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iGetLeanChannelsWRTCategoryService_V1.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     getLeanChannelDataWRTCategory(categorySlug);
                 } catch (Exception e) {
                     e.printStackTrace();

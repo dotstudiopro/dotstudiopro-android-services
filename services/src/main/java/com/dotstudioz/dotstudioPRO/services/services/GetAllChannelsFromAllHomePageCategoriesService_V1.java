@@ -31,6 +31,7 @@ public class GetAllChannelsFromAllHomePageCategoriesService_V1 /*implements Comm
         );
         void getAllChannelsFromAllHomePageCategoriesServiceError(String ERROR);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
         void clientTokenExpired1();
     }
 
@@ -136,6 +137,7 @@ public class GetAllChannelsFromAllHomePageCategoriesService_V1 /*implements Comm
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iGetAllChannelsFromAllHomePageCategoriesService_V1.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     getAllChannelsFromAllHomePageCategoriesService(ApplicationConstants.xAccessToken, api, categoriesSlug, channelDTOList, spotLightCategoriesDTOList);
                 } catch (Exception e) {
                     e.printStackTrace();

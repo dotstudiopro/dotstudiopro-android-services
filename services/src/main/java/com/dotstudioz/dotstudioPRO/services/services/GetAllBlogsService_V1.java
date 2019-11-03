@@ -28,6 +28,7 @@ public class GetAllBlogsService_V1 /*implements CommonAsyncHttpClient_V1.ICommon
         );
         void getAllBlogError(String ERROR);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
         void clientTokenExpired1();
     }
 
@@ -389,6 +390,7 @@ public class GetAllBlogsService_V1 /*implements CommonAsyncHttpClient_V1.ICommon
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iGetAllBlogService_V1.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     getAllBlogService(ApplicationConstants.xAccessToken, api, slug);
                 } catch (Exception e) {
                     e.printStackTrace();

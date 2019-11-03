@@ -547,6 +547,8 @@ public class GetAllCategoriesServiceForHomepage_V1 /*implements CommonAsyncHttpC
 
         void accessTokenExpired1();
 
+        void accessTokenRefreshed(String xAccessToken);
+
         void clientTokenExpired1();
     }
 
@@ -558,6 +560,7 @@ public class GetAllCategoriesServiceForHomepage_V1 /*implements CommonAsyncHttpC
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iGetAllCategoriesServiceForHomepage_v1.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     getAllCategoriesServiceForHomePage(ApplicationConstants.xAccessToken, api);
                 } catch (Exception e) {
                     e.printStackTrace();

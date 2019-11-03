@@ -226,6 +226,7 @@ public class RecommendationChannelService_V1 /*implements CommonAsyncHttpClient_
         void recommendationServiceResponse(ArrayList<Recommended4ItemPairDTO> recommendedItemPairDTOList);
         void recommendationServiceError(String error);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
         void clientTokenExpired1();
     }
 
@@ -237,6 +238,7 @@ public class RecommendationChannelService_V1 /*implements CommonAsyncHttpClient_
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iRecommendationService.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     getRecommendation(ApplicationConstants.xAccessToken, api, id, size, from);
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -126,6 +126,11 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
+            public void accessTokenRefreshed(String accessToken) {
+                Log.d(TAG, "accessTokenRefreshed: accessToken==>"+accessToken);
+            }
+
+            @Override
             public void clientTokenExpired1() {
             }
         });
@@ -156,6 +161,11 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
+            public void accessTokenRefreshed(String accessToken) {
+                Log.d(TAG, "accessTokenRefreshed: accessToken==>"+accessToken);
+            }
+
+            @Override
             public void clientTokenExpired1() {
 
             }
@@ -181,6 +191,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void accessTokenExpired1() {
 
+            }
+
+            @Override
+            public void accessTokenRefreshed(String accessToken) {
+                Log.d(TAG, "accessTokenRefreshed: accessToken==>"+accessToken);
             }
 
             @Override

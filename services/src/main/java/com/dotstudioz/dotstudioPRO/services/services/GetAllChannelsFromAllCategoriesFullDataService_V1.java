@@ -27,6 +27,7 @@ public class GetAllChannelsFromAllCategoriesFullDataService_V1 /*implements Comm
         void getAllChannelsFromAllCategoriesFullDataServiceResponse(ArrayList<SpotLightCategoriesDTO> listOfCategories);
         void getAllChannelsFromAllCategoriesFullDataServiceError(String ERROR);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
         void clientTokenExpired1();
     }
 
@@ -125,6 +126,7 @@ public class GetAllChannelsFromAllCategoriesFullDataService_V1 /*implements Comm
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iGetAllChannelsFromAllCategoriesFullDataService_V1.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     getAllChannelsFromAllCategoriesFullDataService(ApplicationConstants.xAccessToken, api, spotLightCategoriesDTOParent);
                 } catch (Exception e) {
                     e.printStackTrace();

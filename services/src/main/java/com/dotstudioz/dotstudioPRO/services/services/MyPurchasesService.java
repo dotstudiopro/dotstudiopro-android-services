@@ -268,6 +268,7 @@ public class MyPurchasesService /*implements CommonAsyncHttpClient_V1.ICommonAsy
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iMyPurchasesService.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     getMyPurchases(ApplicationConstants.xAccessToken, xClientToken, api, spotLightCategoriesDTOListGeneric);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -292,6 +293,7 @@ public class MyPurchasesService /*implements CommonAsyncHttpClient_V1.ICommonAsy
             public void clientTokenResponse(String ACTUAL_RESPONSE) {
                 try {
                     String idToken = ACTUAL_RESPONSE;
+                    iMyPurchasesService.clientTokenRefreshed(idToken);
                     ApplicationConstants.CLIENT_TOKEN = idToken;
                     getMyPurchases(ApplicationConstants.xAccessToken, idToken, api, spotLightCategoriesDTOListGeneric);
                 } catch(Exception e) {
@@ -313,6 +315,8 @@ public class MyPurchasesService /*implements CommonAsyncHttpClient_V1.ICommonAsy
         void myPurchasesServiceResponse(List<MyPurchaseItemDTO> myPurchaseItemDTOList);
         void myPurchasesServiceError(String ERROR);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
         void clientTokenExpired1();
+        void clientTokenRefreshed(String clientToken);
     }
 }

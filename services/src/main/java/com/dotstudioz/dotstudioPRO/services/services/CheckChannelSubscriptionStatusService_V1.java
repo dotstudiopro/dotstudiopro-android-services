@@ -29,7 +29,9 @@ public class CheckChannelSubscriptionStatusService_V1 /*implements CommonAsyncHt
         void checkChannelSubscriptionStatusServiceResponse(boolean unlockedFlag, boolean adsEnabledFlag);
         void checkChannelSubscriptionStatusServiceError(String ERROR);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
         void clientTokenExpired1();
+        void clientTokenRefreshed(String clientToken);
     }
 
     Context context;
@@ -332,6 +334,7 @@ public class CheckChannelSubscriptionStatusService_V1 /*implements CommonAsyncHt
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iCheckChannelSubscriptionStatusService.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     checkChannelSubscriptionStatusService(ApplicationConstants.xAccessToken, xClientToken, api);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -356,6 +359,7 @@ public class CheckChannelSubscriptionStatusService_V1 /*implements CommonAsyncHt
             public void clientTokenResponse(String ACTUAL_RESPONSE) {
                 try {
                     String idToken = ACTUAL_RESPONSE;
+                    iCheckChannelSubscriptionStatusService.clientTokenRefreshed(idToken);
                     ApplicationConstants.CLIENT_TOKEN = idToken;
                     checkChannelSubscriptionStatusService(ApplicationConstants.xAccessToken, idToken, api);
                 } catch(Exception e) {

@@ -716,6 +716,7 @@ public class AppHomeCarouselChannelUsingSlugService_V1 /*implements CommonAsyncH
         void processMissingChannelDataServiceError(String ERROR);
         //void postProcessingChannelDataServiceResponse(JSONObject response);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
     }
 
     boolean refreshAccessToken = false;
@@ -726,6 +727,7 @@ public class AppHomeCarouselChannelUsingSlugService_V1 /*implements CommonAsyncH
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iFetchChannelUsingSlugService_V1.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     fetchChannelData(channelSlug, ApplicationConstants.xAccessToken);
                 } catch (Exception e) {
                     e.printStackTrace();

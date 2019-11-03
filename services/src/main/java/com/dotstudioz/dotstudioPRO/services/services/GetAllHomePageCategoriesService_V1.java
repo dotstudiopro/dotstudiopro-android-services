@@ -32,6 +32,7 @@ public class GetAllHomePageCategoriesService_V1 /*implements CommonAsyncHttpClie
         );
         void getAllHomePageCategoriesError(String ERROR);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
         void clientTokenExpired1();
     }
 
@@ -135,6 +136,7 @@ public class GetAllHomePageCategoriesService_V1 /*implements CommonAsyncHttpClie
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iGetAllHomePageCategoriesService_V1.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     getAllHomePageCategoriesService(ApplicationConstants.xAccessToken, api);
                 } catch (Exception e) {
                     e.printStackTrace();

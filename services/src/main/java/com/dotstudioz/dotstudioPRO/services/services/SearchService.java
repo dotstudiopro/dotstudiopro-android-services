@@ -120,6 +120,7 @@ public class SearchService /*implements CommonAsyncHttpClient_V1.ICommonAsyncHtt
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iSearchService.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     search(ApplicationConstants.xAccessToken, xClientToken, searchQueryString, api);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -140,6 +141,7 @@ public class SearchService /*implements CommonAsyncHttpClient_V1.ICommonAsyncHtt
         void searchServiceResponse(String ACTUAL_RESPONSE);
         void searchError(String ERROR);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
         void clientTokenExpired1();
     }
 }

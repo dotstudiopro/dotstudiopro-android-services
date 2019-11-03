@@ -32,6 +32,7 @@ public class SliderShowcaseSeriesVideoDetailsService_V1 /*implements CommonAsync
         void fetchNextVideoFromPlaylistForSliderShowcase(int index);
         void getSliderShowcaseSeriesVideoDetailsServiceError(String ERROR);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
         void clientTokenExpired1();
     }
 
@@ -613,6 +614,7 @@ public class SliderShowcaseSeriesVideoDetailsService_V1 /*implements CommonAsync
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iSliderShowcaseSeriesVideoDetailsService_V1.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     fetchSeriesVideoDetailsForSliderShowcase(api, indexOfThisVideo);
                 } catch (Exception e) {
                     e.printStackTrace();

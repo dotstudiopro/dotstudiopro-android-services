@@ -27,7 +27,9 @@ public class LastWatchedVideosService_V1 /*implements CommonAsyncHttpClient_V1.I
         void callBackFromLastWatchedVideosService(LastWatchedVideosPairDTO lastWatchedVideosPairDTO);
         void getVideoPausedPointServiceError(String ERROR);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
         void clientTokenExpired1();
+        void clientTokenRefreshed(String clientToken);
     }
 
     public int noOfResults = 0;
@@ -265,6 +267,7 @@ public class LastWatchedVideosService_V1 /*implements CommonAsyncHttpClient_V1.I
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iLastWatchedVideosService_V1.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     getLastWatchedVideos(api, noOfResults);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -289,6 +292,7 @@ public class LastWatchedVideosService_V1 /*implements CommonAsyncHttpClient_V1.I
             public void clientTokenResponse(String ACTUAL_RESPONSE) {
                 try {
                     String idToken = ACTUAL_RESPONSE;
+                    iLastWatchedVideosService_V1.clientTokenRefreshed(idToken);
                     ApplicationConstants.CLIENT_TOKEN = idToken;
                     getLastWatchedVideos(api, noOfResults);
                 } catch(Exception e) {

@@ -693,6 +693,7 @@ public class FetchChannelUsingSlugForSubscriptionStatusService_V1 /*implements C
         void fetchChannelUsingSlugServiceResponse(SpotLightChannelDTO spotLightChannelDTO);
         void fetchChannelUsingSlugServiceError(String ERROR);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
     }
 
     boolean refreshAccessToken = false;
@@ -703,6 +704,7 @@ public class FetchChannelUsingSlugForSubscriptionStatusService_V1 /*implements C
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iFetchChannelUsingSlugForSubscriptionStatusService_V1.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     fetchChannelData(channelSlug);
                 } catch (Exception e) {
                     e.printStackTrace();

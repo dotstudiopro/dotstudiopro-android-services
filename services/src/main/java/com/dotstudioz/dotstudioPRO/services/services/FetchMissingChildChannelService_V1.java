@@ -1173,6 +1173,7 @@ public class FetchMissingChildChannelService_V1 /*implements CommonAsyncHttpClie
         void populateEpisodesListWithNewData(ArrayList<VideoInfoDTO> videoInfoDtosList);
         void processMissingChildChannelDataServiceError(String ERROR);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
     }
 
     boolean refreshAccessToken = false;
@@ -1183,6 +1184,7 @@ public class FetchMissingChildChannelService_V1 /*implements CommonAsyncHttpClie
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iFetchMissingChildChannelService_V1.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     fetchMissingChildChannelData(selectedParentCategorySlug, selectedParentChannelSlug, channelSlug, spotLightCategoriesDTOList, isSeasonClicked, seasonToLoad);
                 } catch (Exception e) {
                     e.printStackTrace();

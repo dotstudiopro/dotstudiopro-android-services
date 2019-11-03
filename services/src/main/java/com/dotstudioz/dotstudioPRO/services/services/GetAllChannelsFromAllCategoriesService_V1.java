@@ -32,6 +32,7 @@ public class GetAllChannelsFromAllCategoriesService_V1 /*implements CommonAsyncH
         );
         void getAllChannelsFromAllCategoriesServiceError(String ERROR);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
         void clientTokenExpired1();
     }
 
@@ -138,6 +139,7 @@ public class GetAllChannelsFromAllCategoriesService_V1 /*implements CommonAsyncH
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iGetAllChannelsFromAllCategoriesService_V1.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     getAllChannelsFromAllCategoriesService(ApplicationConstants.xAccessToken, api, categoriesSlug, channelDTOList, spotLightCategoriesDTOList);
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -128,7 +128,9 @@ public class ChangePasswordService /*implements CommonAsyncHttpClient_V1.ICommon
         void changePasswordServiceResponse(JSONObject jsonObject);
         void changePasswordServiceError(String ERROR);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
         void clientTokenExpired1();
+        void clientTokenRefreshed(String clientToken);
     }
 
     boolean refreshAccessToken = false;
@@ -139,6 +141,7 @@ public class ChangePasswordService /*implements CommonAsyncHttpClient_V1.ICommon
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iChangePasswordService.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     changePassword(ApplicationConstants.xAccessToken, xClientToken, api, newPassword);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -163,6 +166,7 @@ public class ChangePasswordService /*implements CommonAsyncHttpClient_V1.ICommon
             public void clientTokenResponse(String ACTUAL_RESPONSE) {
                 try {
                     String idToken = ACTUAL_RESPONSE;
+                    iChangePasswordService.clientTokenRefreshed(idToken);
                     ApplicationConstants.CLIENT_TOKEN = idToken;
                     changePassword(ApplicationConstants.xAccessToken, ApplicationConstants.CLIENT_TOKEN, api, newPassword);
                 } catch(Exception e) {

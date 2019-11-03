@@ -34,7 +34,9 @@ public class VideoPausedPointService_V1 /*implements CommonAsyncHttpClient_V1.IC
         void callBackFromVideoPausedPointServiceForRecommendation(ArrayList<VideoInfoDTO> videoInfoDTOArrayList);
         void errorBackFromVideoPausedPointServiceForBrowsePage(String ERROR);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
         void clientTokenExpired1();
+        void clientTokenRefreshed(String clientToken);
     }
 
     public boolean isForSeries = false;
@@ -264,6 +266,7 @@ public class VideoPausedPointService_V1 /*implements CommonAsyncHttpClient_V1.IC
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iVideoPausedPointService_V1.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     if(!isSavingTheData) {
                         checkForVideoPlaybackStatus(api, isForSeries, videoIDsArrayList, calledInBrowse);
                     } else {
@@ -292,6 +295,7 @@ public class VideoPausedPointService_V1 /*implements CommonAsyncHttpClient_V1.IC
             public void clientTokenResponse(String ACTUAL_RESPONSE) {
                 try {
                     String idToken = ACTUAL_RESPONSE;
+                    iVideoPausedPointService_V1.clientTokenRefreshed(idToken);
                     ApplicationConstants.CLIENT_TOKEN = idToken;
                     if(!isSavingTheData) {
                         checkForVideoPlaybackStatus(api, isForSeries, videoIDsArrayList, calledInBrowse);

@@ -29,7 +29,9 @@ public class ChannelsMyListService_V1 /*implements CommonAsyncHttpClient_V1.ICom
         void getMyListResponse(ArrayList<ChannelsMyListDTOForMyList> channelsMyListDTOForMyListArrayList, ArrayList<ChannelMyListDTO> channelMyListDTOArrayList);
         void myListError(String ERROR);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
         void clientTokenExpired1();
+        void clientTokenRefreshed(String clientToken);
     }
 
     public boolean addingFlag = false;
@@ -682,6 +684,7 @@ public class ChannelsMyListService_V1 /*implements CommonAsyncHttpClient_V1.ICom
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iChannelsMyListService.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     if(addingFlag) {
                         if(parentChannelID != null && parentChannelID.trim().length() > 0)
                             addChannelToMyList(channelID, parentChannelID, ApplicationConstants.xAccessToken, xClientToken, api);
@@ -715,6 +718,7 @@ public class ChannelsMyListService_V1 /*implements CommonAsyncHttpClient_V1.ICom
             public void clientTokenResponse(String ACTUAL_RESPONSE) {
                 try {
                     String idToken = ACTUAL_RESPONSE;
+                    iChannelsMyListService.clientTokenRefreshed(idToken);
                     ApplicationConstants.CLIENT_TOKEN = idToken;
                     if(addingFlag) {
                         if(parentChannelID != null && parentChannelID.trim().length() > 0)

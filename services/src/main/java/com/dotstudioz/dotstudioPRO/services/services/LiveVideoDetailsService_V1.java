@@ -30,6 +30,7 @@ public class LiveVideoDetailsService_V1 /*implements CommonAsyncHttpClient_V1.IC
         void fetchLiveVideoInfoDTODataServiceResponse(ArrayList<VideoInfoDTO> videoInfoDTOArrayList);
         void fetchLiveVideoInfoDTODataServiceError(String ERROR);
         void accessTokenExpired1();
+        void accessTokenRefreshed(String accessToken);
         void clientTokenExpired1();
     }
 
@@ -868,6 +869,7 @@ public class LiveVideoDetailsService_V1 /*implements CommonAsyncHttpClient_V1.IC
             public void companyTokenServiceResponse(JSONObject responseBody) {
                 try {
                     ApplicationConstants.xAccessToken = responseBody.getString("token");
+                    iLiveVideoDetailsService_V1.accessTokenRefreshed(ApplicationConstants.xAccessToken);
                     fetchLiveVideoDetails(api);
                 } catch (Exception e) {
                     e.printStackTrace();
