@@ -7,6 +7,7 @@ import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItemJSONArray;
 import com.dotstudioz.dotstudioPRO.models.dto.VideoInfoDTO;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.accesstoken.ClientTokenRefreshClass;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 
@@ -210,8 +211,12 @@ public class VideoPausedPointService_V1 /*implements CommonAsyncHttpClient_V1.IC
     }
     //@Override
     public void clientTokenExpired1() {
-        if(!isSavingTheData)
-            iVideoPausedPointService_V1.clientTokenExpired1();
+        if(refreshClientToken)
+            refreshClientToken();
+        else {
+            if(!isSavingTheData)
+                iVideoPausedPointService_V1.clientTokenExpired1();
+        }
     }
 
     String videoID; int point;
@@ -277,5 +282,33 @@ public class VideoPausedPointService_V1 /*implements CommonAsyncHttpClient_V1.IC
         });
         refreshAccessToken = true;
         companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
+    }
+
+    boolean refreshClientToken = false;
+    private void refreshClientToken() {
+        ClientTokenRefreshClass clientTokenRefreshClass = new ClientTokenRefreshClass(context);
+        clientTokenRefreshClass.setClientTokenRefreshListener(new ClientTokenRefreshClass.IClientTokenRefresh() {
+            @Override
+            public void clientTokenResponse(String ACTUAL_RESPONSE) {
+                try {
+                    String idToken = ACTUAL_RESPONSE;
+                    ApplicationConstants.CLIENT_TOKEN = idToken;
+                    if(!isSavingTheData) {
+                        checkForVideoPlaybackStatus(api, isForSeries, videoIDsArrayList, calledInBrowse);
+                    } else {
+                        savePointForVideoPlaybackStatus(videoID, point);
+                    }
+                } catch(Exception e) {
+                    e.printStackTrace();
+                    iVideoPausedPointService_V1.clientTokenExpired1();
+                }
+            }
+
+            @Override
+            public void clientTokenError(String ERROR) {
+                iVideoPausedPointService_V1.clientTokenExpired1();
+            }
+        });
+        clientTokenRefreshClass.refreshExistingClientToken(ApplicationConstants.xAccessToken, ApplicationConstants.CLIENT_TOKEN);
     }
 }

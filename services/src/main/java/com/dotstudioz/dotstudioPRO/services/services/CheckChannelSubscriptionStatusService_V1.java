@@ -6,6 +6,7 @@ import android.util.Log;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.SubscriptionDTO;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.accesstoken.ClientTokenRefreshClass;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 import com.google.gson.Gson;
@@ -127,7 +128,10 @@ public class CheckChannelSubscriptionStatusService_V1 /*implements CommonAsyncHt
     }
     //@Override
     public void clientTokenExpired1() {
-        iCheckChannelSubscriptionStatusService.clientTokenExpired1();
+        if(refreshClientToken)
+            refreshClientToken();
+        else
+            iCheckChannelSubscriptionStatusService.clientTokenExpired1();
     }
 
     private ArrayList<SubscriptionDTO> userSubscriptionDTOArrayList = new ArrayList<SubscriptionDTO>();
@@ -342,5 +346,29 @@ public class CheckChannelSubscriptionStatusService_V1 /*implements CommonAsyncHt
         });
         refreshAccessToken = true;
         companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
+    }
+
+    boolean refreshClientToken = false;
+    private void refreshClientToken() {
+        ClientTokenRefreshClass clientTokenRefreshClass = new ClientTokenRefreshClass(context);
+        clientTokenRefreshClass.setClientTokenRefreshListener(new ClientTokenRefreshClass.IClientTokenRefresh() {
+            @Override
+            public void clientTokenResponse(String ACTUAL_RESPONSE) {
+                try {
+                    String idToken = ACTUAL_RESPONSE;
+                    ApplicationConstants.CLIENT_TOKEN = idToken;
+                    checkChannelSubscriptionStatusService(ApplicationConstants.xAccessToken, idToken, api);
+                } catch(Exception e) {
+                    e.printStackTrace();
+                    iCheckChannelSubscriptionStatusService.clientTokenExpired1();
+                }
+            }
+
+            @Override
+            public void clientTokenError(String ERROR) {
+                iCheckChannelSubscriptionStatusService.clientTokenExpired1();
+            }
+        });
+        clientTokenRefreshClass.refreshExistingClientToken(ApplicationConstants.xAccessToken, ApplicationConstants.CLIENT_TOKEN);
     }
 }

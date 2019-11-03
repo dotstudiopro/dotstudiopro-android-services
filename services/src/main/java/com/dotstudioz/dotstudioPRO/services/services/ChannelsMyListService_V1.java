@@ -7,6 +7,7 @@ import com.dotstudioz.dotstudioPRO.models.dto.ChannelMyListDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.ChannelsMyListDTOForMyList;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.accesstoken.ClientTokenRefreshClass;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 
@@ -663,7 +664,10 @@ public class ChannelsMyListService_V1 /*implements CommonAsyncHttpClient_V1.ICom
     }
     //@Override
     public void clientTokenExpired1() {
-        iChannelsMyListService.clientTokenExpired1();
+        if(refreshClientToken)
+            refreshClientToken();
+        else
+            iChannelsMyListService.clientTokenExpired1();
     }
 
     private void resultProcessingForCategories(JSONArray response) {
@@ -701,5 +705,38 @@ public class ChannelsMyListService_V1 /*implements CommonAsyncHttpClient_V1.ICom
         });
         refreshAccessToken = true;
         companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
+    }
+
+    boolean refreshClientToken = false;
+    private void refreshClientToken() {
+        ClientTokenRefreshClass clientTokenRefreshClass = new ClientTokenRefreshClass(context);
+        clientTokenRefreshClass.setClientTokenRefreshListener(new ClientTokenRefreshClass.IClientTokenRefresh() {
+            @Override
+            public void clientTokenResponse(String ACTUAL_RESPONSE) {
+                try {
+                    String idToken = ACTUAL_RESPONSE;
+                    ApplicationConstants.CLIENT_TOKEN = idToken;
+                    if(addingFlag) {
+                        if(parentChannelID != null && parentChannelID.trim().length() > 0)
+                            addChannelToMyList(channelID, parentChannelID, ApplicationConstants.xAccessToken, idToken, api);
+                        else
+                            addChannelToMyList(channelID, ApplicationConstants.xAccessToken, idToken, api);
+                    } else if(deletingFlag) {
+                        deleteChannelFromMyList(channelID, ApplicationConstants.xAccessToken, idToken, api);
+                    } else if(gettingFlag) {
+                        getChannelFromMyList(ApplicationConstants.xAccessToken, idToken, api);
+                    }
+                } catch(Exception e) {
+                    e.printStackTrace();
+                    iChannelsMyListService.clientTokenExpired1();
+                }
+            }
+
+            @Override
+            public void clientTokenError(String ERROR) {
+                iChannelsMyListService.clientTokenExpired1();
+            }
+        });
+        clientTokenRefreshClass.refreshExistingClientToken(ApplicationConstants.xAccessToken, ApplicationConstants.CLIENT_TOKEN);
     }
 }

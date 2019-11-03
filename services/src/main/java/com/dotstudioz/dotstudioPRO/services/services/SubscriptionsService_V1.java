@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.accesstoken.ClientTokenRefreshClass;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 
@@ -205,7 +206,10 @@ public class SubscriptionsService_V1 /*implements CommonAsyncHttpClient_V1.IComm
     }
     //@Override
     public void clientTokenExpired1() {
-        iSubscriptionsService.clientTokenExpired1();
+        if(refreshClientToken)
+            refreshClientToken();
+        else
+            iSubscriptionsService.clientTokenExpired1();
     }
 
     boolean refreshAccessToken = false;
@@ -234,5 +238,33 @@ public class SubscriptionsService_V1 /*implements CommonAsyncHttpClient_V1.IComm
         });
         refreshAccessToken = true;
         companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
+    }
+
+    boolean refreshClientToken = false;
+    private void refreshClientToken() {
+        ClientTokenRefreshClass clientTokenRefreshClass = new ClientTokenRefreshClass(context);
+        clientTokenRefreshClass.setClientTokenRefreshListener(new ClientTokenRefreshClass.IClientTokenRefresh() {
+            @Override
+            public void clientTokenResponse(String ACTUAL_RESPONSE) {
+                try {
+                    String idToken = ACTUAL_RESPONSE;
+                    ApplicationConstants.CLIENT_TOKEN = idToken;
+                    if(isBraintreeServiceCall) {
+                        createBrainTreeCustomerUsingNonce(ApplicationConstants.xAccessToken, idToken, nonceString, api);
+                    } else if(isChargifyServiceCall) {
+                        createChargifyCustomerUsingSubscriptionID(ApplicationConstants.xAccessToken, idToken, subscriptionID, api);
+                    }
+                } catch(Exception e) {
+                    e.printStackTrace();
+                    iSubscriptionsService.clientTokenExpired1();
+                }
+            }
+
+            @Override
+            public void clientTokenError(String ERROR) {
+                iSubscriptionsService.clientTokenExpired1();
+            }
+        });
+        clientTokenRefreshClass.refreshExistingClientToken(ApplicationConstants.xAccessToken, ApplicationConstants.CLIENT_TOKEN);
     }
 }

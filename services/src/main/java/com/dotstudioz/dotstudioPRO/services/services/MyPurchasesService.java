@@ -6,6 +6,7 @@ import com.dotstudioz.dotstudioPRO.models.dto.MyPurchaseItemDTO;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.SpotLightCategoriesDTO;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.accesstoken.ClientTokenRefreshClass;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 import com.dotstudioz.dotstudioPRO.services.util.CommonServiceUtils;
@@ -253,7 +254,10 @@ public class MyPurchasesService /*implements CommonAsyncHttpClient_V1.ICommonAsy
 
     //@Override
     public void clientTokenExpired1() {
-        iMyPurchasesService.clientTokenExpired1();
+        if(refreshClientToken)
+            refreshClientToken();
+        else
+            iMyPurchasesService.clientTokenExpired1();
     }
 
     boolean refreshAccessToken = false;
@@ -278,6 +282,30 @@ public class MyPurchasesService /*implements CommonAsyncHttpClient_V1.ICommonAsy
         });
         refreshAccessToken = true;
         companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
+    }
+
+    boolean refreshClientToken = false;
+    private void refreshClientToken() {
+        ClientTokenRefreshClass clientTokenRefreshClass = new ClientTokenRefreshClass(context);
+        clientTokenRefreshClass.setClientTokenRefreshListener(new ClientTokenRefreshClass.IClientTokenRefresh() {
+            @Override
+            public void clientTokenResponse(String ACTUAL_RESPONSE) {
+                try {
+                    String idToken = ACTUAL_RESPONSE;
+                    ApplicationConstants.CLIENT_TOKEN = idToken;
+                    getMyPurchases(ApplicationConstants.xAccessToken, idToken, api, spotLightCategoriesDTOListGeneric);
+                } catch(Exception e) {
+                    e.printStackTrace();
+                    iMyPurchasesService.clientTokenExpired1();
+                }
+            }
+
+            @Override
+            public void clientTokenError(String ERROR) {
+                iMyPurchasesService.clientTokenExpired1();
+            }
+        });
+        clientTokenRefreshClass.refreshExistingClientToken(ApplicationConstants.xAccessToken, ApplicationConstants.CLIENT_TOKEN);
     }
 
 

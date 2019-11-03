@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.accesstoken.ClientTokenRefreshClass;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 
@@ -104,7 +105,10 @@ public class GetUserDetailsService /*implements CommonAsyncHttpClient_V1.ICommon
 
     //@Override
     public void clientTokenExpired1() {
-        iGetUserDetailsService.clientTokenExpired1();
+        if(refreshClientToken)
+            refreshClientToken();
+        else
+            iGetUserDetailsService.clientTokenExpired1();
     }
 
     public interface IGetUserDetailsService {
@@ -136,5 +140,29 @@ public class GetUserDetailsService /*implements CommonAsyncHttpClient_V1.ICommon
         });
         refreshAccessToken = true;
         companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
+    }
+
+    boolean refreshClientToken = false;
+    private void refreshClientToken() {
+        ClientTokenRefreshClass clientTokenRefreshClass = new ClientTokenRefreshClass(context);
+        clientTokenRefreshClass.setClientTokenRefreshListener(new ClientTokenRefreshClass.IClientTokenRefresh() {
+            @Override
+            public void clientTokenResponse(String ACTUAL_RESPONSE) {
+                try {
+                    String idToken = ACTUAL_RESPONSE;
+                    ApplicationConstants.CLIENT_TOKEN = idToken;
+                    getUserDetails(ApplicationConstants.xAccessToken, idToken, api);
+                } catch(Exception e) {
+                    e.printStackTrace();
+                    iGetUserDetailsService.clientTokenExpired1();
+                }
+            }
+
+            @Override
+            public void clientTokenError(String ERROR) {
+                iGetUserDetailsService.clientTokenExpired1();
+            }
+        });
+        clientTokenRefreshClass.refreshExistingClientToken(ApplicationConstants.xAccessToken, ApplicationConstants.CLIENT_TOKEN);
     }
 }

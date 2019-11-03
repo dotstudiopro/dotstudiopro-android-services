@@ -6,6 +6,7 @@ import android.util.Log;
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.SubscriptionDTO;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.accesstoken.ClientTokenRefreshClass;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 
@@ -122,7 +123,10 @@ public class GetUserSubscriptionsService_V1 /*implements CommonAsyncHttpClient_V
     }
     //@Override
     public void clientTokenExpired1() {
-        iGetUserSubscriptionsService.clientTokenExpired1();
+        if(refreshClientToken)
+            refreshClientToken();
+        else
+            iGetUserSubscriptionsService.clientTokenExpired1();
     }
 
     boolean refreshAccessToken = false;
@@ -147,6 +151,30 @@ public class GetUserSubscriptionsService_V1 /*implements CommonAsyncHttpClient_V
         });
         refreshAccessToken = true;
         companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
+    }
+
+    boolean refreshClientToken = false;
+    private void refreshClientToken() {
+        ClientTokenRefreshClass clientTokenRefreshClass = new ClientTokenRefreshClass(context);
+        clientTokenRefreshClass.setClientTokenRefreshListener(new ClientTokenRefreshClass.IClientTokenRefresh() {
+            @Override
+            public void clientTokenResponse(String ACTUAL_RESPONSE) {
+                try {
+                    String idToken = ACTUAL_RESPONSE;
+                    ApplicationConstants.CLIENT_TOKEN = idToken;
+                    getUserSubscriptionsService(ApplicationConstants.xAccessToken, idToken, api);
+                } catch(Exception e) {
+                    e.printStackTrace();
+                    iGetUserSubscriptionsService.clientTokenExpired1();
+                }
+            }
+
+            @Override
+            public void clientTokenError(String ERROR) {
+                iGetUserSubscriptionsService.clientTokenExpired1();
+            }
+        });
+        clientTokenRefreshClass.refreshExistingClientToken(ApplicationConstants.xAccessToken, ApplicationConstants.CLIENT_TOKEN);
     }
 
     private ArrayList<SubscriptionDTO> userSubscriptionDTOArrayList = new ArrayList<SubscriptionDTO>();

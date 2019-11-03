@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.services.accesstoken.AccessTokenHandler;
+import com.dotstudioz.dotstudioPRO.services.accesstoken.ClientTokenRefreshClass;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstantURL;
 import com.dotstudioz.dotstudioPRO.services.constants.ApplicationConstants;
 
@@ -129,7 +130,10 @@ public class EditNameService /*implements CommonAsyncHttpClient_V1.ICommonAsyncH
 
     //@Override
     public void clientTokenExpired1() {
-        iEditNameService.clientTokenExpired1();
+        if(refreshClientToken)
+            refreshClientToken();
+        else
+            iEditNameService.clientTokenExpired1();
     }
 
 
@@ -162,5 +166,29 @@ public class EditNameService /*implements CommonAsyncHttpClient_V1.ICommonAsyncH
         });
         refreshAccessToken = true;
         companyTokenService.requestForToken(ApplicationConstants.COMPANY_KEY, ApplicationConstantURL.TOKEN_URL);
+    }
+
+    boolean refreshClientToken = false;
+    private void refreshClientToken() {
+        ClientTokenRefreshClass clientTokenRefreshClass = new ClientTokenRefreshClass(context);
+        clientTokenRefreshClass.setClientTokenRefreshListener(new ClientTokenRefreshClass.IClientTokenRefresh() {
+            @Override
+            public void clientTokenResponse(String ACTUAL_RESPONSE) {
+                try {
+                    String idToken = ACTUAL_RESPONSE;
+                    ApplicationConstants.CLIENT_TOKEN = idToken;
+                    saveName(ApplicationConstants.xAccessToken, idToken, api, fName, lName);
+                } catch(Exception e) {
+                    e.printStackTrace();
+                    iEditNameService.clientTokenExpired1();
+                }
+            }
+
+            @Override
+            public void clientTokenError(String ERROR) {
+                iEditNameService.clientTokenExpired1();
+            }
+        });
+        clientTokenRefreshClass.refreshExistingClientToken(ApplicationConstants.xAccessToken, ApplicationConstants.CLIENT_TOKEN);
     }
 }
