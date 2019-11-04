@@ -28,9 +28,9 @@ public class ChannelsMyListService_V1 /*implements CommonAsyncHttpClient_V1.ICom
         void deleteChannelFromMyListResponse(JSONObject response);
         void getMyListResponse(ArrayList<ChannelsMyListDTOForMyList> channelsMyListDTOForMyListArrayList, ArrayList<ChannelMyListDTO> channelMyListDTOArrayList);
         void myListError(String ERROR);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
-        void clientTokenExpired1();
+        void clientTokenExpired();
         void clientTokenRefreshed(String clientToken);
     }
 
@@ -662,14 +662,14 @@ public class ChannelsMyListService_V1 /*implements CommonAsyncHttpClient_V1.ICom
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iChannelsMyListService.accessTokenExpired1();
+            iChannelsMyListService.accessTokenExpired();
     }
     //@Override
     public void clientTokenExpired1() {
         if(refreshClientToken)
             refreshClientToken();
         else
-            iChannelsMyListService.clientTokenExpired1();
+            iChannelsMyListService.clientTokenExpired();
     }
 
     private void resultProcessingForCategories(JSONArray response) {
@@ -697,13 +697,13 @@ public class ChannelsMyListService_V1 /*implements CommonAsyncHttpClient_V1.ICom
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iChannelsMyListService.accessTokenExpired1();
+                    iChannelsMyListService.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iChannelsMyListService.accessTokenExpired1();
+                iChannelsMyListService.accessTokenExpired();
             }
         });
         refreshAccessToken = true;
@@ -732,13 +732,13 @@ public class ChannelsMyListService_V1 /*implements CommonAsyncHttpClient_V1.ICom
                     }
                 } catch(Exception e) {
                     e.printStackTrace();
-                    iChannelsMyListService.clientTokenExpired1();
+                    iChannelsMyListService.clientTokenExpired();
                 }
             }
 
             @Override
             public void clientTokenError(String ERROR) {
-                iChannelsMyListService.clientTokenExpired1();
+                iChannelsMyListService.clientTokenExpired();
             }
         });
         clientTokenRefreshClass.refreshExistingClientToken(ApplicationConstants.xAccessToken, ApplicationConstants.CLIENT_TOKEN);

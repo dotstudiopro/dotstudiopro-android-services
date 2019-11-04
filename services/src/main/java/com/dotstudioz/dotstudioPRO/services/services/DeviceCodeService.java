@@ -98,7 +98,7 @@ public class DeviceCodeService /*implements CommonAsyncHttpClient_V1.ICommonAsyn
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iDeviceCodeService.accessTokenExpired1();
+            iDeviceCodeService.accessTokenExpired();
     }
 
     //@Override
@@ -109,7 +109,7 @@ public class DeviceCodeService /*implements CommonAsyncHttpClient_V1.ICommonAsyn
     public interface IDeviceCodeService {
         void deviceCodeServiceResponse(JSONObject jsonObject);
         void deviceCodeServiceError(String error);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
     }
 
@@ -125,13 +125,13 @@ public class DeviceCodeService /*implements CommonAsyncHttpClient_V1.ICommonAsyn
                     getDeviceCode(ApplicationConstants.xAccessToken, api);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iDeviceCodeService.accessTokenExpired1();
+                    iDeviceCodeService.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iDeviceCodeService.accessTokenExpired1();
+                iDeviceCodeService.accessTokenExpired();
             }
         });
         refreshAccessToken = true;

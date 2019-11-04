@@ -29,9 +29,9 @@ public class VideoDetailsService_V1 /*implements CommonAsyncHttpClient_V1.ICommo
         void callBackFromFetchVideoDetails(ArrayList<VideoInfoDTO> videoInfoDTOArrayList);
         void fetchVideoPlaybackDetails(String videoID);
         void getVideoDetailsServiceError(String ERROR);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
-        void clientTokenExpired1();
+        void clientTokenExpired();
     }
 
     ArrayList<VideoInfoDTO> videoInfoDTOArrayList = null;
@@ -959,11 +959,11 @@ public class VideoDetailsService_V1 /*implements CommonAsyncHttpClient_V1.ICommo
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iVideoDetailsService_V1.accessTokenExpired1();
+            iVideoDetailsService_V1.accessTokenExpired();
     }
     //@Override
     public void clientTokenExpired1() {
-        iVideoDetailsService_V1.clientTokenExpired1();
+        iVideoDetailsService_V1.clientTokenExpired();
     }
 
     boolean refreshAccessToken = false;
@@ -982,13 +982,13 @@ public class VideoDetailsService_V1 /*implements CommonAsyncHttpClient_V1.ICommo
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iVideoDetailsService_V1.accessTokenExpired1();
+                    iVideoDetailsService_V1.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iVideoDetailsService_V1.accessTokenExpired1();
+                iVideoDetailsService_V1.accessTokenExpired();
             }
         });
         refreshAccessToken = true;

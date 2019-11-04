@@ -104,19 +104,19 @@ public class ClientTokenService /*implements CommonAsyncHttpClient_V1.ICommonAsy
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iClientTokenService.accessTokenExpired1();
+            iClientTokenService.accessTokenExpired();
     }
     //@Override
     public void clientTokenExpired1() {
-        iClientTokenService.clientTokenExpired1();
+        iClientTokenService.clientTokenExpired();
     }
 
     public interface IClientTokenService {
         void clientTokenServiceResponse(JSONObject jsonObject);
         void clientTokenServiceError(String error);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
-        void clientTokenExpired1();
+        void clientTokenExpired();
     }
 
     boolean refreshAccessToken = false;
@@ -131,13 +131,13 @@ public class ClientTokenService /*implements CommonAsyncHttpClient_V1.ICommonAsy
                     getClientToken(ApplicationConstants.xAccessToken, xClientToken, api, userIdString, userEmailId);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iClientTokenService.accessTokenExpired1();
+                    iClientTokenService.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iClientTokenService.accessTokenExpired1();
+                iClientTokenService.accessTokenExpired();
             }
         });
         refreshAccessToken = true;

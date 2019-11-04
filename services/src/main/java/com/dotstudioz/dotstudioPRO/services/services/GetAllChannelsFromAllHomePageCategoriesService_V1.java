@@ -30,9 +30,9 @@ public class GetAllChannelsFromAllHomePageCategoriesService_V1 /*implements Comm
                 ArrayList<SpotLightCategoriesDTO> spotLightCategoriesDTOList
         );
         void getAllChannelsFromAllHomePageCategoriesServiceError(String ERROR);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
-        void clientTokenExpired1();
+        void clientTokenExpired();
     }
 
     Context context;
@@ -122,11 +122,11 @@ public class GetAllChannelsFromAllHomePageCategoriesService_V1 /*implements Comm
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iGetAllChannelsFromAllHomePageCategoriesService_V1.accessTokenExpired1();
+            iGetAllChannelsFromAllHomePageCategoriesService_V1.accessTokenExpired();
     }
     //@Override
     public void clientTokenExpired1() {
-        iGetAllChannelsFromAllHomePageCategoriesService_V1.clientTokenExpired1();
+        iGetAllChannelsFromAllHomePageCategoriesService_V1.clientTokenExpired();
     }
 
     boolean refreshAccessToken = false;
@@ -141,13 +141,13 @@ public class GetAllChannelsFromAllHomePageCategoriesService_V1 /*implements Comm
                     getAllChannelsFromAllHomePageCategoriesService(ApplicationConstants.xAccessToken, api, categoriesSlug, channelDTOList, spotLightCategoriesDTOList);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iGetAllChannelsFromAllHomePageCategoriesService_V1.accessTokenExpired1();
+                    iGetAllChannelsFromAllHomePageCategoriesService_V1.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iGetAllChannelsFromAllHomePageCategoriesService_V1.accessTokenExpired1();
+                iGetAllChannelsFromAllHomePageCategoriesService_V1.accessTokenExpired();
             }
         });
         refreshAccessToken = true;

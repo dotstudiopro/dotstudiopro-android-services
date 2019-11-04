@@ -125,7 +125,7 @@ public class AppHomeCarouselChannelUsingSlugService_V1 /*implements CommonAsyncH
                 if(AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
                     AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInChannelPageString);
                     if(AccessTokenHandler.getInstance().foundAnyError)
-                        iFetchChannelUsingSlugService_V1.accessTokenExpired1();
+                        iFetchChannelUsingSlugService_V1.accessTokenExpired();
                 }
             }
         } catch(Exception e) {
@@ -153,7 +153,7 @@ public class AppHomeCarouselChannelUsingSlugService_V1 /*implements CommonAsyncH
                     if(AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
                         AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInChannelPageString);
                         if(AccessTokenHandler.getInstance().foundAnyError)
-                            iFetchChannelUsingSlugService_V1.accessTokenExpired1();
+                            iFetchChannelUsingSlugService_V1.accessTokenExpired();
                     }
                 }
             }
@@ -167,7 +167,7 @@ public class AppHomeCarouselChannelUsingSlugService_V1 /*implements CommonAsyncH
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iFetchChannelUsingSlugService_V1.accessTokenExpired1();
+            iFetchChannelUsingSlugService_V1.accessTokenExpired();
     }
     //@Override
     public void clientTokenExpired1() {
@@ -715,7 +715,7 @@ public class AppHomeCarouselChannelUsingSlugService_V1 /*implements CommonAsyncH
         void postProcessingChannelDataServiceResponse(SpotLightChannelDTO spotLightChannelDTO);
         void processMissingChannelDataServiceError(String ERROR);
         //void postProcessingChannelDataServiceResponse(JSONObject response);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
     }
 
@@ -731,13 +731,13 @@ public class AppHomeCarouselChannelUsingSlugService_V1 /*implements CommonAsyncH
                     fetchChannelData(channelSlug, ApplicationConstants.xAccessToken);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iFetchChannelUsingSlugService_V1.accessTokenExpired1();
+                    iFetchChannelUsingSlugService_V1.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iFetchChannelUsingSlugService_V1.accessTokenExpired1();
+                iFetchChannelUsingSlugService_V1.accessTokenExpired();
             }
         });
         refreshAccessToken = true;

@@ -32,9 +32,9 @@ public class SeriesVideoDetailsService_V1 /*implements CommonAsyncHttpClient_V1.
         void callBackFromFetchSeriesVideoDetails(ArrayList<VideoInfoDTO> videoInfoDTOArrayList);
         void fetchVideoPlaybackDetailsForSeries(String videoID);
         void getSeriesVideoDetailsServiceError(String ERROR);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
-        void clientTokenExpired1();
+        void clientTokenExpired();
     }
 
     ArrayList<VideoInfoDTO> videoInfoDTOArrayList = null;
@@ -906,11 +906,11 @@ public class SeriesVideoDetailsService_V1 /*implements CommonAsyncHttpClient_V1.
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iSeriesVideoDetailsService_V1.accessTokenExpired1();
+            iSeriesVideoDetailsService_V1.accessTokenExpired();
     }
     //@Override
     public void clientTokenExpired1() {
-        iSeriesVideoDetailsService_V1.clientTokenExpired1();
+        iSeriesVideoDetailsService_V1.clientTokenExpired();
     }
 
     boolean refreshAccessToken = false;
@@ -925,13 +925,13 @@ public class SeriesVideoDetailsService_V1 /*implements CommonAsyncHttpClient_V1.
                     fetchSeriesVideoDetails(api);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iSeriesVideoDetailsService_V1.accessTokenExpired1();
+                    iSeriesVideoDetailsService_V1.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iSeriesVideoDetailsService_V1.accessTokenExpired1();
+                iSeriesVideoDetailsService_V1.accessTokenExpired();
             }
         });
         refreshAccessToken = true;

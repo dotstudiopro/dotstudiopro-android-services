@@ -28,9 +28,9 @@ public class CheckChannelSubscriptionStatusService_V1 /*implements CommonAsyncHt
     public interface ICheckChannelSubscriptionStatusService {
         void checkChannelSubscriptionStatusServiceResponse(boolean unlockedFlag, boolean adsEnabledFlag);
         void checkChannelSubscriptionStatusServiceError(String ERROR);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
-        void clientTokenExpired1();
+        void clientTokenExpired();
         void clientTokenRefreshed(String clientToken);
     }
 
@@ -126,14 +126,14 @@ public class CheckChannelSubscriptionStatusService_V1 /*implements CommonAsyncHt
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iCheckChannelSubscriptionStatusService.accessTokenExpired1();
+            iCheckChannelSubscriptionStatusService.accessTokenExpired();
     }
     //@Override
     public void clientTokenExpired1() {
         if(refreshClientToken)
             refreshClientToken();
         else
-            iCheckChannelSubscriptionStatusService.clientTokenExpired1();
+            iCheckChannelSubscriptionStatusService.clientTokenExpired();
     }
 
     private ArrayList<SubscriptionDTO> userSubscriptionDTOArrayList = new ArrayList<SubscriptionDTO>();
@@ -338,13 +338,13 @@ public class CheckChannelSubscriptionStatusService_V1 /*implements CommonAsyncHt
                     checkChannelSubscriptionStatusService(ApplicationConstants.xAccessToken, xClientToken, api);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iCheckChannelSubscriptionStatusService.accessTokenExpired1();
+                    iCheckChannelSubscriptionStatusService.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iCheckChannelSubscriptionStatusService.accessTokenExpired1();
+                iCheckChannelSubscriptionStatusService.accessTokenExpired();
             }
         });
         refreshAccessToken = true;
@@ -364,13 +364,13 @@ public class CheckChannelSubscriptionStatusService_V1 /*implements CommonAsyncHt
                     checkChannelSubscriptionStatusService(ApplicationConstants.xAccessToken, idToken, api);
                 } catch(Exception e) {
                     e.printStackTrace();
-                    iCheckChannelSubscriptionStatusService.clientTokenExpired1();
+                    iCheckChannelSubscriptionStatusService.clientTokenExpired();
                 }
             }
 
             @Override
             public void clientTokenError(String ERROR) {
-                iCheckChannelSubscriptionStatusService.clientTokenExpired1();
+                iCheckChannelSubscriptionStatusService.clientTokenExpired();
             }
         });
         clientTokenRefreshClass.refreshExistingClientToken(ApplicationConstants.xAccessToken, ApplicationConstants.CLIENT_TOKEN);

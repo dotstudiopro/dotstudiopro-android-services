@@ -112,7 +112,7 @@ public class ChangePasswordService /*implements CommonAsyncHttpClient_V1.ICommon
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iChangePasswordService.accessTokenExpired1();
+            iChangePasswordService.accessTokenExpired();
     }
 
     //@Override
@@ -120,16 +120,16 @@ public class ChangePasswordService /*implements CommonAsyncHttpClient_V1.ICommon
         if(refreshClientToken)
             refreshClientToken();
         else
-            iChangePasswordService.clientTokenExpired1();
+            iChangePasswordService.clientTokenExpired();
     }
 
 
     public interface IChangePasswordService {
         void changePasswordServiceResponse(JSONObject jsonObject);
         void changePasswordServiceError(String ERROR);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
-        void clientTokenExpired1();
+        void clientTokenExpired();
         void clientTokenRefreshed(String clientToken);
     }
 
@@ -145,13 +145,13 @@ public class ChangePasswordService /*implements CommonAsyncHttpClient_V1.ICommon
                     changePassword(ApplicationConstants.xAccessToken, xClientToken, api, newPassword);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iChangePasswordService.accessTokenExpired1();
+                    iChangePasswordService.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iChangePasswordService.accessTokenExpired1();
+                iChangePasswordService.accessTokenExpired();
             }
         });
         refreshAccessToken = true;
@@ -171,13 +171,13 @@ public class ChangePasswordService /*implements CommonAsyncHttpClient_V1.ICommon
                     changePassword(ApplicationConstants.xAccessToken, ApplicationConstants.CLIENT_TOKEN, api, newPassword);
                 } catch(Exception e) {
                     e.printStackTrace();
-                    iChangePasswordService.clientTokenExpired1();
+                    iChangePasswordService.clientTokenExpired();
                 }
             }
 
             @Override
             public void clientTokenError(String ERROR) {
-                iChangePasswordService.clientTokenExpired1();
+                iChangePasswordService.clientTokenExpired();
             }
         });
         clientTokenRefreshClass.refreshExistingClientToken(ApplicationConstants.xAccessToken, ApplicationConstants.CLIENT_TOKEN);

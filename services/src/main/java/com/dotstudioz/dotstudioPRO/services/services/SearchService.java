@@ -104,12 +104,12 @@ public class SearchService /*implements CommonAsyncHttpClient_V1.ICommonAsyncHtt
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iSearchService.accessTokenExpired1();
+            iSearchService.accessTokenExpired();
     }
 
     //@Override
     public void clientTokenExpired1() {
-        iSearchService.clientTokenExpired1();
+        iSearchService.clientTokenExpired();
     }
 
     boolean refreshAccessToken = false;
@@ -124,13 +124,13 @@ public class SearchService /*implements CommonAsyncHttpClient_V1.ICommonAsyncHtt
                     search(ApplicationConstants.xAccessToken, xClientToken, searchQueryString, api);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iSearchService.accessTokenExpired1();
+                    iSearchService.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iSearchService.accessTokenExpired1();
+                iSearchService.accessTokenExpired();
             }
         });
         refreshAccessToken = true;
@@ -140,8 +140,8 @@ public class SearchService /*implements CommonAsyncHttpClient_V1.ICommonAsyncHtt
     public interface ISearchService {
         void searchServiceResponse(String ACTUAL_RESPONSE);
         void searchError(String ERROR);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
-        void clientTokenExpired1();
+        void clientTokenExpired();
     }
 }

@@ -39,7 +39,7 @@ public class ValidateAppVersionAPI /*implements CommonAsyncHttpClient_V1.ICommon
     public interface IValidateAppVersionAPI {
         void getAppVersionResponse(boolean flag, ValidateAppVersionDTO validateAppVersionDTO);
         void getAppVersionError(String ERROR);
-        void accessTokenExpired1();
+        void accessTokenExpired();
     }
 
     public ValidateAppVersionAPI(Context ctx){
@@ -156,7 +156,7 @@ public class ValidateAppVersionAPI /*implements CommonAsyncHttpClient_V1.ICommon
     }
     //@Override
     public void accessTokenExpired1() {
-        iValidateAppVersionAPI.accessTokenExpired1();
+        iValidateAppVersionAPI.accessTokenExpired();
     }
     //@Override
     public void clientTokenExpired1() {

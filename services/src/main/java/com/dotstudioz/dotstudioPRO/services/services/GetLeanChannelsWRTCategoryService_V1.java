@@ -94,7 +94,7 @@ public class GetLeanChannelsWRTCategoryService_V1 /*implements CommonAsyncHttpCl
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iGetLeanChannelsWRTCategoryService_V1.accessTokenExpired1();
+            iGetLeanChannelsWRTCategoryService_V1.accessTokenExpired();
     }
 
     //@Override
@@ -107,7 +107,7 @@ public class GetLeanChannelsWRTCategoryService_V1 /*implements CommonAsyncHttpCl
         void hidePDialog();
         void processLeanChannelWRTCategoryServiceResponse(JSONObject response);
         void processLeanChannelWRTCategoryServiceError(String ERROR);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
 
         void numberOfCategoriesAlreadyFetched();
@@ -126,13 +126,13 @@ public class GetLeanChannelsWRTCategoryService_V1 /*implements CommonAsyncHttpCl
                     getLeanChannelDataWRTCategory(categorySlug);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iGetLeanChannelsWRTCategoryService_V1.accessTokenExpired1();
+                    iGetLeanChannelsWRTCategoryService_V1.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iGetLeanChannelsWRTCategoryService_V1.accessTokenExpired1();
+                iGetLeanChannelsWRTCategoryService_V1.accessTokenExpired();
             }
         });
         refreshAccessToken = true;

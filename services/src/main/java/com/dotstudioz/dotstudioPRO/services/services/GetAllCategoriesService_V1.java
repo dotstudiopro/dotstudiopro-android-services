@@ -37,8 +37,8 @@ public class GetAllCategoriesService_V1 /*implements CommonAsyncHttpClient_V1.IC
                 ArrayList<SpotLightCategoriesDTO> spotLightCategoriesDTOListForGenre
         );
         void getAllCategoriesError(String ERROR);
-        void accessTokenExpired1();
-        void clientTokenExpired1();
+        void accessTokenExpired();
+        void clientTokenExpired();
         void accessTokenRefreshed(String xAccessToken);
     }
 
@@ -128,11 +128,11 @@ public class GetAllCategoriesService_V1 /*implements CommonAsyncHttpClient_V1.IC
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iGetAllCategoriesService_V1.accessTokenExpired1();
+            iGetAllCategoriesService_V1.accessTokenExpired();
     }
     //@Override
     public void clientTokenExpired11() {
-        iGetAllCategoriesService_V1.clientTokenExpired1();
+        iGetAllCategoriesService_V1.clientTokenExpired();
     }
 
     private ArrayList<SpotLightCategoriesDTO> spotLightCategoriesDTOListALL = new ArrayList<SpotLightCategoriesDTO>();
@@ -302,13 +302,13 @@ public class GetAllCategoriesService_V1 /*implements CommonAsyncHttpClient_V1.IC
                     getAllCategoriesService(ApplicationConstants.xAccessToken, api);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iGetAllCategoriesService_V1.accessTokenExpired1();
+                    iGetAllCategoriesService_V1.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iGetAllCategoriesService_V1.accessTokenExpired1();
+                iGetAllCategoriesService_V1.accessTokenExpired();
             }
         });
         refreshAccessToken = true;

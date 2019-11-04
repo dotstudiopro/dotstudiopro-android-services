@@ -122,9 +122,9 @@ public class RecommendationChannelService_V1 /*implements CommonAsyncHttpClient_
                     if (AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
                         AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInRentNowPageString);
                         if (AccessTokenHandler.getInstance().foundAnyError)
-                            iRecommendationService.accessTokenExpired1();
+                            iRecommendationService.accessTokenExpired();
                         else if (AccessTokenHandler.getInstance().foundAnyErrorForClientToken)
-                            iRecommendationService.clientTokenExpired1();
+                            iRecommendationService.clientTokenExpired();
                     }
                 }
             }
@@ -137,11 +137,11 @@ public class RecommendationChannelService_V1 /*implements CommonAsyncHttpClient_
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iRecommendationService.accessTokenExpired1();
+            iRecommendationService.accessTokenExpired();
     }
     //@Override
     public void clientTokenExpired1() {
-        iRecommendationService.clientTokenExpired1();
+        iRecommendationService.clientTokenExpired();
     }
 
     private ArrayList<RecommendedItemDTO> recommendedItemDTOList;
@@ -225,9 +225,9 @@ public class RecommendationChannelService_V1 /*implements CommonAsyncHttpClient_
     public interface IRecommendationService {
         void recommendationServiceResponse(ArrayList<Recommended4ItemPairDTO> recommendedItemPairDTOList);
         void recommendationServiceError(String error);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
-        void clientTokenExpired1();
+        void clientTokenExpired();
     }
 
     boolean refreshAccessToken = false;
@@ -242,13 +242,13 @@ public class RecommendationChannelService_V1 /*implements CommonAsyncHttpClient_
                     getRecommendation(ApplicationConstants.xAccessToken, api, id, size, from);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iRecommendationService.accessTokenExpired1();
+                    iRecommendationService.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iRecommendationService.accessTokenExpired1();
+                iRecommendationService.accessTokenExpired();
             }
         });
         refreshAccessToken = true;

@@ -123,12 +123,12 @@ public class GetAllCategoriesServiceForHomepage_V1 /*implements CommonAsyncHttpC
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iGetAllCategoriesServiceForHomepage_v1.accessTokenExpired1();
+            iGetAllCategoriesServiceForHomepage_v1.accessTokenExpired();
     }
 
     //@Override
     public void clientTokenExpired1() {
-        iGetAllCategoriesServiceForHomepage_v1.clientTokenExpired1();
+        iGetAllCategoriesServiceForHomepage_v1.clientTokenExpired();
     }
 
     private void resultProcessingForCategories(JSONArray response) {
@@ -545,11 +545,11 @@ public class GetAllCategoriesServiceForHomepage_V1 /*implements CommonAsyncHttpC
 
         void getAllCategoriesForHomepageError(String ERROR);
 
-        void accessTokenExpired1();
+        void accessTokenExpired();
 
         void accessTokenRefreshed(String xAccessToken);
 
-        void clientTokenExpired1();
+        void clientTokenExpired();
     }
 
     boolean refreshAccessToken = false;
@@ -564,13 +564,13 @@ public class GetAllCategoriesServiceForHomepage_V1 /*implements CommonAsyncHttpC
                     getAllCategoriesServiceForHomePage(ApplicationConstants.xAccessToken, api);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iGetAllCategoriesServiceForHomepage_v1.accessTokenExpired1();
+                    iGetAllCategoriesServiceForHomepage_v1.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iGetAllCategoriesServiceForHomepage_v1.accessTokenExpired1();
+                iGetAllCategoriesServiceForHomepage_v1.accessTokenExpired();
             }
         });
         refreshAccessToken = true;

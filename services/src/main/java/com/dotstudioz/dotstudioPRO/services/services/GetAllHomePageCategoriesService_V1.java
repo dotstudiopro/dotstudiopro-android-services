@@ -31,9 +31,9 @@ public class GetAllHomePageCategoriesService_V1 /*implements CommonAsyncHttpClie
                 ArrayList<SpotLightCategoriesDTO> originalSpotLightHomePageCategoriesDTOListFinal
         );
         void getAllHomePageCategoriesError(String ERROR);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
-        void clientTokenExpired1();
+        void clientTokenExpired();
     }
 
     Context context;
@@ -121,11 +121,11 @@ public class GetAllHomePageCategoriesService_V1 /*implements CommonAsyncHttpClie
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iGetAllHomePageCategoriesService_V1.accessTokenExpired1();
+            iGetAllHomePageCategoriesService_V1.accessTokenExpired();
     }
     //@Override
     public void clientTokenExpired1() {
-        iGetAllHomePageCategoriesService_V1.clientTokenExpired1();
+        iGetAllHomePageCategoriesService_V1.clientTokenExpired();
     }
 
     boolean refreshAccessToken = false;
@@ -140,13 +140,13 @@ public class GetAllHomePageCategoriesService_V1 /*implements CommonAsyncHttpClie
                     getAllHomePageCategoriesService(ApplicationConstants.xAccessToken, api);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iGetAllHomePageCategoriesService_V1.accessTokenExpired1();
+                    iGetAllHomePageCategoriesService_V1.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iGetAllHomePageCategoriesService_V1.accessTokenExpired1();
+                iGetAllHomePageCategoriesService_V1.accessTokenExpired();
             }
         });
         refreshAccessToken = true;

@@ -28,9 +28,9 @@ public class GetUserSubscriptionsService_V1 /*implements CommonAsyncHttpClient_V
                 ArrayList<SubscriptionDTO> userSubscriptionDTOArrayList
         );
         void getUserSubscriptionsError(String ERROR);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
-        void clientTokenExpired1();
+        void clientTokenExpired();
         void clientTokenRefreshed(String clientToken);
     }
 
@@ -121,14 +121,14 @@ public class GetUserSubscriptionsService_V1 /*implements CommonAsyncHttpClient_V
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iGetUserSubscriptionsService.accessTokenExpired1();
+            iGetUserSubscriptionsService.accessTokenExpired();
     }
     //@Override
     public void clientTokenExpired1() {
         if(refreshClientToken)
             refreshClientToken();
         else
-            iGetUserSubscriptionsService.clientTokenExpired1();
+            iGetUserSubscriptionsService.clientTokenExpired();
     }
 
     boolean refreshAccessToken = false;
@@ -143,13 +143,13 @@ public class GetUserSubscriptionsService_V1 /*implements CommonAsyncHttpClient_V
                     getUserSubscriptionsService(ApplicationConstants.xAccessToken, xClientToken, api);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iGetUserSubscriptionsService.accessTokenExpired1();
+                    iGetUserSubscriptionsService.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iGetUserSubscriptionsService.accessTokenExpired1();
+                iGetUserSubscriptionsService.accessTokenExpired();
             }
         });
         refreshAccessToken = true;
@@ -169,13 +169,13 @@ public class GetUserSubscriptionsService_V1 /*implements CommonAsyncHttpClient_V
                     getUserSubscriptionsService(ApplicationConstants.xAccessToken, idToken, api);
                 } catch(Exception e) {
                     e.printStackTrace();
-                    iGetUserSubscriptionsService.clientTokenExpired1();
+                    iGetUserSubscriptionsService.clientTokenExpired();
                 }
             }
 
             @Override
             public void clientTokenError(String ERROR) {
-                iGetUserSubscriptionsService.clientTokenExpired1();
+                iGetUserSubscriptionsService.clientTokenExpired();
             }
         });
         clientTokenRefreshClass.refreshExistingClientToken(ApplicationConstants.xAccessToken, ApplicationConstants.CLIENT_TOKEN);

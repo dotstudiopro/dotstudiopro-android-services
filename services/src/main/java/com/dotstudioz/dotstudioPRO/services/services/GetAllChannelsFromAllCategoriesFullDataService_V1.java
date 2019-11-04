@@ -26,9 +26,9 @@ public class GetAllChannelsFromAllCategoriesFullDataService_V1 /*implements Comm
     public interface IGetAllChannelsFromAllCategoriesFullDataService_V1 {
         void getAllChannelsFromAllCategoriesFullDataServiceResponse(ArrayList<SpotLightCategoriesDTO> listOfCategories);
         void getAllChannelsFromAllCategoriesFullDataServiceError(String ERROR);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
-        void clientTokenExpired1();
+        void clientTokenExpired();
     }
 
     Context context;
@@ -111,11 +111,11 @@ public class GetAllChannelsFromAllCategoriesFullDataService_V1 /*implements Comm
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iGetAllChannelsFromAllCategoriesFullDataService_V1.accessTokenExpired1();
+            iGetAllChannelsFromAllCategoriesFullDataService_V1.accessTokenExpired();
     }
     //@Override
     public void clientTokenExpired1() {
-        iGetAllChannelsFromAllCategoriesFullDataService_V1.clientTokenExpired1();
+        iGetAllChannelsFromAllCategoriesFullDataService_V1.clientTokenExpired();
     }
 
     boolean refreshAccessToken = false;
@@ -130,13 +130,13 @@ public class GetAllChannelsFromAllCategoriesFullDataService_V1 /*implements Comm
                     getAllChannelsFromAllCategoriesFullDataService(ApplicationConstants.xAccessToken, api, spotLightCategoriesDTOParent);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iGetAllChannelsFromAllCategoriesFullDataService_V1.accessTokenExpired1();
+                    iGetAllChannelsFromAllCategoriesFullDataService_V1.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iGetAllChannelsFromAllCategoriesFullDataService_V1.accessTokenExpired1();
+                iGetAllChannelsFromAllCategoriesFullDataService_V1.accessTokenExpired();
             }
         });
         refreshAccessToken = true;

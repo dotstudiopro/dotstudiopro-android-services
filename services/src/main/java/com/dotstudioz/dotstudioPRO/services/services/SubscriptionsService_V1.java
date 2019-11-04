@@ -33,9 +33,9 @@ public class SubscriptionsService_V1 /*implements CommonAsyncHttpClient_V1.IComm
                 JSONObject response
         );
         void createChargifyCustomerUsingSubscriptionIDError(String ERROR);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
-        void clientTokenExpired1();
+        void clientTokenExpired();
         void clientTokenRefreshed(String clientToken);
     }
 
@@ -204,14 +204,14 @@ public class SubscriptionsService_V1 /*implements CommonAsyncHttpClient_V1.IComm
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iSubscriptionsService.accessTokenExpired1();
+            iSubscriptionsService.accessTokenExpired();
     }
     //@Override
     public void clientTokenExpired1() {
         if(refreshClientToken)
             refreshClientToken();
         else
-            iSubscriptionsService.clientTokenExpired1();
+            iSubscriptionsService.clientTokenExpired();
     }
 
     boolean refreshAccessToken = false;
@@ -230,13 +230,13 @@ public class SubscriptionsService_V1 /*implements CommonAsyncHttpClient_V1.IComm
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iSubscriptionsService.accessTokenExpired1();
+                    iSubscriptionsService.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iSubscriptionsService.accessTokenExpired1();
+                iSubscriptionsService.accessTokenExpired();
             }
         });
         refreshAccessToken = true;
@@ -260,13 +260,13 @@ public class SubscriptionsService_V1 /*implements CommonAsyncHttpClient_V1.IComm
                     }
                 } catch(Exception e) {
                     e.printStackTrace();
-                    iSubscriptionsService.clientTokenExpired1();
+                    iSubscriptionsService.clientTokenExpired();
                 }
             }
 
             @Override
             public void clientTokenError(String ERROR) {
-                iSubscriptionsService.clientTokenExpired1();
+                iSubscriptionsService.clientTokenExpired();
             }
         });
         clientTokenRefreshClass.refreshExistingClientToken(ApplicationConstants.xAccessToken, ApplicationConstants.CLIENT_TOKEN);

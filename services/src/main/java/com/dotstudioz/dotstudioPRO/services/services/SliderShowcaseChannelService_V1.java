@@ -21,9 +21,9 @@ public class SliderShowcaseChannelService_V1 /*implements CommonAsyncHttpClient_
     public interface ISliderShowcaseChannelService_V1 {
         void processSliderShowcaseChannelServiceResponse(JSONObject response);
         void getSliderShowcaseChannelError(String ERROR);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
-        void clientTokenExpired1();
+        void clientTokenExpired();
     }
     Context context;
     public SliderShowcaseChannelService_V1(Context ctx) {
@@ -104,11 +104,11 @@ public class SliderShowcaseChannelService_V1 /*implements CommonAsyncHttpClient_
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iSliderShowcaseChannelService_V1.accessTokenExpired1();
+            iSliderShowcaseChannelService_V1.accessTokenExpired();
     }
     //@Override
     public void clientTokenExpired1() {
-        iSliderShowcaseChannelService_V1.clientTokenExpired1();
+        iSliderShowcaseChannelService_V1.clientTokenExpired();
     }
 
     boolean refreshAccessToken = false;
@@ -123,13 +123,13 @@ public class SliderShowcaseChannelService_V1 /*implements CommonAsyncHttpClient_
                     getSliderShowcaseChannel(categorySlug);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iSliderShowcaseChannelService_V1.accessTokenExpired1();
+                    iSliderShowcaseChannelService_V1.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iSliderShowcaseChannelService_V1.accessTokenExpired1();
+                iSliderShowcaseChannelService_V1.accessTokenExpired();
             }
         });
         refreshAccessToken = true;

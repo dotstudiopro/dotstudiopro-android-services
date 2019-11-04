@@ -108,7 +108,7 @@ public class DeviceCodeActivationService /*implements CommonAsyncHttpClient_V1.I
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iDeviceCodeActivationService.accessTokenExpired1();
+            iDeviceCodeActivationService.accessTokenExpired();
     }
 
     //@Override
@@ -119,7 +119,7 @@ public class DeviceCodeActivationService /*implements CommonAsyncHttpClient_V1.I
     public interface IDeviceCodeActivationService {
         void deviceCodeActivationServiceResponse(JSONObject responseBody);
         void deviceCodeActivationServiceError(String responseBody);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
     }
 
@@ -135,13 +135,13 @@ public class DeviceCodeActivationService /*implements CommonAsyncHttpClient_V1.I
                     getDeviceActivationWithCode(ApplicationConstants.xAccessToken, code, customerId, api);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iDeviceCodeActivationService.accessTokenExpired1();
+                    iDeviceCodeActivationService.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iDeviceCodeActivationService.accessTokenExpired1();
+                iDeviceCodeActivationService.accessTokenExpired();
             }
         });
         refreshAccessToken = true;

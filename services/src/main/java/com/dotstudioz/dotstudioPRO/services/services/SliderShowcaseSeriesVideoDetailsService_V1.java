@@ -31,9 +31,9 @@ public class SliderShowcaseSeriesVideoDetailsService_V1 /*implements CommonAsync
         void callBackFromFetchSeriesVideoDetailsForSliderShowcase(ArrayList<VideoInfoDTO> videoInfoDTOArrayListForSliderShowcase);
         void fetchNextVideoFromPlaylistForSliderShowcase(int index);
         void getSliderShowcaseSeriesVideoDetailsServiceError(String ERROR);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
-        void clientTokenExpired1();
+        void clientTokenExpired();
     }
 
     ArrayList<VideoInfoDTO> videoInfoDTOArrayListForSliderShowcase = null;
@@ -596,14 +596,14 @@ public class SliderShowcaseSeriesVideoDetailsService_V1 /*implements CommonAsync
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iSliderShowcaseSeriesVideoDetailsService_V1.accessTokenExpired1();
+            iSliderShowcaseSeriesVideoDetailsService_V1.accessTokenExpired();
     }
     //@Override
     public void clientTokenExpired1() {
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iSliderShowcaseSeriesVideoDetailsService_V1.clientTokenExpired1();
+            iSliderShowcaseSeriesVideoDetailsService_V1.clientTokenExpired();
     }
 
     boolean refreshAccessToken = false;
@@ -618,13 +618,13 @@ public class SliderShowcaseSeriesVideoDetailsService_V1 /*implements CommonAsync
                     fetchSeriesVideoDetailsForSliderShowcase(api, indexOfThisVideo);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iSliderShowcaseSeriesVideoDetailsService_V1.accessTokenExpired1();
+                    iSliderShowcaseSeriesVideoDetailsService_V1.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iSliderShowcaseSeriesVideoDetailsService_V1.accessTokenExpired1();
+                iSliderShowcaseSeriesVideoDetailsService_V1.accessTokenExpired();
             }
         });
         refreshAccessToken = true;

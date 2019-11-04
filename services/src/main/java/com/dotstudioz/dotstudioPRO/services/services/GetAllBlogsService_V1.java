@@ -27,9 +27,9 @@ public class GetAllBlogsService_V1 /*implements CommonAsyncHttpClient_V1.ICommon
                 ArrayList<SpotLightBlogDTO> spotLightBlogDTOListALL
         );
         void getAllBlogError(String ERROR);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
-        void clientTokenExpired1();
+        void clientTokenExpired();
     }
 
     Context context;
@@ -131,11 +131,11 @@ public class GetAllBlogsService_V1 /*implements CommonAsyncHttpClient_V1.ICommon
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iGetAllBlogService_V1.accessTokenExpired1();
+            iGetAllBlogService_V1.accessTokenExpired();
     }
     //@Override
     public void clientTokenExpired1() {
-        iGetAllBlogService_V1.clientTokenExpired1();
+        iGetAllBlogService_V1.clientTokenExpired();
     }
 
     private ArrayList<SpotLightBlogDTO> spotLightBlogDTOListALL = new ArrayList<SpotLightBlogDTO>();
@@ -394,13 +394,13 @@ public class GetAllBlogsService_V1 /*implements CommonAsyncHttpClient_V1.ICommon
                     getAllBlogService(ApplicationConstants.xAccessToken, api, slug);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iGetAllBlogService_V1.accessTokenExpired1();
+                    iGetAllBlogService_V1.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iGetAllBlogService_V1.accessTokenExpired1();
+                iGetAllBlogService_V1.accessTokenExpired();
             }
         });
         refreshAccessToken = true;

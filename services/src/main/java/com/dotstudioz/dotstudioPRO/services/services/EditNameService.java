@@ -125,7 +125,7 @@ public class EditNameService /*implements CommonAsyncHttpClient_V1.ICommonAsyncH
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iEditNameService.accessTokenExpired1();
+            iEditNameService.accessTokenExpired();
     }
 
     //@Override
@@ -133,16 +133,16 @@ public class EditNameService /*implements CommonAsyncHttpClient_V1.ICommonAsyncH
         if(refreshClientToken)
             refreshClientToken();
         else
-            iEditNameService.clientTokenExpired1();
+            iEditNameService.clientTokenExpired();
     }
 
 
     public interface IEditNameService {
         void editNameServiceResponse(JSONObject jsonObject);
         void editNameServiceError(String ERROR);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
-        void clientTokenExpired1();
+        void clientTokenExpired();
         void clientTokenRefreshed(String clientToken);
     }
 
@@ -158,13 +158,13 @@ public class EditNameService /*implements CommonAsyncHttpClient_V1.ICommonAsyncH
                     saveName(ApplicationConstants.xAccessToken, xClientToken, api, fName, lName);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iEditNameService.accessTokenExpired1();
+                    iEditNameService.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iEditNameService.accessTokenExpired1();
+                iEditNameService.accessTokenExpired();
             }
         });
         refreshAccessToken = true;
@@ -184,13 +184,13 @@ public class EditNameService /*implements CommonAsyncHttpClient_V1.ICommonAsyncH
                     saveName(ApplicationConstants.xAccessToken, idToken, api, fName, lName);
                 } catch(Exception e) {
                     e.printStackTrace();
-                    iEditNameService.clientTokenExpired1();
+                    iEditNameService.clientTokenExpired();
                 }
             }
 
             @Override
             public void clientTokenError(String ERROR) {
-                iEditNameService.clientTokenExpired1();
+                iEditNameService.clientTokenExpired();
             }
         });
         clientTokenRefreshClass.refreshExistingClientToken(ApplicationConstants.xAccessToken, ApplicationConstants.CLIENT_TOKEN);

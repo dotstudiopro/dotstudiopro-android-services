@@ -100,7 +100,7 @@ public class GetUserDetailsService /*implements CommonAsyncHttpClient_V1.ICommon
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iGetUserDetailsService.accessTokenExpired1();
+            iGetUserDetailsService.accessTokenExpired();
     }
 
     //@Override
@@ -108,15 +108,15 @@ public class GetUserDetailsService /*implements CommonAsyncHttpClient_V1.ICommon
         if(refreshClientToken)
             refreshClientToken();
         else
-            iGetUserDetailsService.clientTokenExpired1();
+            iGetUserDetailsService.clientTokenExpired();
     }
 
     public interface IGetUserDetailsService {
         void getUserDetailsServiceResponse(JSONObject jsonObject);
         void getUserDetailsServiceError(String error);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
-        void clientTokenExpired1();
+        void clientTokenExpired();
         void clientTokenRefreshed(String clientToken);
     }
 
@@ -132,13 +132,13 @@ public class GetUserDetailsService /*implements CommonAsyncHttpClient_V1.ICommon
                     getUserDetails(ApplicationConstants.xAccessToken, xClientToken, api);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iGetUserDetailsService.accessTokenExpired1();
+                    iGetUserDetailsService.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iGetUserDetailsService.accessTokenExpired1();
+                iGetUserDetailsService.accessTokenExpired();
             }
         });
         refreshAccessToken = true;
@@ -158,13 +158,13 @@ public class GetUserDetailsService /*implements CommonAsyncHttpClient_V1.ICommon
                     getUserDetails(ApplicationConstants.xAccessToken, idToken, api);
                 } catch(Exception e) {
                     e.printStackTrace();
-                    iGetUserDetailsService.clientTokenExpired1();
+                    iGetUserDetailsService.clientTokenExpired();
                 }
             }
 
             @Override
             public void clientTokenError(String ERROR) {
-                iGetUserDetailsService.clientTokenExpired1();
+                iGetUserDetailsService.clientTokenExpired();
             }
         });
         clientTokenRefreshClass.refreshExistingClientToken(ApplicationConstants.xAccessToken, ApplicationConstants.CLIENT_TOKEN);

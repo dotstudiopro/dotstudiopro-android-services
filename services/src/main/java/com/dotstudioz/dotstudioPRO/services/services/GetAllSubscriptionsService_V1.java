@@ -28,9 +28,9 @@ public class GetAllSubscriptionsService_V1 /*implements CommonAsyncHttpClient_V1
                 ArrayList<SubscriptionDTO> subscriptionDTOArrayList
         );
         void getAllSubscriptionsError(String ERROR);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
-        void clientTokenExpired1();
+        void clientTokenExpired();
     }
 
     Context context;
@@ -119,11 +119,11 @@ public class GetAllSubscriptionsService_V1 /*implements CommonAsyncHttpClient_V1
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iGetAllSubscriptionsService.accessTokenExpired1();
+            iGetAllSubscriptionsService.accessTokenExpired();
     }
     //@Override
     public void clientTokenExpired1() {
-        iGetAllSubscriptionsService.clientTokenExpired1();
+        iGetAllSubscriptionsService.clientTokenExpired();
     }
 
     private ArrayList<SubscriptionDTO> subscriptionDTOArrayList = new ArrayList<SubscriptionDTO>();
@@ -363,13 +363,13 @@ public class GetAllSubscriptionsService_V1 /*implements CommonAsyncHttpClient_V1
                     getAllSubscriptionsService(ApplicationConstants.xAccessToken, api);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iGetAllSubscriptionsService.accessTokenExpired1();
+                    iGetAllSubscriptionsService.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iGetAllSubscriptionsService.accessTokenExpired1();
+                iGetAllSubscriptionsService.accessTokenExpired();
             }
         });
         refreshAccessToken = true;

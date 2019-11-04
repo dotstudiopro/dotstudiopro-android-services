@@ -99,9 +99,9 @@ public class ChannelDetailsService /*implements CommonAsyncHttpClient_V1.ICommon
                     if (AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
                         AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInChannelsPageString);
                         if (AccessTokenHandler.getInstance().foundAnyError)
-                            iChannelDetailsService.accessTokenExpired1();
+                            iChannelDetailsService.accessTokenExpired();
                         else if (AccessTokenHandler.getInstance().foundAnyErrorForClientToken)
-                            iChannelDetailsService.clientTokenExpired1();
+                            iChannelDetailsService.clientTokenExpired();
                     }
                 }
             } catch (JSONException e) {
@@ -176,7 +176,7 @@ public class ChannelDetailsService /*implements CommonAsyncHttpClient_V1.ICommon
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iChannelDetailsService.accessTokenExpired1();
+            iChannelDetailsService.accessTokenExpired();
     }
 
     //@Override
@@ -184,14 +184,14 @@ public class ChannelDetailsService /*implements CommonAsyncHttpClient_V1.ICommon
         if(refreshClientToken)
             refreshClientToken();
         else
-            iChannelDetailsService.clientTokenExpired1();
+            iChannelDetailsService.clientTokenExpired();
     }
 
     public interface IChannelDetailsService {
         void channelDetailsServiceResponse(JSONObject jsonObject);
         void channelDetailsServiceError(String error);
-        void accessTokenExpired1();
-        void clientTokenExpired1();
+        void accessTokenExpired();
+        void clientTokenExpired();
         void accessTokenRefreshed(String accessToken);
     }
 
@@ -207,13 +207,13 @@ public class ChannelDetailsService /*implements CommonAsyncHttpClient_V1.ICommon
                     getChannelDetails(ApplicationConstants.xAccessToken, api, categorySlug, channelSlug);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iChannelDetailsService.accessTokenExpired1();
+                    iChannelDetailsService.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iChannelDetailsService.accessTokenExpired1();
+                iChannelDetailsService.accessTokenExpired();
             }
         });
         refreshAccessToken = true;
@@ -232,13 +232,13 @@ public class ChannelDetailsService /*implements CommonAsyncHttpClient_V1.ICommon
                     getChannelDetails(ApplicationConstants.xAccessToken, api, categorySlug, channelSlug);
                 } catch(Exception e) {
                     e.printStackTrace();
-                    iChannelDetailsService.clientTokenExpired1();
+                    iChannelDetailsService.clientTokenExpired();
                 }
             }
 
             @Override
             public void clientTokenError(String ERROR) {
-                iChannelDetailsService.clientTokenExpired1();
+                iChannelDetailsService.clientTokenExpired();
             }
         });
         clientTokenRefreshClass.refreshExistingClientToken(ApplicationConstants.xAccessToken, ApplicationConstants.CLIENT_TOKEN);

@@ -31,9 +31,9 @@ public class GetAllChannelsFromAllCategoriesService_V1 /*implements CommonAsyncH
                 List<SpotLightCategoriesDTO> spotLightCategoriesDTOList
         );
         void getAllChannelsFromAllCategoriesServiceError(String ERROR);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
-        void clientTokenExpired1();
+        void clientTokenExpired();
     }
 
     Context context;
@@ -124,11 +124,11 @@ public class GetAllChannelsFromAllCategoriesService_V1 /*implements CommonAsyncH
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iGetAllChannelsFromAllCategoriesService_V1.accessTokenExpired1();
+            iGetAllChannelsFromAllCategoriesService_V1.accessTokenExpired();
     }
     //@Override
     public void clientTokenExpired1() {
-        iGetAllChannelsFromAllCategoriesService_V1.clientTokenExpired1();
+        iGetAllChannelsFromAllCategoriesService_V1.clientTokenExpired();
     }
 
     boolean refreshAccessToken = false;
@@ -143,13 +143,13 @@ public class GetAllChannelsFromAllCategoriesService_V1 /*implements CommonAsyncH
                     getAllChannelsFromAllCategoriesService(ApplicationConstants.xAccessToken, api, categoriesSlug, channelDTOList, spotLightCategoriesDTOList);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iGetAllChannelsFromAllCategoriesService_V1.accessTokenExpired1();
+                    iGetAllChannelsFromAllCategoriesService_V1.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iGetAllChannelsFromAllCategoriesService_V1.accessTokenExpired1();
+                iGetAllChannelsFromAllCategoriesService_V1.accessTokenExpired();
             }
         });
         refreshAccessToken = true;

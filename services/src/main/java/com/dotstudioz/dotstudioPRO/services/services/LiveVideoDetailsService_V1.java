@@ -29,9 +29,9 @@ public class LiveVideoDetailsService_V1 /*implements CommonAsyncHttpClient_V1.IC
     public interface ILiveVideoDetailsService_V1 {
         void fetchLiveVideoInfoDTODataServiceResponse(ArrayList<VideoInfoDTO> videoInfoDTOArrayList);
         void fetchLiveVideoInfoDTODataServiceError(String ERROR);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
-        void clientTokenExpired1();
+        void clientTokenExpired();
     }
 
     ArrayList<VideoInfoDTO> videoInfoDTOArrayList = null;
@@ -851,14 +851,14 @@ public class LiveVideoDetailsService_V1 /*implements CommonAsyncHttpClient_V1.IC
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iLiveVideoDetailsService_V1.accessTokenExpired1();
+            iLiveVideoDetailsService_V1.accessTokenExpired();
     }
     //@Override
     public void clientTokenExpired1() {
         if(refreshClientToken)
             refreshClientToken();
         else
-            iLiveVideoDetailsService_V1.clientTokenExpired1();
+            iLiveVideoDetailsService_V1.clientTokenExpired();
     }
 
     boolean refreshAccessToken = false;
@@ -873,13 +873,13 @@ public class LiveVideoDetailsService_V1 /*implements CommonAsyncHttpClient_V1.IC
                     fetchLiveVideoDetails(api);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iLiveVideoDetailsService_V1.accessTokenExpired1();
+                    iLiveVideoDetailsService_V1.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iLiveVideoDetailsService_V1.accessTokenExpired1();
+                iLiveVideoDetailsService_V1.accessTokenExpired();
             }
         });
         refreshAccessToken = true;
@@ -898,13 +898,13 @@ public class LiveVideoDetailsService_V1 /*implements CommonAsyncHttpClient_V1.IC
                     fetchLiveVideoDetails(api);
                 } catch(Exception e) {
                     e.printStackTrace();
-                    iLiveVideoDetailsService_V1.clientTokenExpired1();
+                    iLiveVideoDetailsService_V1.clientTokenExpired();
                 }
             }
 
             @Override
             public void clientTokenError(String ERROR) {
-                iLiveVideoDetailsService_V1.clientTokenExpired1();
+                iLiveVideoDetailsService_V1.clientTokenExpired();
             }
         });
         clientTokenRefreshClass.refreshExistingClientToken(ApplicationConstants.xAccessToken, ApplicationConstants.CLIENT_TOKEN);

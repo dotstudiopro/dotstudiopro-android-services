@@ -124,7 +124,7 @@ public class FetchMissingChannelService_V1 /*implements CommonAsyncHttpClient_V1
                 if (AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
                     AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInChannelPageString);
                     if (AccessTokenHandler.getInstance().foundAnyError)
-                        iFetchMissingChannelService_V1.accessTokenExpired1();
+                        iFetchMissingChannelService_V1.accessTokenExpired();
                 }
             }
         } catch(Exception e) {
@@ -151,7 +151,7 @@ public class FetchMissingChannelService_V1 /*implements CommonAsyncHttpClient_V1
                     if(AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
                         AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInChannelPageString);
                         if(AccessTokenHandler.getInstance().foundAnyError)
-                            iFetchMissingChannelService_V1.accessTokenExpired1();
+                            iFetchMissingChannelService_V1.accessTokenExpired();
                     }
                 }
             }
@@ -165,7 +165,7 @@ public class FetchMissingChannelService_V1 /*implements CommonAsyncHttpClient_V1
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iFetchMissingChannelService_V1.accessTokenExpired1();
+            iFetchMissingChannelService_V1.accessTokenExpired();
     }
     //@Override
     public void clientTokenExpired1() {
@@ -899,7 +899,7 @@ public class FetchMissingChannelService_V1 /*implements CommonAsyncHttpClient_V1
         void hidePDialog();
         void postProcessingMissingChannelDataServiceResponse(String selectedChannelID, SpotLightChannelDTO spotLightChannelDTO, SpotLightCategoriesDTO spotLightCategoriesDTO, JSONObject channel, ArrayList<VideoInfoDTO> missingVideoInfoDTOList);
         void processMissingChannelDataServiceError(String ERROR);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
     }
 
@@ -915,13 +915,13 @@ public class FetchMissingChannelService_V1 /*implements CommonAsyncHttpClient_V1
                     fetchMissingChannelData(channelSlug, spotLightCategoriesDTOArrayList);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iFetchMissingChannelService_V1.accessTokenExpired1();
+                    iFetchMissingChannelService_V1.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iFetchMissingChannelService_V1.accessTokenExpired1();
+                iFetchMissingChannelService_V1.accessTokenExpired();
             }
         });
         refreshAccessToken = true;

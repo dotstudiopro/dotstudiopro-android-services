@@ -118,11 +118,11 @@ public class SearchSuggesterService_V1 /*implements CommonAsyncHttpClient_V1.ICo
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iSearchSuggesterService.accessTokenExpired1();
+            iSearchSuggesterService.accessTokenExpired();
     }
     //@Override
     public void clientTokenExpired1() {
-        iSearchSuggesterService.clientTokenExpired1();
+        iSearchSuggesterService.clientTokenExpired();
     }
 
     boolean refreshAccessToken = false;
@@ -137,13 +137,13 @@ public class SearchSuggesterService_V1 /*implements CommonAsyncHttpClient_V1.ICo
                     search(ApplicationConstants.xAccessToken, xClientToken, searchQueryString, api);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iSearchSuggesterService.accessTokenExpired1();
+                    iSearchSuggesterService.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iSearchSuggesterService.accessTokenExpired1();
+                iSearchSuggesterService.accessTokenExpired();
             }
         });
         refreshAccessToken = true;
@@ -208,8 +208,8 @@ public class SearchSuggesterService_V1 /*implements CommonAsyncHttpClient_V1.ICo
         void showProgress(String message);
         void searchSuggesterServiceResponse(ArrayList<SearchSuggesterDTO> searchSuggesterDTOArrayList);
         void searchSuggesterError(String ERROR);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
-        void clientTokenExpired1();
+        void clientTokenExpired();
     }
 }

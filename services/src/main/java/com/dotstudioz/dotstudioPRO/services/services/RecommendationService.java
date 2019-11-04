@@ -167,12 +167,12 @@ public class RecommendationService /*implements CommonAsyncHttpClient_V1.ICommon
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iRecommendationService.accessTokenExpired1();
+            iRecommendationService.accessTokenExpired();
     }
 
     //@Override
     public void clientTokenExpired1() {
-        iRecommendationService.clientTokenExpired1();
+        iRecommendationService.clientTokenExpired();
     }
 
     boolean refreshAccessToken = false;
@@ -187,13 +187,13 @@ public class RecommendationService /*implements CommonAsyncHttpClient_V1.ICommon
                     getRecommendation(ApplicationConstants.xAccessToken, api, id, size, from);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iRecommendationService.accessTokenExpired1();
+                    iRecommendationService.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iRecommendationService.accessTokenExpired1();
+                iRecommendationService.accessTokenExpired();
             }
         });
         refreshAccessToken = true;
@@ -203,8 +203,8 @@ public class RecommendationService /*implements CommonAsyncHttpClient_V1.ICommon
     public interface IRecommendationService {
         void recommendationServiceResponse(ArrayList recommendedItemPairDTOList);
         void recommendationServiceError(String error);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
-        void clientTokenExpired1();
+        void clientTokenExpired();
     }
 }

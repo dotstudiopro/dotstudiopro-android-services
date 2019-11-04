@@ -29,9 +29,9 @@ public class GetCategoriesFullDataService_V1 /*implements CommonAsyncHttpClient_
                 SpotLightCategoriesDTO spotLightCategoriesDTO
         );
         void getCategoriesFullDataServiceError(String ERROR);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
-        void clientTokenExpired1();
+        void clientTokenExpired();
     }
 
     Context context;
@@ -119,11 +119,11 @@ public class GetCategoriesFullDataService_V1 /*implements CommonAsyncHttpClient_
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iGetCategoriesFullDataService_V1.accessTokenExpired1();
+            iGetCategoriesFullDataService_V1.accessTokenExpired();
     }
     //@Override
     public void clientTokenExpired1() {
-        iGetCategoriesFullDataService_V1.clientTokenExpired1();
+        iGetCategoriesFullDataService_V1.clientTokenExpired();
     }
 
     boolean refreshAccessToken = false;
@@ -138,13 +138,13 @@ public class GetCategoriesFullDataService_V1 /*implements CommonAsyncHttpClient_
                     getCategoriesFullDataService(ApplicationConstants.xAccessToken, api, spotLightCategoriesDTO);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iGetCategoriesFullDataService_V1.accessTokenExpired1();
+                    iGetCategoriesFullDataService_V1.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iGetCategoriesFullDataService_V1.accessTokenExpired1();
+                iGetCategoriesFullDataService_V1.accessTokenExpired();
             }
         });
         refreshAccessToken = true;

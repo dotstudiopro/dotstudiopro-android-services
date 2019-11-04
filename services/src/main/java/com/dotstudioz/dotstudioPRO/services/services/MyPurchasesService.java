@@ -112,7 +112,7 @@ public class MyPurchasesService /*implements CommonAsyncHttpClient_V1.ICommonAsy
 
                                     try {
                                         if (responseBody.has("message")) {
-                                            iMyPurchasesService.accessTokenExpired1();
+                                            iMyPurchasesService.accessTokenExpired();
                                         }
                                     } catch (Exception e)
                                     {
@@ -249,7 +249,7 @@ public class MyPurchasesService /*implements CommonAsyncHttpClient_V1.ICommonAsy
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iMyPurchasesService.accessTokenExpired1();
+            iMyPurchasesService.accessTokenExpired();
     }
 
     //@Override
@@ -257,7 +257,7 @@ public class MyPurchasesService /*implements CommonAsyncHttpClient_V1.ICommonAsy
         if(refreshClientToken)
             refreshClientToken();
         else
-            iMyPurchasesService.clientTokenExpired1();
+            iMyPurchasesService.clientTokenExpired();
     }
 
     boolean refreshAccessToken = false;
@@ -272,13 +272,13 @@ public class MyPurchasesService /*implements CommonAsyncHttpClient_V1.ICommonAsy
                     getMyPurchases(ApplicationConstants.xAccessToken, xClientToken, api, spotLightCategoriesDTOListGeneric);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iMyPurchasesService.accessTokenExpired1();
+                    iMyPurchasesService.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iMyPurchasesService.accessTokenExpired1();
+                iMyPurchasesService.accessTokenExpired();
             }
         });
         refreshAccessToken = true;
@@ -298,13 +298,13 @@ public class MyPurchasesService /*implements CommonAsyncHttpClient_V1.ICommonAsy
                     getMyPurchases(ApplicationConstants.xAccessToken, idToken, api, spotLightCategoriesDTOListGeneric);
                 } catch(Exception e) {
                     e.printStackTrace();
-                    iMyPurchasesService.clientTokenExpired1();
+                    iMyPurchasesService.clientTokenExpired();
                 }
             }
 
             @Override
             public void clientTokenError(String ERROR) {
-                iMyPurchasesService.clientTokenExpired1();
+                iMyPurchasesService.clientTokenExpired();
             }
         });
         clientTokenRefreshClass.refreshExistingClientToken(ApplicationConstants.xAccessToken, ApplicationConstants.CLIENT_TOKEN);
@@ -314,9 +314,9 @@ public class MyPurchasesService /*implements CommonAsyncHttpClient_V1.ICommonAsy
     public interface IMyPurchasesService {
         void myPurchasesServiceResponse(List<MyPurchaseItemDTO> myPurchaseItemDTOList);
         void myPurchasesServiceError(String ERROR);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
-        void clientTokenExpired1();
+        void clientTokenExpired();
         void clientTokenRefreshed(String clientToken);
     }
 }

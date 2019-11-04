@@ -117,7 +117,7 @@ public class FetchChannelUsingSlugForSubscriptionStatusService_V1 /*implements C
                 if (AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
                     AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInChannelPageString);
                     if (AccessTokenHandler.getInstance().foundAnyError)
-                        iFetchChannelUsingSlugForSubscriptionStatusService_V1.accessTokenExpired1();
+                        iFetchChannelUsingSlugForSubscriptionStatusService_V1.accessTokenExpired();
                 }
             }
         } catch(Exception e) {
@@ -144,7 +144,7 @@ public class FetchChannelUsingSlugForSubscriptionStatusService_V1 /*implements C
                     if(AccessTokenHandler.getInstance().handleTokenExpiryConditions(responseBody)) {
                         AccessTokenHandler.getInstance().setFlagWhileCalingForToken(AccessTokenHandler.getInstance().fetchTokenCalledInChannelPageString);
                         if(AccessTokenHandler.getInstance().foundAnyError)
-                            iFetchChannelUsingSlugForSubscriptionStatusService_V1.accessTokenExpired1();
+                            iFetchChannelUsingSlugForSubscriptionStatusService_V1.accessTokenExpired();
                     }
                 }
             }
@@ -158,7 +158,7 @@ public class FetchChannelUsingSlugForSubscriptionStatusService_V1 /*implements C
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iFetchChannelUsingSlugForSubscriptionStatusService_V1.accessTokenExpired1();
+            iFetchChannelUsingSlugForSubscriptionStatusService_V1.accessTokenExpired();
     }
     //@Override
     public void clientTokenExpired1() {
@@ -692,7 +692,7 @@ public class FetchChannelUsingSlugForSubscriptionStatusService_V1 /*implements C
         void hidePDialog();
         void fetchChannelUsingSlugServiceResponse(SpotLightChannelDTO spotLightChannelDTO);
         void fetchChannelUsingSlugServiceError(String ERROR);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
     }
 
@@ -708,13 +708,13 @@ public class FetchChannelUsingSlugForSubscriptionStatusService_V1 /*implements C
                     fetchChannelData(channelSlug);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iFetchChannelUsingSlugForSubscriptionStatusService_V1.accessTokenExpired1();
+                    iFetchChannelUsingSlugForSubscriptionStatusService_V1.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iFetchChannelUsingSlugForSubscriptionStatusService_V1.accessTokenExpired1();
+                iFetchChannelUsingSlugForSubscriptionStatusService_V1.accessTokenExpired();
             }
         });
         refreshAccessToken = true;

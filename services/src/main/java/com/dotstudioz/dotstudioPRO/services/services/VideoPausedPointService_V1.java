@@ -33,9 +33,9 @@ public class VideoPausedPointService_V1 /*implements CommonAsyncHttpClient_V1.IC
         void callBackFromVideoPausedPointServiceForBrowsePage(ArrayList<VideoInfoDTO> videoInfoDTOArrayList);
         void callBackFromVideoPausedPointServiceForRecommendation(ArrayList<VideoInfoDTO> videoInfoDTOArrayList);
         void errorBackFromVideoPausedPointServiceForBrowsePage(String ERROR);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
-        void clientTokenExpired1();
+        void clientTokenExpired();
         void clientTokenRefreshed(String clientToken);
     }
 
@@ -209,7 +209,7 @@ public class VideoPausedPointService_V1 /*implements CommonAsyncHttpClient_V1.IC
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iVideoPausedPointService_V1.accessTokenExpired1();
+            iVideoPausedPointService_V1.accessTokenExpired();
     }
     //@Override
     public void clientTokenExpired1() {
@@ -217,7 +217,7 @@ public class VideoPausedPointService_V1 /*implements CommonAsyncHttpClient_V1.IC
             refreshClientToken();
         else {
             if(!isSavingTheData)
-                iVideoPausedPointService_V1.clientTokenExpired1();
+                iVideoPausedPointService_V1.clientTokenExpired();
         }
     }
 
@@ -274,13 +274,13 @@ public class VideoPausedPointService_V1 /*implements CommonAsyncHttpClient_V1.IC
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iVideoPausedPointService_V1.accessTokenExpired1();
+                    iVideoPausedPointService_V1.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iVideoPausedPointService_V1.accessTokenExpired1();
+                iVideoPausedPointService_V1.accessTokenExpired();
             }
         });
         refreshAccessToken = true;
@@ -304,13 +304,13 @@ public class VideoPausedPointService_V1 /*implements CommonAsyncHttpClient_V1.IC
                     }
                 } catch(Exception e) {
                     e.printStackTrace();
-                    iVideoPausedPointService_V1.clientTokenExpired1();
+                    iVideoPausedPointService_V1.clientTokenExpired();
                 }
             }
 
             @Override
             public void clientTokenError(String ERROR) {
-                iVideoPausedPointService_V1.clientTokenExpired1();
+                iVideoPausedPointService_V1.clientTokenExpired();
             }
         });
         clientTokenRefreshClass.refreshExistingClientToken(ApplicationConstants.xAccessToken, ApplicationConstants.CLIENT_TOKEN);

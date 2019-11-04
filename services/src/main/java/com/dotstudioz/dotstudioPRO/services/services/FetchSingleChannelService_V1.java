@@ -107,11 +107,11 @@ public class FetchSingleChannelService_V1 /*implements CommonAsyncHttpClient_V1.
         if(!refreshAccessToken)
             refreshAccessToken();
         else
-            iFetchSingleChannelService_V1.accessTokenExpired1();
+            iFetchSingleChannelService_V1.accessTokenExpired();
     }
     //@Override
     public void clientTokenExpired1() {
-        //iGetAllChannelsFromAllCategoriesService_V1.clientTokenExpired1();
+        //iGetAllChannelsFromAllCategoriesService_V1.clientTokenExpired();
     }
 
     JSONArray channelsArray;
@@ -838,7 +838,7 @@ public class FetchSingleChannelService_V1 /*implements CommonAsyncHttpClient_V1.
         void hidePDialog();
         void fetchLiveVideoChannelDataServiceResponse(SpotLightChannelDTO spotLightChannelDTO);
         void fetchLiveVideoChannelDataServiceError(String ERROR);
-        void accessTokenExpired1();
+        void accessTokenExpired();
         void accessTokenRefreshed(String accessToken);
     }
 
@@ -854,13 +854,13 @@ public class FetchSingleChannelService_V1 /*implements CommonAsyncHttpClient_V1.
                     fetchSingleChannelData(channelSlug);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    iFetchSingleChannelService_V1.accessTokenExpired1();
+                    iFetchSingleChannelService_V1.accessTokenExpired();
                 }
             }
 
             @Override
             public void companyTokenServiceError(String responseBody) {
-                iFetchSingleChannelService_V1.accessTokenExpired1();
+                iFetchSingleChannelService_V1.accessTokenExpired();
             }
         });
         refreshAccessToken = true;
