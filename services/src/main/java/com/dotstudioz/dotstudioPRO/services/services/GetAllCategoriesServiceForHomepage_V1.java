@@ -488,10 +488,11 @@ public class GetAllCategoriesServiceForHomepage_V1 /*implements CommonAsyncHttpC
                                         }
 
                                         spotLightChannelDTO.setVideoInfoDTOList(missingVideoInfoDTOList);
-                                        spotLightCategoriesDTO.getSpotLightChannelDTOList().add(spotLightChannelDTO);
+                                        //spotLightCategoriesDTO.getSpotLightChannelDTOList().add(spotLightChannelDTO);
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
+                                    spotLightCategoriesDTO.getSpotLightChannelDTOList().add(spotLightChannelDTO);
                                 } else if(isParent) {
                                     spotLightCategoriesDTO.getSpotLightChannelDTOList().add(spotLightChannelDTO);
                                 }
