@@ -709,6 +709,22 @@ public class FetchChannelUsingSlugService_V1 /*implements CommonAsyncHttpClient_
                         JSONObject childChannel = childChannelsArray.getJSONObject(c);
                         SpotLightChannelDTO childSpotLightChannelDTO = new SpotLightChannelDTO();
                         try {
+                            if(childChannel.has("_id")) {
+                                String idChild = childChannel.getString("_id");
+                                childSpotLightChannelDTO.setId(idChild);
+                            }
+                        } catch (JSONException e) {
+                            //spotLightChannelDTO.setDspro_id("");
+                        }
+                        try {
+                            if(childChannel.has("dspro_id")) {
+                                String dsproIdChild = childChannel.getString("dspro_id");
+                                childSpotLightChannelDTO.setDspro_id(dsproIdChild);
+                            }
+                        } catch (JSONException e) {
+                            //spotLightChannelDTO.setDspro_id("");
+                        }
+                        try {
                             if(childChannel.has("is_product")) {
                                 if(childChannel.getString("is_product")!= null) {
                                     if(childChannel.getString("is_product").equals("true"))
