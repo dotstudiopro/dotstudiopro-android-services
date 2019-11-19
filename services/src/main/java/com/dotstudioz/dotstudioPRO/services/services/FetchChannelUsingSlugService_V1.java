@@ -725,6 +725,14 @@ public class FetchChannelUsingSlugService_V1 /*implements CommonAsyncHttpClient_
                             //spotLightChannelDTO.setDspro_id("");
                         }
                         try {
+                            if(childChannel.has("slug")) {
+                                String slugChild = childChannel.getString("slug");
+                                childSpotLightChannelDTO.setSlug(slugChild);
+                            }
+                        } catch (JSONException e) {
+                            //spotLightChannelDTO.setDspro_id("");
+                        }
+                        try {
                             if(childChannel.has("is_product")) {
                                 if(childChannel.getString("is_product")!= null) {
                                     if(childChannel.getString("is_product").equals("true"))
