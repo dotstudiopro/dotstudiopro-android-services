@@ -810,8 +810,7 @@ public class FetchChannelUsingSlugService_V1 /*implements CommonAsyncHttpClient_
                                     e.printStackTrace();
                                 }
                             }
-                        }else
-                        {
+                        } else {
                             try {
                                 VideoInfoDTO videoInfoDTO = new VideoInfoDTO();
                                 videoInfoDTO.setVideoID(childChannel.getString("video"));
@@ -834,6 +833,20 @@ public class FetchChannelUsingSlugService_V1 /*implements CommonAsyncHttpClient_
                                 try {
                                     videoInfoDTO.setThumb(childChannel.getString("thumb"));
                                 } catch (Exception e) {
+                                }
+                                try {
+                                    if(videoInfoDTO.getThumb() == null || videoInfoDTO.getThumb().length() == 0) {
+                                        try {
+                                            String imageString = childChannel.getString("videos_thumb");
+                                            imageString = CommonServiceUtils.replaceDotstudioproWithMyspotlightForImage(imageString);
+                                            videoInfoDTO.setThumb(imageString);
+                                        } catch (JSONException e) {
+                                            videoInfoDTO.setThumb("");
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                } catch(Exception e) {
+                                    e.printStackTrace();
                                 }
                                 try {
                                     videoInfoDTO.setSlug(childChannel.getString("slug"));
