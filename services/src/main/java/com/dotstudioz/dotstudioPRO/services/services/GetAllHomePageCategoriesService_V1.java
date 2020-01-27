@@ -300,6 +300,11 @@ public class GetAllHomePageCategoriesService_V1 /*implements CommonAsyncHttpClie
             spotLightCategoriesDTO.setCategoryName("");
         }
         try {
+            spotLightCategoriesDTO.setCategoryDescription(obj.getString("description"));
+        } catch (JSONException e) {
+            spotLightCategoriesDTO.setCategoryDescription("");
+        }
+        try {
             if(obj.has("dsp_meta")) {
                 if(obj.getJSONObject("dsp_meta").has("dspappapi_app_display_weight")) {
                     spotLightCategoriesDTO.setCategoryWeight(obj.getJSONObject("dsp_meta").getInt("dspappapi_app_display_weight"));
