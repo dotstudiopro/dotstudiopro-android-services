@@ -879,6 +879,12 @@ public class FetchMissingChildChannelService_V1 /*implements CommonAsyncHttpClie
                                                             ee.printStackTrace();
                                                         }
                                                         try {
+                                                            if(((JSONObject) playlistArray.get(j)).has("description"))
+                                                                videoInfoDTO.setDescription(playlistArray.getJSONObject(j).getString("description"));
+                                                        } catch(Exception ee) {
+                                                            ee.printStackTrace();
+                                                        }
+                                                        try {
                                                             if(((JSONObject) playlistArray.get(j)).has("seriestitle"))
                                                                 videoInfoDTO.setSeriesTitle(((JSONObject) playlistArray.get(j)).getString("seriestitle"));
                                                         } catch(Exception ee) {
@@ -1029,6 +1035,12 @@ public class FetchMissingChildChannelService_V1 /*implements CommonAsyncHttpClie
                                                         try {
                                                             if(childChannel.getJSONObject("video").has("title"))
                                                                 videoInfoDTO.setVideoTitle(childChannel.getJSONObject("video").getString("title"));
+                                                        } catch(Exception ee) {
+                                                            ee.printStackTrace();
+                                                        }
+                                                        try {
+                                                            if(childChannel.getJSONObject("video").has("description"))
+                                                                videoInfoDTO.setDescription(childChannel.getJSONObject("video").getString("description"));
                                                         } catch(Exception ee) {
                                                             ee.printStackTrace();
                                                         }

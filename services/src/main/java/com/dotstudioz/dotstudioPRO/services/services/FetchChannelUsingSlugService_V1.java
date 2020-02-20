@@ -635,6 +635,8 @@ public class FetchChannelUsingSlugService_V1 /*implements CommonAsyncHttpClient_
                                     videoInfoDTO.setThumb(playlistArray.getJSONObject(j).getString("thumb"));
                                 if(((JSONObject) playlistArray.get(j)).has("title"))
                                     videoInfoDTO.setVideoTitle(playlistArray.getJSONObject(j).getString("title"));
+                                if(((JSONObject) playlistArray.get(j)).has("description"))
+                                    videoInfoDTO.setDescription(playlistArray.getJSONObject(j).getString("description"));
                                 if(((JSONObject) playlistArray.get(j)).has("seriestitle"))
                                     videoInfoDTO.setSeriesTitle(((JSONObject) playlistArray.get(j)).getString("seriestitle"));
 
@@ -788,6 +790,7 @@ public class FetchChannelUsingSlugService_V1 /*implements CommonAsyncHttpClient_
                                             videoInfoDTO.setVideoID(playlistArray.getJSONObject(j).getString("_id"));
                                             videoInfoDTO.setThumb(playlistArray.getJSONObject(j).getString("thumb"));
                                             videoInfoDTO.setVideoTitle(playlistArray.getJSONObject(j).getString("title"));
+                                            videoInfoDTO.setDescription(playlistArray.getJSONObject(j).getString("description"));
                                             try {
                                                 JSONObject vidInfoDTOJSONObject = (JSONObject) playlistArray.get(j);
                                                 if(vidInfoDTOJSONObject.has("custom_fields")) {
