@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void accessTokenExpired1() {
+            public void accessTokenExpired() {
             }
 
             @Override
@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void clientTokenExpired1() {
+            public void clientTokenExpired() {
             }
         });
         String expiredToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiI1Y2E2M2M3Zjk4ZjgxNTE0M2MwNTIwNDIiLCJleHBpcmVzIjoxNTYxOTEwODI2NzAxLCJjb250ZXh0Ijp7Im5hbWUiOiJpcGJvdHQiLCJzdWJkb21haW4iOiJpcGJvdHQiLCJyZWFkX29ubHkiOmZhbHNlfX0.8SmSqhKbTX-23Mr39z0-CgattkjBYw_nE2guOnEqRw0";
@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void accessTokenExpired1() {
+            public void accessTokenExpired() {
 
             }
 
@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void clientTokenExpired1() {
+            public void clientTokenExpired() {
 
             }
         });
@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void accessTokenExpired1() {
+            public void accessTokenExpired() {
 
             }
 
@@ -199,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void clientTokenExpired1() {
+            public void clientTokenExpired() {
 
             }
         });

@@ -6,8 +6,8 @@ android {
     defaultConfig {
         minSdkVersion 17
         targetSdkVersion 28
-        versionCode 72
-        versionName "1.0.72"
+        versionCode 73
+        versionName "1.0.73"
 
         multiDexEnabled true
     }
@@ -43,7 +43,8 @@ dependencies {
         exclude module: 'okhttp'
     }
 
-    implementation 'com.auth0.android:lock:2.14.1'
+    //implementation 'com.auth0.android:lock:2.14.1'
+    implementation 'com.github.dotstudiopro:dotstudiopro-android-lock:0.0.1'
     implementation 'com.auth0:java-jwt:2.1.0'
 
     implementation 'com.google.code.gson:gson:2.8.5'
