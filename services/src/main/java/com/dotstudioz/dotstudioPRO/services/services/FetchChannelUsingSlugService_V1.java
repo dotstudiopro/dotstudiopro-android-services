@@ -344,6 +344,11 @@ public class FetchChannelUsingSlugService_V1 /*implements CommonAsyncHttpClient_
                                 spotLightCategoriesDTO.setCategoryName("");
                             }
                             try {
+                                spotLightCategoriesDTO.setCategoryDisplayName(spotLightCategoriesDTOOBJ.getString("display_name"));
+                            } catch (JSONException e) {
+                                spotLightCategoriesDTO.setCategoryName("");
+                            }
+                            try {
                                 spotLightCategoriesDTO.setCategorySlug(spotLightCategoriesDTOOBJ.getString("slug"));
                             } catch (JSONException e) {
                                 spotLightCategoriesDTO.setCategorySlug("");

@@ -300,6 +300,12 @@ public class GetAllHomePageCategoriesService_V1 /*implements CommonAsyncHttpClie
             spotLightCategoriesDTO.setCategoryName("");
         }
         try {
+            spotLightCategoriesDTO.setCategoryDisplayName(obj.getString("display_name"));
+            Log.d("GetAllHomePageCat", "spotLightCategoriesDTO.getCategoryDisplayName()==>" + spotLightCategoriesDTO.getCategoryDisplayName());
+        } catch (JSONException e) {
+            spotLightCategoriesDTO.setCategoryName("");
+        }
+        try {
             spotLightCategoriesDTO.setCategoryDescription(obj.getString("description"));
         } catch (JSONException e) {
             spotLightCategoriesDTO.setCategoryDescription("");
@@ -447,6 +453,12 @@ public class GetAllHomePageCategoriesService_V1 /*implements CommonAsyncHttpClie
         try {
             spotLightCategoriesDTO.setCategoryName(obj.getString("name"));
             Log.d("GetAllHomePageCat", "spotLightCategoriesDTO.getCategoryName()==>" + spotLightCategoriesDTO.getCategoryName());
+        } catch (JSONException e) {
+            spotLightCategoriesDTO.setCategoryName("");
+        }
+        try {
+            spotLightCategoriesDTO.setCategoryDisplayName(obj.getString("display_name"));
+            Log.d("GetAllHomePageCat", "spotLightCategoriesDTO.getCategoryDisplayName()==>" + spotLightCategoriesDTO.getCategoryDisplayName());
         } catch (JSONException e) {
             spotLightCategoriesDTO.setCategoryName("");
         }

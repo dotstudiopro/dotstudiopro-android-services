@@ -378,6 +378,11 @@ public class FetchMissingChannelService_V1 /*implements CommonAsyncHttpClient_V1
                                 spotLightCategoriesDTO.setCategoryName("");
                             }
                             try {
+                                spotLightCategoriesDTO.setCategoryDisplayName(spotLightCategoriesDTOOBJ.getString("display_name"));
+                            } catch (JSONException e) {
+                                spotLightCategoriesDTO.setCategoryName("");
+                            }
+                            try {
                                 spotLightCategoriesDTO.setCategorySlug(spotLightCategoriesDTOOBJ.getString("slug"));
                             } catch (JSONException e) {
                                 spotLightCategoriesDTO.setCategorySlug("");

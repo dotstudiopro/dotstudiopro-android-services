@@ -1,6 +1,7 @@
 package com.dotstudioz.dotstudioPRO.services.services;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.dotstudioz.dotstudioPRO.models.dto.ParameterItem;
 import com.dotstudioz.dotstudioPRO.models.dto.SpotLightCategoriesDTO;
@@ -337,6 +338,11 @@ public class AppHomeCarouselChannelUsingSlugService_V1 /*implements CommonAsyncH
                             }
                             try {
                                 spotLightCategoriesDTO.setCategoryName(spotLightCategoriesDTOOBJ.getString("name"));
+                            } catch (JSONException e) {
+                                spotLightCategoriesDTO.setCategoryName("");
+                            }
+                            try {
+                                spotLightCategoriesDTO.setCategoryDisplayName(spotLightCategoriesDTOOBJ.getString("display_name"));
                             } catch (JSONException e) {
                                 spotLightCategoriesDTO.setCategoryName("");
                             }

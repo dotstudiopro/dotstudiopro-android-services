@@ -222,6 +222,12 @@ public class GetAllCategoriesService_V1 /*implements CommonAsyncHttpClient_V1.IC
                     spotLightCategoriesDTO.setCategoryName("");
                 }
                 try {
+                    spotLightCategoriesDTO.setCategoryDisplayName(obj.getString("display_name"));
+                    //Log.d("GetAllCategories", "spotLightCategoriesDTO.getCategoryDisplayName()==>" + spotLightCategoriesDTO.getCategoryDisplayName());
+                } catch (JSONException e) {
+                    spotLightCategoriesDTO.setCategoryDisplayName("");
+                }
+                try {
                     spotLightCategoriesDTO.setCategoryDescription(obj.getString("description"));
                 } catch (JSONException e) {
                     spotLightCategoriesDTO.setCategoryDescription("");
