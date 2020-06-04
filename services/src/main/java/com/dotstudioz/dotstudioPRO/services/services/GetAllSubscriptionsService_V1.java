@@ -265,6 +265,24 @@ public class GetAllSubscriptionsService_V1 /*implements CommonAsyncHttpClient_V1
                     subscriptionDTO.setChargifyId("");
                 }
                 try {
+                    if(obj.has("apple_product_id"))
+                        subscriptionDTO.setAppleProductId(obj.getString("apple_product_id"));
+                } catch (JSONException e) {
+                    subscriptionDTO.setAppleProductId("");
+                }
+                try {
+                    if(obj.has("google_product_id"))
+                        subscriptionDTO.setGoogleProductId(obj.getString("google_product_id"));
+                } catch (JSONException e) {
+                    subscriptionDTO.setGoogleProductId("");
+                }
+                try {
+                    if(obj.has("roku_product_id"))
+                        subscriptionDTO.setRokuProductId(obj.getString("roku_product_id"));
+                } catch (JSONException e) {
+                    subscriptionDTO.setRokuProductId("");
+                }
+                try {
                     if(obj.has("entire_catalogue"))
                         subscriptionDTO.setEntireCatalogue(obj.getBoolean("entire_catalogue"));
                 } catch (JSONException e) {
@@ -330,6 +348,24 @@ public class GetAllSubscriptionsService_V1 /*implements CommonAsyncHttpClient_V1
                         subscriptionDTO.setName(obj.getString("name"));
                 } catch (JSONException e) {
                     subscriptionDTO.setName("");
+                }
+                try {
+                    if(obj.has("description"))
+                        subscriptionDTO.setDescription(obj.getString("description"));
+                } catch (JSONException e) {
+                    subscriptionDTO.setDescription("");
+                }
+                try {
+                    if(obj.has("price_display"))
+                        subscriptionDTO.setPriceDisplay(obj.getString("price_display"));
+                } catch (JSONException e) {
+                    subscriptionDTO.setPriceDisplay("");
+                }
+                try {
+                    if(obj.has("is_most_popular"))
+                        subscriptionDTO.setMostPopular(obj.getBoolean("is_most_popular"));
+                } catch (JSONException e) {
+                    subscriptionDTO.setMostPopular(false);
                 }
                 try {
                     if(obj.has("trial"))
